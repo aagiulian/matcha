@@ -1,75 +1,100 @@
+
+/*********************************************************************************/
+/* Use script `gen-jwt-keys.sh` to generate public and private keys in .env file */
+/*********************************************************************************/
+
+require('dotenv').config()
 const { ApolloServer, gql } = require('apollo-server');
-const fs = require('fs');
+const { makeExecutableSchema } = require('graphql-tools');
+const { attachDirectives } = require('./auth-helpers');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-
-//Use script `gen-jwt-keys.sh` to generate public and private keys
-let privateKEY = fs.readFileSync('./assets/keys/jwtRS256.key');
-let publicKEY = fs.readFileSync('./assets/keys/jwtRS256.key.pub');
-
-let issuer = "matcha";
-let audience = "localost";
+const issuer = "matcha";
+const audience = "localhost";
 
 let database = {
   users: []
 }
 
 const typeDefs = gql`
-type Query {
-  token: String
-}
 
-type AuthPayload {
-  token: String
-  user: String
-}
+  directive @isAuthenticated on QUERY | FIELD_DEFINITION
 
-type Mutation {
-  signup(email: String!, password: String!): AuthPayload!
-}
+  type User {
+    id: ID!
+    email: String!,
+    hashedPassword: String!
+  }
+
+  type SignupResponse {
+    id: ID!
+    email: String!
+  }
+
+  type AuthPayload {
+    success: Boolean!
+    token: String
+  }
+
+  type Mutation {
+    signup(email: String!, password: String!): SignupResponse!
+    login(email: String!, password: String!): AuthPayload!
+  }
+
+  type Query {
+    allUsers: [User] @isAuthenticated
+  }
 `;
 
 const resolvers = {
+  Query: {
+    allUsers: () => database.users
+  },
   Mutation: {
-    signup: async (parent, args) => {
+    signup: async (_, args) => {
       let hashedPassword = await bcrypt.hash(args.password, 10);
       let id = database.users.length;
-      database.users.push({id, email: args.emal, hashedPassword});
-
-      let jwtPayload = {
-        id: id,
-        role: 0
-      };
-      let signOptions = {
-        issuer,
-        subject: args.email,
-        audience,
-        expiresIn: "12h",
-        algorithm: "RS256"
-      }
-      let token = jwt.sign(jwtPayload, privateKEY, signOptions);
-      console.log("token:", token);
-
-      let verifyOptions = {
-        issuer,
-        subject:  args.email,
-        audience ,
-        expiresIn:  "12h",
-        algorithm:  ["RS256"]
-      };
-      let legit = jwt.verify(token, publicKEY, verifyOptions);
-      console.log("\nJWT verification result: " + JSON.stringify(legit));
+      database.users.push({id, email: args.email, hashedPassword});
       
-      return {token, user: args.email};
+      return {id, email: args.email};
+
+    },
+    login: async (_, args) => {
+      let users = database.users.filter(user => user.email === args.email);
+
+      if (0 < users.length && await bcrypt.compare(args.password, users[0].hashedPassword)) {
+        let user = users[0];
+	let jwtPayload = {
+	  id: user.id,
+	  role: "user"
+	};
+	let signOptions = {
+	    issuer,
+	    subject: args.email,
+	    audience,
+	    expiresIn: "12h",
+	    algorithm: "RS256"
+	}
+        let token = jwt.sign(jwtPayload, process.env.JWT_PRIVATE, signOptions);
+        return {success: true, token}
+      } else {
+        return {success: false}
+      }
     }
   }
 }
 
+const schema = makeExecutableSchema({ typeDefs, resolvers });
+
+attachDirectives(schema);
+
 const server = new ApolloServer({
-   typeDefs,
-   resolvers,
-   });
+  schema,
+  context: ({ req }) => {
+    return req;
+  }
+});
 
 server.listen().then(({ url }) => {
   console.log(`🚀  Server ready at ${url}`);
