@@ -1,5 +1,6 @@
 import './App.css';
 import Signup from './components/Signup'
+import Login from './components/Login'
 import React from 'react';
 import './index.css';
 import { ApolloProvider } from "react-apollo";
@@ -14,6 +15,9 @@ const App = () => (
         <div>
             <h2>My first Apollo app 🚀</h2>
             <Signup/>
+            <br/>
+            <br/>
+            <Login/>
         </div>
     </ApolloProvider>
 );
