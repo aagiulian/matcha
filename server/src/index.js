@@ -6,12 +6,10 @@
 require('dotenv').config()
 const { ApolloServer, gql } = require('apollo-server');
 const { makeExecutableSchema } = require('graphql-tools');
-const { attachDirectives } = require('./auth-helpers');
+const { attachDirectives } = require('./auth-helpers/directives');
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
+const { generateToken } = require('./auth-helpers/generateToken')
 
-const issuer = "matcha";
-const audience = "localhost";
 
 let database = {
   users: []
@@ -38,7 +36,7 @@ const typeDefs = gql`
   }
 
   type Mutation {
-    signup(email: String!, password: String!): SignupResponse!
+    signup(email: String!, password: String!): SignupResponse! @isAuthenticated
     login(email: String!, password: String!): AuthPayload!
   }
 
@@ -55,31 +53,17 @@ const resolvers = {
     signup: async (_, args) => {
       let hashedPassword = await bcrypt.hash(args.password, 10);
       let id = database.users.length;
-      database.users.push({id, email: args.email, hashedPassword});
-      
-      return {id, email: args.email};
-
+      database.users.push({ id, email: args.email, hashedPassword });
+      return { id, email: args.email };
     },
     login: async (_, args) => {
       let users = database.users.filter(user => user.email === args.email);
-
       if (0 < users.length && await bcrypt.compare(args.password, users[0].hashedPassword)) {
         let user = users[0];
-	let jwtPayload = {
-	  id: user.id,
-	  role: "user"
-	};
-	let signOptions = {
-	    issuer,
-	    subject: args.email,
-	    audience,
-	    expiresIn: "12h",
-	    algorithm: "RS256"
-	}
-        let token = jwt.sign(jwtPayload, process.env.JWT_PRIVATE, signOptions);
-        return {success: true, token}
+        let token = generateToken(user);
+        return { success: true, token }
       } else {
-        return {success: false}
+        return { success: false }
       }
     }
   }
