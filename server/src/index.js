@@ -9,6 +9,11 @@ const { makeExecutableSchema } = require('graphql-tools');
 const { attachDirectives } = require('./auth-helpers/directives');
 const bcrypt = require('bcrypt');
 const { generateToken } = require('./auth-helpers/generateToken')
+const {
+  IsAuthenticatedDirective,
+  HasRoleDirective,
+  HasScopeDirective
+} = require("./auth-helpers/directivesSecond");
 
 
 let database = {
@@ -17,7 +22,15 @@ let database = {
 
 const typeDefs = gql`
 
-  directive @isAuthenticated on QUERY | FIELD_DEFINITION
+  directive @hasScope(scopes: [String]) on OBJECT | FIELD_DEFINITION
+  directive @hasRole(roles: [Role]) on OBJECT | FIELD_DEFINITION
+  directive @isAuthenticated on OBJECT | FIELD_DEFINITION
+
+  enum Role {
+      reader
+      user
+      admin
+  }
 
   type User {
     id: ID!
@@ -41,7 +54,7 @@ const typeDefs = gql`
   }
 
   type Query {
-    allUsers: [User] @isAuthenticated
+    allUsers: [User]
   }
 `;
 
