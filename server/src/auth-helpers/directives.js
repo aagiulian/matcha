@@ -1,95 +1,86 @@
 const { forEachField } = require('graphql-tools');
+const { defaultFieldResolver } = require('graphql');
 const { getArgumentValues } = require('graphql/execution/values');
 const jwt = require('jsonwebtoken');
-const { createError } = require('apollo-errors');
+const { createError, ForbiddenError} = require('apollo-errors');
+const { SchemaDirectiveVisitor } = require("apollo-server");
 
-const AuthorizationError = createError('AuthorizationError', {
+
+const AuthError = createError('AuthorizationError', {
   message: 'You are not authorized.'
 });
 
-const directiveResolvers = {
-  isAuthenticated(result, source, args, context) {
-    const token = context.headers.authorization;
-        
-    if (!token) {
-      throw new AuthorizationError({
-        message: 'You must supply a JWT for authorization!'
-      });
+
+
+class AuthenticationDirective extends SchemaDirectiveVisitor {
+  visitFieldDefinition(field) {
+    // destructuring the `resolve` property off of `field`, while providing a default value `defaultFieldResolver` in case `field.resolve` is undefined.
+    // destructuring the field's `name` to use in the Error message
+    const { resolver = defaultFieldResolver, name } = field
+
+    field.resolve = async function (source, args, context, info) {
+      //console.log("context in resolver:", context.user);
+
+      if (typeof context.user.id == 'undefined') 
+        throw new AuthError(`You must authenticate to access ${name}`);
+
+      // runs if the condition above passes
+      const result = await resolver.call(this, source, args, context, info)
+      return result
     }
-    try {
-      const decoded = jwt.verify(
-        token.replace('Bearer ', ''),
-        process.env.JWT_PUBLIC
-      );
-      return result;
-    } catch (err) {
-      throw new AuthorizationError({
-        message: 'You are not authorized.'
-      });
+  }
+}
+
+class OwnerDirective extends SchemaDirectiveVisitor {
+  visitFieldDefinition(field) {
+    // destructuring the `resolve` property off of `field`, while providing a default value `defaultFieldResolver` in case `field.resolve` is undefined.
+    // destructuring the field's `name` to use in the Error message
+    const { resolver = defaultFieldResolver, name } = field
+
+    field.resolve = async function (source, args, context, info) {
+      
+      // the query variables are available at info.variableValues
+      const {
+        variableValues: { userID }
+      } = info
+
+      console.log("owner directive");
+      console.log("\nuserID:", userID);
+      console.log("\ncontext.user:", context.user);
+      console.log("userID:", userID);
+      console.log("user.id:", context.user.id);
+      console.log("typeof userID:", typeof userID);
+      console.log("typeof user.id:", typeof context.user.id);
+      console.log("-----------------");
+      
+
+      // checks that the logged in user is the same as the one in the query variable `userID`
+      if (context.user.id !== userID)
+        throw new AuthError(`Unauthorized field ${name}`)
+
+      // runs if the condition above passes
+      const result = await resolver.call(this, source, args, context, info)
+
+      return result
     }
-  },
-  hasScope(result, source, args, context) {
-    const token = context.headers.authorization;
-    const expectedScopes = args.scope;
-    if (!token) {
-      throw new AuthorizationError({
-        message: 'You must supply a JWT for authorization!'
-      });
-    }
-    try {
-      const decoded = jwt.verify(
-        token.replace('Bearer ', ''),
-        process.env.JWT_PUBLIC
-      );
-      const scopes = decoded.scope.split(' ');
-      if (expectedScopes.some(scope => scopes.indexOf(scope) !== -1)) {
-        return result;
-      }
-    } catch (err) {
-      return Promise.reject(
-        new AuthorizationError({
-          message: `You are not authorized. Expected scopes: ${expectedScopes.join(
-            ', '
-          )}`
-        })
-      );
-    }
+  }
+}
+
+/***********************************************************************/
+
+const attachUserToContext = ({ req }) => {
+  const token = req.headers.authorization;
+  if (token) {
+    const user = jwt.verify(
+      token.replace('Bearer ', ''),
+      process.env.JWT_PUBLIC
+    );
+    return { user };
   }
 };
 
-// Credit: agonbina https://github.com/apollographql/graphql-tools/issues/212
-const attachDirectives = schema => {
-  forEachField(schema, field => {
-    const directives = field.astNode.directives;
-    directives.forEach(directive => {
-      const directiveName = directive.name.value;
-      const resolver = directiveResolvers[directiveName];
-
-      if (resolver) {
-        const oldResolve = field.resolve;
-        const Directive = schema.getDirective(directiveName);
-        const args = getArgumentValues(Directive, directive);
-
-        field.resolve = function() {
-          const [source, _, context, info] = arguments;
-          let promise = oldResolve.call(field, ...arguments);
-
-          const isPrimitive = !(promise instanceof Promise);
-          if (isPrimitive) {
-            promise = Promise.resolve(promise);
-          }
-
-          return promise.then(result =>
-            resolver(result, source, args, context, info)
-          );
-        };
-      }
-    });
-  });
-};
-
 module.exports = {
-	AuthorizationError,
-	directiveResolvers,
-	attachDirectives,
+  attachUserToContext,
+  OwnerDirective,
+  AuthenticationDirective
 };
