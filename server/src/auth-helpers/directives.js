@@ -10,7 +10,7 @@ const AuthorizationError = createError('AuthorizationError', {
 const directiveResolvers = {
   isAuthenticated(result, source, args, context) {
     const token = context.headers.authorization;
-        
+
     if (!token) {
       throw new AuthorizationError({
         message: 'You must supply a JWT for authorization!'
@@ -89,7 +89,6 @@ const attachDirectives = schema => {
 };
 
 module.exports = {
-	AuthorizationError,
 	directiveResolvers,
 	attachDirectives,
 };
