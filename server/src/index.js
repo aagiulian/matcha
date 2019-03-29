@@ -34,7 +34,7 @@ const typeDefs = gql`
 
   type User {
     id: ID!
-    email: String!,
+    email: String! @isAuthenticated
     hashedPassword: String!
   }
 
@@ -82,9 +82,15 @@ const resolvers = {
   }
 }
 
-const schema = makeExecutableSchema({ typeDefs, resolvers });
-
-attachDirectives(schema);
+const schema = makeExecutableSchema({ 
+  typeDefs,
+  resolvers,
+  schemaDirectives: {
+    isAuthenticated: IsAuthenticatedDirective,
+    hasRole: HasRoleDirective,
+    hasScope: HasScopeDirective
+  }
+ });
 
 const server = new ApolloServer({
   schema,
