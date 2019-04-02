@@ -6,14 +6,13 @@
 require('dotenv').config()
 const { ApolloServer, gql } = require('apollo-server');
 const { makeExecutableSchema } = require('graphql-tools');
-const { attachDirectives } = require('./auth-helpers/directives');
 const bcrypt = require('bcrypt');
 const { generateToken } = require('./auth-helpers/generateToken')
 const {
-  IsAuthenticatedDirective,
-  HasRoleDirective,
-  HasScopeDirective
-} = require("./auth-helpers/directivesSecond");
+  attachUserToContext,
+  OwnerDirective,
+  AuthenticationDirective
+} = require("./auth-helpers/directives");
 
 
 let database = {
@@ -22,20 +21,13 @@ let database = {
 
 const typeDefs = gql`
 
-  directive @hasScope(scopes: [String]) on OBJECT | FIELD_DEFINITION
-  directive @hasRole(roles: [Role]) on OBJECT | FIELD_DEFINITION
-  directive @isAuthenticated on OBJECT | FIELD_DEFINITION
-
-  enum Role {
-      reader
-      user
-      admin
-  }
+  directive @isAuthenticated on FIELD_DEFINITION
+  directive @isOwner on FIELD_DEFINITION | QUERY
 
   type User {
     id: ID!
     email: String! @isAuthenticated
-    hashedPassword: String!
+    hashedPassword: String! @isOwner
   }
 
   type SignupResponse {
@@ -49,18 +41,33 @@ const typeDefs = gql`
   }
 
   type Mutation {
-    signup(email: String!, password: String!): SignupResponse! @isAuthenticated
+    signup(email: String!, password: String!): SignupResponse!
     login(email: String!, password: String!): AuthPayload!
   }
 
   type Query {
+    me(userID: Int!): User
     allUsers: [User]
   }
+
 `;
+
 
 const resolvers = {
   Query: {
-    allUsers: () => database.users
+    me(_, args) {
+
+      console.log("args:");
+      return database.users[0];
+      const users = database.users.filter(user => user.id == args.userID);
+
+      if (users.length)
+        return users[0];
+    },
+    allUsers() {
+      console.log("allusers");
+      return database.users;
+    },
   },
   Mutation: {
     signup: async (_, args) => {
@@ -86,17 +93,14 @@ const schema = makeExecutableSchema({
   typeDefs,
   resolvers,
   schemaDirectives: {
-    isAuthenticated: IsAuthenticatedDirective,
-    hasRole: HasRoleDirective,
-    hasScope: HasScopeDirective
-  }
+    isOwner: OwnerDirective,
+    isAuthenticated: AuthenticationDirective
+  },
  });
 
 const server = new ApolloServer({
   schema,
-  context: ({ req }) => {
-    return req;
-  }
+  context: attachUserToContext
 });
 
 server.listen().then(({ url }) => {
