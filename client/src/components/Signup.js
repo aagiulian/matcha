@@ -48,7 +48,7 @@ export default function Signup() {
           //                        onChange={this.handleInputChange}
           //                       value={this.state.password}
         />
-        <button type="submit">Login User</button>
+        <button type="submit">Signup User</button>
       </form>
     </div>
   );
