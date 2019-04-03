@@ -1,6 +1,7 @@
 import React from "react";
 import gql from "graphql-tag";
 import { useMutation } from "react-apollo-hooks";
+import PropTypes from "prop-types";
 
 const LOGIN = gql`
   mutation Login($email: String!, $password: String!) {
@@ -55,3 +56,7 @@ export default function Login(props) {
     </div>
   );
 }
+
+Login.propTypes = {
+  setToken: PropTypes.func.isRequired
+};

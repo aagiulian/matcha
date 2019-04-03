@@ -21,7 +21,7 @@ const App = () => {
     <ApolloProvider client={client}>
       <ApolloProviderHooks client={client}>
         <div>
-          <h2>Matcha soon to be released 🚀</h2>
+          <h2>Matcha soon to be released </h2>
           {console.log("TT", token)}
           {token ? (
             <div>
