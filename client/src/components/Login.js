@@ -1,63 +1,62 @@
-import React from 'react';
-import { Mutation } from "react-apollo";
+import React from "react";
 import gql from "graphql-tag";
+import { useMutation } from "react-apollo-hooks";
+import PropTypes from "prop-types";
 
 const LOGIN = gql`
-    mutation Login($email: String!, $password: String!) {
-        login(email: $email, password: $password) {
-            token
-            user
-        }
+  mutation Login($email: String!, $password: String!) {
+    login(email: $email, password: $password) {
+      success
+      token
     }
+  }
 `;
 
-const Login = () => {
-    let email;
-    let password;
+export default function Login(props) {
+  let email;
+  let password;
 
-    return (
-        <Mutation mutation={LOGIN}>
-        {(login, { data }) => ( 
-            <div>
-                <form onSubmit={e => { 
-                    e.preventDefault();
-                    login({ variables: { email: email.value, password: password.value }});
-                    email.value = "";
-                    password.value = "";
-                }}>
-                    <input
-                        ref = {
-                            node => {
-                            console.log(node)
-                            email = node;
-                        }
-                    }
-                        type="email"
-                        placeholder="Email"
-                        name="email"
-                        // onChange={this.handleInputChange}
-                        // value={this.state.email}
-                    />
-                    <input
-                        ref = {node => {
-                            password = node;
-                        }}
-                        type="password"
-                        placeholder="Password"
-                        name="password"
-//                        onChange={this.handleInputChange}
- //                       value={this.state.password}
-                    />
-                    <button
-                        type="submit"
-                    >
-                        Login User
-                    </button>
-                </form>
-            </div>
-        )}
-        </Mutation>
-    )
+  console.log(props);
+  console.log(props.setToken);
+  const Login = useMutation(LOGIN);
+  return (
+    <div>
+      <form
+        onSubmit={e => {
+          e.preventDefault();
+          Login({
+            variables: { email: email.value, password: password.value }
+          }).then(res => {
+            if (res.data.login.success === true) {
+              props.setToken(res.data.login.token);
+            }
+          });
+          email.value = "";
+          password.value = "";
+        }}
+      >
+        <input
+          ref={node => {
+            email = node;
+          }}
+          type="email"
+          placeholder="Email"
+          name="email"
+        />
+        <input
+          ref={node => {
+            password = node;
+          }}
+          type="password"
+          placeholder="Password"
+          name="password"
+        />
+        <button type="submit">Login User</button>
+      </form>
+    </div>
+  );
 }
 
-export default Login;
+Login.propTypes = {
+  setToken: PropTypes.func.isRequired
+};

@@ -1,6 +1,6 @@
-var jwt = require('jsonwebtoken');
+var jwt = require("jsonwebtoken");
 
-require('dotenv').config()
+require("dotenv").config();
 
 const issuer = "matcha";
 const audience = "localhost";
@@ -16,10 +16,10 @@ function generateToken(user) {
     audience,
     expiresIn: 60 * 60 * 24, // expires in 24 hours
     algorithm: "RS256"
-  }
-  return token = jwt.sign(jwtPayload, process.env.JWT_PRIVATE, signOptions);
+  };
+  return jwt.sign(jwtPayload, process.env.JWT_PRIVATE, signOptions);
 }
 
 module.exports = {
   generateToken
-}
+};
