@@ -22,12 +22,12 @@ let database = {
 const typeDefs = gql`
 
   directive @isAuthenticated on FIELD_DEFINITION
-  directive @isOwner on FIELD_DEFINITION | QUERY
+  directive @isOwner on FIELD_DEFINITION
 
   type User {
     id: ID!
-    email: String! @isAuthenticated
-    hashedPassword: String! @isOwner
+    email: String! 
+    hashedPassword: String! @isAuthenticated
   }
 
   type SignupResponse {
@@ -46,7 +46,7 @@ const typeDefs = gql`
   }
 
   type Query {
-    me(userID: Int!): User
+    moi(userID: Int!): User @isOwner
     allUsers: [User]
   }
 
@@ -55,7 +55,7 @@ const typeDefs = gql`
 
 const resolvers = {
   Query: {
-    me(_, args) {
+    moi(obj, args, context, info) {
 
       console.log("args:");
       return database.users[0];
@@ -81,9 +81,9 @@ const resolvers = {
       if (0 < users.length && await bcrypt.compare(args.password, users[0].hashedPassword)) {
         let user = users[0];
         let token = generateToken(user);
-        return { success: true, token }
+        return { success: true, token: token }
       } else {
-        return { success: false }
+        return { success: false, token: null }
       }
     }
   }

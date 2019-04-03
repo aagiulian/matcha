@@ -1,6 +1,5 @@
 var jwt = require("jsonwebtoken");
 
-require("dotenv").config();
 
 const issuer = "matcha";
 const audience = "localhost";
