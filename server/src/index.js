@@ -1,26 +1,23 @@
-
 /*********************************************************************************/
 /* Use script `gen-jwt-keys.sh` to generate public and private keys in .env file */
 /*********************************************************************************/
 
-require('dotenv').config()
-const { ApolloServer, gql } = require('apollo-server');
-const { makeExecutableSchema } = require('graphql-tools');
-const bcrypt = require('bcrypt');
-const { generateToken } = require('./auth-helpers/generateToken')
+require("dotenv").config();
+const { ApolloServer, gql } = require("apollo-server");
+const { makeExecutableSchema } = require("graphql-tools");
+const bcrypt = require("bcrypt");
+const { generateToken } = require("./auth-helpers/generateToken");
 const {
   attachUserToContext,
   OwnerDirective,
   AuthenticationDirective
 } = require("./auth-helpers/directives");
 
-
 let database = {
   users: []
-}
+};
 
 const typeDefs = gql`
-
   directive @isAuthenticated on FIELD_DEFINITION
   directive @isOwner on FIELD_DEFINITION | QUERY
 
@@ -49,25 +46,21 @@ const typeDefs = gql`
     me(userID: Int!): User
     allUsers: [User]
   }
-
 `;
-
 
 const resolvers = {
   Query: {
     me(_, args) {
-
       console.log("args:");
       return database.users[0];
       const users = database.users.filter(user => user.id == args.userID);
 
-      if (users.length)
-        return users[0];
+      if (users.length) return users[0];
     },
     allUsers() {
       console.log("allusers");
       return database.users;
-    },
+    }
   },
   Mutation: {
     signup: async (_, args) => {
@@ -78,25 +71,28 @@ const resolvers = {
     },
     login: async (_, args) => {
       let users = database.users.filter(user => user.email === args.email);
-      if (0 < users.length && await bcrypt.compare(args.password, users[0].hashedPassword)) {
+      if (
+        0 < users.length &&
+        (await bcrypt.compare(args.password, users[0].hashedPassword))
+      ) {
         let user = users[0];
         let token = generateToken(user);
-        return { success: true, token }
+        return { success: true, token: token };
       } else {
-        return { success: false }
+        return { success: false, token: null };
       }
     }
   }
-}
+};
 
-const schema = makeExecutableSchema({ 
+const schema = makeExecutableSchema({
   typeDefs,
   resolvers,
   schemaDirectives: {
     isOwner: OwnerDirective,
     isAuthenticated: AuthenticationDirective
-  },
- });
+  }
+});
 
 const server = new ApolloServer({
   schema,
