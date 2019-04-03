@@ -35,8 +35,6 @@ export default function Signup() {
           type="email"
           placeholder="Email"
           name="email"
-          // onChange={this.handleInputChange}
-          // value={this.state.email}
         />
         <input
           ref={node => {
@@ -45,8 +43,6 @@ export default function Signup() {
           type="password"
           placeholder="Password"
           name="password"
-          //                        onChange={this.handleInputChange}
-          //                       value={this.state.password}
         />
         <button type="submit">Signup User</button>
       </form>
