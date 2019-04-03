@@ -29,10 +29,11 @@ const errorLink = onError(({ graphQLErrors, networkError, operation }) => {
 });
 
 const authLink = setContext((_, { headers }) => {
+  let JWT = sessionStorage.getItem("token");
   const context = {
     headers: {
       ...headers,
-      Authorization: `bearer ${sessionStorage.getItem("token")}`
+      Authorization: JWT ? `Bearer ${JWT}` : ""
     }
   };
   return context;
@@ -41,7 +42,7 @@ const authLink = setContext((_, { headers }) => {
 const httpLink = new HttpLink({ uri: "http://localhost:4000" });
 
 const client = new ApolloClient({
-  link: ApolloLink.from([errorLink, stateLink, authLink, httpLink]),
+  link: ApolloLink.from([errorLink, authLink, stateLink, httpLink]),
   cache
 });
 

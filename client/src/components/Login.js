@@ -1,20 +1,23 @@
 import React from "react";
 import gql from "graphql-tag";
 import { useMutation } from "react-apollo-hooks";
+import PropTypes from "prop-types";
 
 const LOGIN = gql`
   mutation Login($email: String!, $password: String!) {
     login(email: $email, password: $password) {
+      success
       token
-      user
     }
   }
 `;
 
-export default function Login() {
+export default function Login(props) {
   let email;
   let password;
 
+  console.log(props);
+  console.log(props.setToken);
   const Login = useMutation(LOGIN);
   return (
     <div>
@@ -23,6 +26,10 @@ export default function Login() {
           e.preventDefault();
           Login({
             variables: { email: email.value, password: password.value }
+          }).then(res => {
+            if (res.data.login.success === true) {
+              props.setToken(res.data.login.token);
+            }
           });
           email.value = "";
           password.value = "";
@@ -49,3 +56,7 @@ export default function Login() {
     </div>
   );
 }
+
+Login.propTypes = {
+  setToken: PropTypes.func.isRequired
+};

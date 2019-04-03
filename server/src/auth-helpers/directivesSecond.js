@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 const { SchemaDirectiveVisitor } = require("graphql-tools");
-const { createError } = require('apollo-errors');
+const { createError } = require("apollo-errors");
 const {
   DirectiveLocation,
   GraphQLDirective,
@@ -8,9 +8,9 @@ const {
   GraphQLString
 } = require("graphql");
 
-const AuthorizationError = createError('AuthorizationError', {
-    message: 'You are not authorized.'
-  });
+const AuthorizationError = createError("AuthorizationError", {
+  message: "You are not authorized."
+});
 
 const verifyAndDecodeToken = ({ context }) => {
   if (
@@ -215,7 +215,7 @@ class IsAuthenticatedDirective extends SchemaDirectiveVisitor {
 }
 
 module.exports = {
-    IsAuthenticatedDirective,
-    HasRoleDirective,
-    HasScopeDirective
-}
+  IsAuthenticatedDirective,
+  HasRoleDirective,
+  HasScopeDirective
+};

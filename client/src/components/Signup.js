@@ -5,8 +5,8 @@ import { useMutation } from "react-apollo-hooks";
 const SIGNUP = gql`
   mutation Signup($email: String!, $password: String!) {
     signup(email: $email, password: $password) {
-      token
-      user
+      id
+      email
     }
   }
 `;
@@ -23,7 +23,7 @@ export default function Signup() {
           e.preventDefault();
           Signup({
             variables: { email: email.value, password: password.value }
-          });
+          }).then(result => console.log(result));
           email.value = "";
           password.value = "";
         }}
