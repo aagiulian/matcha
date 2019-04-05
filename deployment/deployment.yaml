@@ -1,0 +1,98 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: graphql-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: matcha
+  template:
+    metadata:
+      labels:
+        name: matcha
+    spec:
+#      volumes:
+#        - name: secret-volume
+#          secret:
+#            secretName: jwt-keys
+      containers:
+        - name: graphql-api
+          image: graphql-api
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 4000
+#          volumeMounts:
+#            - name: secret-volume
+#              readOnly: true
+#              mountPath: "/etc/jwt-keys"
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: graphql-api
+  labels:
+    name:  graphql-api
+spec:
+  type: NodePort
+  ports:
+    - port: 4000 
+      protocol: TCP
+      nodePort: 30077
+  selector:
+    name: graphql-api
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: user-db
+  template:
+    metadata:
+      labels:
+        name: user-db 
+    spec:
+      containers:
+        - name: postgres
+          image: postgres
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_PASSWORD
+              value: "password"
+            - name: POSTGRES_DB
+              value: "matcha"
+            - name: POSTGRES_USER
+              value: "admin"
+            - name: PGDATA
+              value: "/var/lib/postgresql/data/pgdata"
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data/pgdata/
+              name: pgdata
+      volumes:
+        - name: pgdata
+          emptyDir: {} # does this allow to monitor disk usage ?
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-db
+  labels:
+    name: user-db
+spec:
+  ports:
+    # the port that this service should serve on
+  - port: 5432 
+    targetPort: 5432
+  selector:
+    name: user-db
