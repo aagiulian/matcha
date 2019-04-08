@@ -1,21 +1,17 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: graphql-api
+  name: graphql-api-deployment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      name: matcha
+      app: graphql-api 
   template:
     metadata:
       labels:
-        name: matcha
+        app: graphql-api 
     spec:
-#      volumes:
-#        - name: secret-volume
-#          secret:
-#            secretName: jwt-keys
       containers:
         - name: graphql-api
           image: graphql-api
@@ -23,18 +19,27 @@ spec:
           ports:
             - containerPort: 4000
 #          volumeMounts:
+#            - name: source-code
+#              mountPath: /usr/src/app
 #            - name: secret-volume
 #              readOnly: true
 #              mountPath: "/etc/jwt-keys"
+#      volumes:
+#        - name: source-code 
+#          hostPath:
+#            path: ~/matcha/server
+#        - name: secret-volume
+#          secret:
+#            secretName: jwt-keys
 
 ---
 
 apiVersion: v1
 kind: Service
 metadata:
-  name: graphql-api
+  name: graphql-api-service
   labels:
-    name:  graphql-api
+    app:  graphql-api-service
 spec:
   type: NodePort
   ports:
@@ -42,57 +47,58 @@ spec:
       protocol: TCP
       nodePort: 30077
   selector:
-    name: graphql-api
+    app: graphql-api
 
 ---
-
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: user-db
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      name: user-db
-  template:
-    metadata:
-      labels:
-        name: user-db 
-    spec:
-      containers:
-        - name: postgres
-          image: postgres
-          ports:
-            - containerPort: 5432
-          env:
-            - name: POSTGRES_PASSWORD
-              value: "password"
-            - name: POSTGRES_DB
-              value: "matcha"
-            - name: POSTGRES_USER
-              value: "admin"
-            - name: PGDATA
-              value: "/var/lib/postgresql/data/pgdata"
-          volumeMounts:
-            - mountPath: /var/lib/postgresql/data/pgdata/
-              name: pgdata
-      volumes:
-        - name: pgdata
-          emptyDir: {} # does this allow to monitor disk usage ?
-
----
-
-apiVersion: v1
-kind: Service
-metadata:
-  name: user-db
-  labels:
-    name: user-db
-spec:
-  ports:
-    # the port that this service should serve on
-  - port: 5432 
-    targetPort: 5432
-  selector:
-    name: user-db
+#
+#apiVersion: apps/v1
+#kind: Deployment
+#metadata:
+#  name: user-db-deployment
+#spec:
+#  replicas: 1
+#  selector:
+#    matchLabels:
+#      app: user-db
+#  template:
+#    metadata:
+#      labels:
+#        app: user-db 
+#    spec:
+#      containers:
+#        - name: postgres
+#          image: postgres
+#          ports:
+#            - containerPort: 5432
+#          env:
+#            - name: POSTGRES_PASSWORD
+#              value: "password"
+#            - name: POSTGRES_DB
+#              value: "matcha"
+#            - name: POSTGRES_USER
+#              value: "admin"
+#            - name: PGDATA
+#              value: "/var/lib/postgresql/data/pgdata"
+#          volumeMounts:
+#            - mountPath: /var/lib/postgresql/data/pgdata/
+#              name: pgdata
+#      volumes:
+#        - name: pgdata
+#          hostPath:
+#            path: ~/matcha/pgdata
+#
+#---
+#
+#apiVersion: v1
+#kind: Service
+#metadata:
+#  name: user-db-service
+#  labels:
+#    app: user-db-service
+#spec:
+#  ports:
+#    # the port that this service should serve on
+#  - port: 5432 
+#    targetPort: 5432
+#  selector:
+#    app: user-db
