@@ -1,5 +1,5 @@
 #!/bin/bash
 
 kubectl delete deployment --all
-kubectl delete svc graphql-api
-kubectl delete svc user-db
+kubectl delete svc --all
+docker image rm graphql-api

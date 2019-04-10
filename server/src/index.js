@@ -13,9 +13,13 @@ const {
   AuthenticationDirective
 } = require("./auth-helpers/directives");
 
+
 let database = {
   users: []
 };
+
+//console.log("jwtprivate:", process.env.JWT_PRIVATE);
+//console.log("jwtpublic :", process.env.JWT_PUBLIC);
 
 const typeDefs = gql`
   directive @isAuthenticated on FIELD_DEFINITION

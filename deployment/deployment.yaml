@@ -18,19 +18,14 @@ spec:
           imagePullPolicy: Never
           ports:
             - containerPort: 4000
-#          volumeMounts:
-#            - name: source-code
-#              mountPath: /usr/src/app
-#            - name: secret-volume
-#              readOnly: true
-#              mountPath: "/etc/jwt-keys"
-#      volumes:
-#        - name: source-code 
-#          hostPath:
-#            path: ~/matcha/server
-#        - name: secret-volume
-#          secret:
-#            secretName: jwt-keys
+          volumeMounts:
+            - name: source-code
+              mountPath: /usr/src/app
+      volumes:
+        - name: source-code 
+          hostPath:
+            path: /Users/vfour/matcha/server
+            type: Directory
 
 ---
 
@@ -41,7 +36,7 @@ metadata:
   labels:
     app:  graphql-api-service
 spec:
-  type: NodePort
+  type: LoadBalancer
   ports:
     - port: 4000 
       protocol: TCP

@@ -14,3 +14,5 @@ docker build -t graphql-api server
 
 #k8s deployment
 kubectl create -f deployment
+
+echo "minikube running on:" $(minikube ip)
