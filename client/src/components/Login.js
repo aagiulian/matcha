@@ -4,8 +4,8 @@ import { useMutation } from "react-apollo-hooks";
 import PropTypes from "prop-types";
 
 const LOGIN = gql`
-  mutation Login($email: String!, $password: String!) {
-    login(email: $email, password: $password) {
+  mutation Login($input: LoginInput!) {
+    login(input: $input) {
       success
       token
     }
@@ -13,8 +13,8 @@ const LOGIN = gql`
 `;
 
 export default function Login(props) {
-  let email;
   let password;
+  let username;
 
   console.log(props);
   console.log(props.setToken);
@@ -25,24 +25,27 @@ export default function Login(props) {
         onSubmit={e => {
           e.preventDefault();
           Login({
-            variables: { email: email.value, password: password.value }
+            variables: {
+              input: { username: username.value, password: password.value }
+            }
           }).then(res => {
             if (res.data.login.success === true) {
               props.setToken(res.data.login.token);
             }
           });
-          email.value = "";
           password.value = "";
+          username.value = "";
         }}
       >
         <input
           ref={node => {
-            email = node;
+            username = node;
           }}
-          type="email"
-          placeholder="Email"
-          name="email"
+          type="username"
+          placeholder="Username"
+          name="username"
         />
+        <br />
         <input
           ref={node => {
             password = node;
@@ -51,6 +54,7 @@ export default function Login(props) {
           placeholder="Password"
           name="password"
         />
+        <br />
         <button type="submit">Login User</button>
       </form>
     </div>
