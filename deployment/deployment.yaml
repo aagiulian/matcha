@@ -46,6 +46,22 @@ spec:
 
 ---
 
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-db-service
+  labels:
+    app: user-db-service
+spec:
+  ports:
+    - port: 5432 
+      protocol: TCP
+      targetPort: 5432
+  selector:
+    app: user-db
+
+---
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -72,29 +88,51 @@ spec:
               value: "matcha"
             - name: POSTGRES_USER
               value: "admin"
-            - name: PGDATA
-              value: "/mnt/pgdata"
+          #volumeMounts:
+            #- name: pgdata
+              #mountPath: /var/lib/postgresql/data/
+
           volumeMounts:
-            - name: pgdata
-              mountPath: /var/lib/postgresql/data
+            - name: postgres-storage
+              mountPath: /var/lib/postgresql/db-data
+      #volumes:
+        #- name: pgdata
+          #hostPath:
+            #path: /Users/vfour/matcha/pgdata/
+            #type: Directory
+
       volumes:
-        - name: pgdata
-          hostPath:
-            path: /Users/vfour/matcha/pgdata
-            type: Directory
+        - name: postgres-storage
+          persistentVolumeClaim:
+            claimName: postgres-pv-claim
 
 ---
 
 apiVersion: v1
-kind: Service
+kind: PersistentVolume
 metadata:
-  name: user-db-service
-  labels:
-    app: user-db-service
+  name: postgres-pv
 spec:
-  ports:
-  - port: 5432 
-    protocol: TCP
-    targetPort: 5432
-  selector:
-    app: user-db
+  capacity: 
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  hostPath:
+    path: /tmp/postgres
+
+---
+
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-pv-claim
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: ""
+  resources:
+    requests:
+      storage: 1Gi
+

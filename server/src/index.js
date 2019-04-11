@@ -13,6 +13,10 @@ const {
   AuthenticationDirective
 } = require("./auth-helpers/directives");
 
+const fs = require('fs');
+const { Pool, Client } = require('pg');
+
+const initTables = fs.readFileSync('./tables.sql').toString();
 
 let database = {
   users: []
@@ -51,6 +55,20 @@ const typeDefs = gql`
     allUsers: [User]
   }
 `;
+
+const pool = new Pool({
+  host: "user-db-service",
+  port: 5432,
+  user: "admin",
+  password: "password",
+  database: "matcha"
+});
+
+
+pool.query('SELECT NOW()', (err, res) => {
+  console.log(err, res);
+});
+
 
 const resolvers = {
   Query: {
