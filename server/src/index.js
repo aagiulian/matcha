@@ -65,7 +65,7 @@ const pool = new Pool({
 });
 
 
-pool.query('SELECT NOW()', (err, res) => {
+pool.query("SELECT * FROM pg_catalog.pg_tables", (err, res) => {
   console.log(err, res);
 });
 

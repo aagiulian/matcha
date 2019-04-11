@@ -11,6 +11,7 @@ eval $(minikube docker-env)
 
 #docker builds
 docker build -t graphql-api server
+docker build -t postgres-local db
 
 #k8s deployment
 kubectl create -f deployment
