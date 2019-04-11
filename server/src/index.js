@@ -21,10 +21,93 @@ const typeDefs = gql`
   directive @isAuthenticated on FIELD_DEFINITION
   directive @isOwner on FIELD_DEFINITION
 
+  scalar DateTime
+  enum SexualOrientation {
+    HETEROSEXUAL
+    HOMOSEXUAL
+    BISEXUAL
+  }
+  enum Gender {
+    MALE
+    FEMALE
+    FTM
+    MTF
+  }
+  enum ConnectionType {
+    CONNECTED
+    DISCONNECTED
+  }
+
+  type Node {
+    id: ID!
+    createdAt: DateTime!
+    updatedAt: DateTime!
+  }
+
   type User {
     id: ID!
-    email: String! 
+    profileInfo: ProfileInfo!
+    position: String!
+    hashtags: [Hashtag]
+    isOnline: Boolean!
+    popularity_score: String!
+    lastSeen: String!
+    protected: ProtectedInfo!
+  }
+
+  type ProtectedInfo {
     hashedPassword: String! @isAuthenticated
+  }
+
+  type ProfileInfo {
+    username: String!
+    firstname: String!
+    lastName: String!
+    gender: Gender!
+    dob: String!
+    bio: String!
+    numPics: Int!
+    urlPp: String!
+    pictures: [Picture]
+    sexualOrientation: SexualOrientation!
+    email: String!
+  }
+
+  type Relation {
+    visitedBy: [User]
+    likes: [User]
+    matches: [User]
+    blocks: [User]
+    conversation: [Conversation]
+  }
+
+  type Hashtag {
+    id: ID!
+    name: String!
+    users: [User]
+  }
+
+  type Picture {
+    id: ID!
+    user: User!
+    url: String!
+    # ismain: Boolean!
+  }
+
+  type Conversation {
+    id: ID!
+    messages: [Message]
+    # userA: User
+    # userB: User
+  }
+
+  type Message {
+    id: ID!
+    text: String!
+    isRead: Boolean!
+    datetime: String!
+    emitter: User!
+    # conversation: Conversation!
   }
 
   type SignupResponse {
@@ -37,14 +120,34 @@ const typeDefs = gql`
     token: String
   }
 
+  input SignupInput {
+    email: String!
+    username: String!
+    # name: String!
+    # surname: String!
+    password: String!
+  }
+
+  input LoginInput {
+    username: String!
+    password: String!
+  }
+
   type Mutation {
-    signup(email: String!, password: String!): SignupResponse!
-    login(email: String!, password: String!): AuthPayload!
+    signup(input: SignupInput!): SignupResponse!
+    login(input: LoginInput!): AuthPayload!
+    visitedBy(userId: Int!): [User]!
   }
 
   type Query {
     me(userID: Int!): User @isOwner
     allUsers: [User]
+    node(
+      """
+      The ID of the object
+      """
+      id: ID!
+    ): Node
   }
 `;
 
@@ -63,23 +166,31 @@ const resolvers = {
     }
   },
   Mutation: {
-    signup: async (_, args) => {
-      let hashedPassword = await bcrypt.hash(args.password, 10);
+    signup: async (_, { input }) => {
+      let hashedPassword = await bcrypt.hash(input.password, 10);
       let id = database.users.length;
-      database.users.push({ id, email: args.email, hashedPassword });
-      return { id, email: args.email };
+      database.users.push({
+        id,
+        email: input.email,
+        hashedPassword,
+        username: input.username
+      });
+      console.log(database);
+      return { id, email: input.email };
     },
-    login: async (_, args) => {
-      let users = database.users.filter(user => user.email === args.email);
+    login: async (_, { input }) => {
+      let users = database.users.filter(
+        user => user.username === input.username
+      );
       if (
         0 < users.length &&
-        (await bcrypt.compare(args.password, users[0].hashedPassword))
+        (await bcrypt.compare(input.password, users[0].hashedPassword))
       ) {
         let user = users[0];
         let token = generateToken(user);
-        return { success: true, token: token }
+        return { success: true, token: token };
       } else {
-        return { success: false, token: null }
+        return { success: false, token: null };
       }
     }
   }
