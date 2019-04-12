@@ -41,9 +41,34 @@ var databaseCleaner = new DatabaseCleaner("postgresql");
 databaseCleaner.clean(pool, () => console.log("Database cleaned !"));
 //
 
+async function getProfileInfo(id) {
+  let text = "SELECT username, email FROM users WHERE id = $1";
+  let values = [id];
+  console.log("ID", id);
+  let res = await pool.query(text, values);
+  if (res.rowCount) {
+    return res.rows[0];
+  } else {
+    return null; // ici il faudra throw une error graphql
+  }
+}
 
 const resolvers = {
+  User: {
+    profileInfo: async ({ id }) => ({ id })
+  },
+  ProfileInfo: {
+    username: async ({ id }) => {
+      const { username } = await getProfileInfo(id);
+      return username;
+    },
+    email: async ({ id }) => {
+      const { email } = await getProfileInfo(id);
+      return email;
+    }
+  },
   Query: {
+    user: (_, { id }) => ({ id }),
     me(_, args) {
       return database.users[0];
       const users = database.users.filter(user => user.id == args.userID);
@@ -67,18 +92,7 @@ const resolvers = {
       let text =
         "INSERT INTO users(email, hashed_password, username) VALUES($1, $2, $3)";
       let values = [input.email, hashedPassword, input.username];
-      // try {
       pool.query(text, values);
-      // } catch (e) {
-      //   console.log("ERRORSIGNUP: ", e);
-      // }
-      // Database.users.push({
-      //  id,
-      //  email: input.email,
-      //  hashedPassword,
-      //  username: input.username
-      // );
-      // console.log(database);
       return { email: input.email };
     },
     login: async (_, { input }) => {
