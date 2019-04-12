@@ -18,6 +18,10 @@ const { Pool, Client } = require("pg");
 
 const { typeDefs } = require("./schema/schema");
 
+const fakeProfiles = require("./fake_profiles.json");
+
+console.log("fake profile:", fakeProfiles[0]);
+
 let database = {
   users: []
 };
@@ -30,11 +34,13 @@ const pool = new Pool({
   database: "matcha"
 });
 
+
 // TO CLEAN DB
 var DatabaseCleaner = require("database-cleaner");
 var databaseCleaner = new DatabaseCleaner("postgresql");
 databaseCleaner.clean(pool, () => console.log("Database cleaned !"));
 //
+
 
 const resolvers = {
   Query: {
