@@ -6,8 +6,8 @@ import json
 
 
 @click.command()
-@click.option('--count', default = 1000, help = 'Number of profiles to generate')
-@click.option('--filename', default = 'fake_profiles.json', help = 'Name of the output file')
+@click.option('--count', default=1000, help = 'Number of profiles to generate')
+@click.option('--filename', default='fake_profiles.json', help = 'Name of the output file')
 def generate_fake_profiles(count, filename):
     fake = Faker('fr_FR')
 
@@ -18,6 +18,7 @@ def generate_fake_profiles(count, filename):
         profile['current_location'] = fake.local_latlng(country_code="FR", coords_only=True)
         dob = profile['birthdate']
         profile['birthdate'] = dob.strftime("%Y-%m-%d")
+        profiles.append(profile)
 
     with open(filename, 'w') as outfile:
         json.dump(profiles, outfile)
