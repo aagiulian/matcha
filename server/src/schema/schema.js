@@ -125,7 +125,6 @@ const typeDefs = gql`
   type Query {
     me(userID: Int!): User @isOwner
     user(id: Int!): User
-    profileInfo(id: Int!): ProfileInfo
     allUsers: [User]
     node(
       """

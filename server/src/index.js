@@ -44,7 +44,7 @@ async function getProfileInfo(id) {
   if (res.rowCount) {
     return res.rows[0];
   } else {
-    return null;
+    return null; // ici il faudra throw une error graphql
   }
 }
 
@@ -64,7 +64,6 @@ const resolvers = {
   },
   Query: {
     user: (_, { id }) => ({ id }),
-    profileInfo: (_, { id }) => ({ id }),
     me(_, args) {
       return database.users[0];
       const users = database.users.filter(user => user.id == args.userID);
