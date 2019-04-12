@@ -1,15 +1,15 @@
-const jwt = require('jsonwebtoken');
-const { createError } = require('apollo-errors');
+const jwt = require("jsonwebtoken");
+const { createError } = require("apollo-errors");
 
-const AuthorizationError = createError('AuthorizationError', {
-  message: 'You are not authorized.'
+const AuthorizationError = createError("AuthorizationError", {
+  message: "You are not authorized."
 });
 
 const attachUserToContext = (req, res, next) => {
   const token = req.headers.authorization;
   if (token) {
     const decoded = jwt.verify(
-      token.replace('Bearer ', ''),
+      token.replace("Bearer ", ""),
       process.env.JWT_PUBLIC
     );
     req.user = decoded;
@@ -17,10 +17,9 @@ const attachUserToContext = (req, res, next) => {
   } else {
     res
       .status(401)
-      .send({ message: 'You must supply a JWT for authorization!' });
+      .send({ message: "You must supply a JWT for authorization!" });
   }
 };
-
 
 const checkAuthAndResolve = (context, controller) => {
   const token = context.headers.authorization;
@@ -30,7 +29,7 @@ const checkAuthAndResolve = (context, controller) => {
     });
   }
   const decoded = jwt.verify(
-    token.replace('Bearer ', ''),
+    token.replace("Bearer ", ""),
     process.env.JWT_PUBLIC
   );
   return controller.apply(this, [decoded]);
@@ -49,28 +48,27 @@ const checkScopesAndResolve = (
     });
   }
   const decoded = jwt.verify(
-    token.replace('Bearer ', ''),
+    token.replace("Bearer ", ""),
     process.env.JWT_PUBLIC
   );
   const scopes = decoded.scope;
   if (!scopes) {
-    throw new AuthorizationError({ message: 'No scopes supplied!' });
+    throw new AuthorizationError({ message: "No scopes supplied!" });
   }
   if (scopes && expectedScopes.some(scope => scopes.indexOf(scope) !== -1)) {
     return controller.apply(this, params);
   } else {
     throw new AuthorizationError({
       message: `You are not authorized. Expected scopes: ${expectedScopes.join(
-        ', '
+        ", "
       )}`
     });
   }
 };
 
-
 module.exports = {
-	AuthorizationError,
-	attachUserToContext,
-	checkAuthAndResolve,
-	checkScopesAndResolve
+  AuthorizationError,
+  attachUserToContext,
+  checkAuthAndResolve,
+  checkScopesAndResolve
 };
