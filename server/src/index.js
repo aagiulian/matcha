@@ -189,25 +189,32 @@ const resolvers = {
     signup: async (_, { input }) => {
       let hashedPassword = await bcrypt.hash(input.password, 10);
       let id = database.users.length;
-      database.users.push({
-        id,
-        email: input.email,
-        hashedPassword,
-        username: input.username
-      });
-      console.log(database);
+      pool.query(
+        `INSERT INTO users(email, hashed_password, username) VALUES(
+          ${input.email}, ${hashedPassword}, ${input.username})`
+      );
+      // Database.users.push({
+      //  id,
+      //  email: input.email,
+      //  hashedPassword,
+      //  username: input.username
+      // );
+      // console.log(database);
       return { id, email: input.email };
     },
     login: async (_, { input }) => {
-      let users = database.users.filter(
-        user => user.username === input.username
-      );
+      let text = "SELECT id, hashed_password FROM users WHERE username = $1";
+      let values = [input.username];
+      let user = await pool.query(text, values);
+      // let users = database.users.filter(
+      //   user => user.username === input.username
+      // );
       if (
-        0 < users.length &&
-        (await bcrypt.compare(input.password, users[0].hashedPassword))
+        0 < user.rows.length &&
+        (await bcrypt.compare(input.password, user.rows[0].hashedPassword))
       ) {
-        let user = users[0];
-        let token = generateToken(user);
+        // let user = users[0];
+        let token = generateToken(user.rows[0]);
         return { success: true, token: token };
       } else {
         return { success: false, token: null };

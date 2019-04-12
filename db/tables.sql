@@ -21,6 +21,7 @@ CREATE TYPE CONNECTION_TYPE AS ENUM (
 CREATE TABLE users (
        id SERIAL PRIMARY KEY,
        username VARCHAR(42),
+       hashed_password VARCHAR(60),
        first_name VARCHAR(42),
        last_name VARCHAR(42),
        dob TIMESTAMP,
