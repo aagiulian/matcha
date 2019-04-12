@@ -1,4 +1,3 @@
-
 const { gql } = require("apollo-server");
 
 const typeDefs = gql`
@@ -30,7 +29,7 @@ const typeDefs = gql`
 
   type User {
     id: ID!
-    profileInfo: ProfileInfo!
+    profileInfo: ProfileInfo
     position: String!
     hashtags: [Hashtag]
     isOnline: Boolean!
@@ -95,7 +94,7 @@ const typeDefs = gql`
   }
 
   type SignupResponse {
-    id: ID!
+    #id: ID!
     email: String!
   }
 
@@ -125,6 +124,8 @@ const typeDefs = gql`
 
   type Query {
     me(userID: Int!): User @isOwner
+    user(id: Int!): User
+    profileInfo(id: Int!): ProfileInfo
     allUsers: [User]
     node(
       """
@@ -134,7 +135,6 @@ const typeDefs = gql`
     ): Node
   }
 `;
-
 
 module.exports = {
   typeDefs
