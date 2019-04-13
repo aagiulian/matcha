@@ -10,9 +10,12 @@ const {
   OwnerDirective,
   AuthenticationDirective
 } = require("./auth-helpers/directives");
-
 const { typeDefs } = require("./schema/schema");
 const { resolvers } = require("./resolvers/resolvers");
+
+const fakeProfiles = require("./fake_profiles.json");
+
+console.log("fake profile:", fakeProfiles[0]);
 
 const schema = makeExecutableSchema({
   typeDefs,
