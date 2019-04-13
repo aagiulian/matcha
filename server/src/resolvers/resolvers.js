@@ -37,8 +37,8 @@ const resolvers = {
       if (users.length) return users[0];
     },
     async allUsers() {
-      let text = "SELECT username, email FROM users";
-      let res = await pool.query(text);
+      const text = "SELECT username, email FROM users";
+      const res = await pool.query(text);
       if (res.rowCount) {
         console.log(res.rows);
         return res.rows;
@@ -49,30 +49,27 @@ const resolvers = {
   },
   Mutation: {
     signup: async (_, { input: { email, password, username } }) => {
-      let hashedPassword = await bcrypt.hash(password, 10);
-      let text =
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const text =
         "INSERT INTO users(email, hashed_password, username) VALUES($1, $2, $3)";
-      let values = [email, hashedPassword, username];
+      const values = [email, hashedPassword, username];
       pool.query(text, values);
       return { email: email };
     },
-    login: async (_, { input }) => {
-      let text =
+    login: async (_, { input: { username, password } }) => {
+      const text =
         "SELECT id, hashed_password, username FROM users WHERE username = $1";
-      let values = [username];
-      let res = await pool.query(text, values);
-      console.log("res: ");
-      console.log(res);
-      // let users = database.users.filter(
-      //   user => user.username === input.username
-      // );
-      console.log("");
+      const values = [username];
+      const { rows: results, rowCount: resultsCount } = await pool.query(
+        text,
+        values
+      );
+      console.log(results);
       if (
-        res.rowCount &&
-        (await bcrypt.compare(password, res.rows[0].hashed_password))
+        resultsCount &&
+        (await bcrypt.compare(password, results[0].hashed_password))
       ) {
-        // let user = users[0];
-        let token = generateToken(res.rows[0]);
+        const token = generateToken(results[0]);
         return { success: true, token: token };
       } else {
         return { success: false, token: null };
