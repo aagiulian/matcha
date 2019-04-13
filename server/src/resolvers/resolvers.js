@@ -48,18 +48,18 @@ const resolvers = {
     }
   },
   Mutation: {
-    signup: async (_, { input }) => {
-      let hashedPassword = await bcrypt.hash(input.password, 10);
+    signup: async (_, { input: { email, password, username } }) => {
+      let hashedPassword = await bcrypt.hash(password, 10);
       let text =
         "INSERT INTO users(email, hashed_password, username) VALUES($1, $2, $3)";
-      let values = [input.email, hashedPassword, input.username];
+      let values = [email, hashedPassword, username];
       pool.query(text, values);
-      return { email: input.email };
+      return { email: email };
     },
     login: async (_, { input }) => {
       let text =
         "SELECT id, hashed_password, username FROM users WHERE username = $1";
-      let values = [input.username];
+      let values = [username];
       let res = await pool.query(text, values);
       console.log("res: ");
       console.log(res);
@@ -69,7 +69,7 @@ const resolvers = {
       console.log("");
       if (
         res.rowCount &&
-        (await bcrypt.compare(input.password, res.rows[0].hashed_password))
+        (await bcrypt.compare(password, res.rows[0].hashed_password))
       ) {
         // let user = users[0];
         let token = generateToken(res.rows[0]);
