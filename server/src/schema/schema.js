@@ -35,6 +35,7 @@ const typeDefs = gql`
     isOnline: Boolean!
     popularity_score: String!
     lastSeen: String!
+    verified: Boolean!
     protected: ProtectedInfo!
   }
 

@@ -1,4 +1,5 @@
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 const { generateToken } = require("../auth-helpers/generateToken");
 const { pool } = require("../database");
 
@@ -48,17 +49,39 @@ const resolvers = {
     }
   },
   Mutation: {
-    signup: async (_, { input: { email, password, username } }) => {
+    signup: async (
+      _,
+      { input: { email, password, username } },
+      { transporter }
+    ) => {
       const hashedPassword = await bcrypt.hash(password, 10);
       const text =
-        "INSERT INTO users(email, hashed_password, username) VALUES($1, $2, $3)";
-      const values = [email, hashedPassword, username];
+        "INSERT INTO users(email, hashed_password, username, verified) VALUES($1, $2, $3, $4)";
+      const values = [email, hashedPassword, username, false];
       pool.query(text, values);
+      jwt.sign(
+        {
+          username: username
+        },
+        process.env.JWT_PRIVATE,
+        {
+          expiresIn: 60 * 60 * 24, // expires in 24 hours
+          algorithm: "RS256"
+        },
+        (err, emailToken) => {
+          const url = `http://localhost:3000/verify/${emailToken}`;
+          transporter.sendMail({
+            to: email,
+            subject: "Confirm Email",
+            html: `Please click this email to confirm your email: <a href="${url}">${url}</a>`
+          });
+        }
+      );
       return { email: email };
     },
     login: async (_, { input: { username, password } }) => {
       const text =
-        "SELECT id, hashed_password, username FROM users WHERE username = $1";
+        "SELECT id, hashed_password, username, verified FROM users WHERE username = $1";
       const values = [username];
       const { rows: results, rowCount: resultsCount } = await pool.query(
         text,
@@ -69,6 +92,7 @@ const resolvers = {
         resultsCount &&
         (await bcrypt.compare(password, results[0].hashed_password))
       ) {
+        /////// ICI CHECK SI VERIFIED A TRUE SINON ENVOYER VERIFIED GRAPHQL ERROR
         const token = generateToken(results[0]);
         return { success: true, token: token };
       } else {

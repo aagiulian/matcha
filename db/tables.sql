@@ -33,7 +33,8 @@ CREATE TABLE users (
        email VARCHAR(420),
        last_seen TIMESTAMP,
        position POINT,
-       popularity_score SMALLINT);
+       popularity_score SMALLINT,
+       verified BOOLEAN);
 
 
 CREATE TABLE hashtags (

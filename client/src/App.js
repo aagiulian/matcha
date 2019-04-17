@@ -1,12 +1,11 @@
-import { ApolloProvider } from "react-apollo";
-import { ApolloProvider as ApolloProviderHooks } from "react-apollo-hooks";
-
 import Signup from "./components/Signup";
 import Login from "./components/Login";
 import Logout from "./components/Logout";
+import Verify from "./components/Verify";
 import React, { useState } from "react";
-import client from "./apolloClient";
 
+import Header from "./components/Header";
+import { Switch, Route } from "react-router-dom";
 import "./index.css";
 import "./App.css";
 
@@ -18,26 +17,34 @@ const App = () => {
   };
 
   return (
-    <ApolloProvider client={client}>
-      <ApolloProviderHooks client={client}>
-        <div>
-          <h2>Matcha soon to be released </h2>
-          {token ? (
-            <div>
-              <Logout />
-              <Signup />
-            </div>
-          ) : (
-            <div>
-              <Signup />
-              <br />
-              <br />
-              <Login setToken={setTokenInStorage} />
-            </div>
-          )}
+    <div>
+      <div className="center w85">
+        <Header />
+        <div className="ph3 pv1 background-gray">
+          <Switch>
+            <Route exact path="/signup" component={Signup} />
+            <Route exact path="/login" component={Login} />
+            <Route exact path="/verify/:emailToken" component={Verify} />
+          </Switch>
         </div>
-      </ApolloProviderHooks>
-    </ApolloProvider>
+      </div>
+      <div>
+        <h2>Matcha soon to be released </h2>
+        {token ? (
+          <div>
+            <Logout />
+            <Signup />
+          </div>
+        ) : (
+          <div>
+            <Signup />
+            <br />
+            <br />
+            <Login setToken={setTokenInStorage} />
+          </div>
+        )}
+      </div>
+    </div>
   );
 };
 

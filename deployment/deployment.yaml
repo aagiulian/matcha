@@ -88,6 +88,9 @@ spec:
           imagePullPolicy: Never
           ports:
             - containerPort: 4000
+              name: graphql-port
+            - containerPort: 4001
+              name: express-port
           volumeMounts:
             - name: source-code
               mountPath: /usr/src/app
@@ -110,6 +113,11 @@ spec:
     - port: 4000
       protocol: TCP
       nodePort: 30077
+      name: graphql-port
+    - port: 4001
+      protocol: TCP
+      nodePort: 30078
+      name: express-port
   selector:
     app: graphql-api
 

@@ -15,8 +15,8 @@ class AuthenticationDirective extends SchemaDirectiveVisitor {
     // destructuring the field's `name` to use in the Error message
     const { resolver = defaultFieldResolver, name } = field;
 
-    field.resolve = async function (...args) {
-      console.log("args:", args)
+    field.resolve = async function(...args) {
+      console.log("args:", args);
       const context = args[2];
 
       if (context.user == null)
@@ -24,8 +24,8 @@ class AuthenticationDirective extends SchemaDirectiveVisitor {
 
       const result = await resolver.apply(this, args);
       console.log("result:", result);
-      return result
-    }
+      return result;
+    };
   }
 }
 
@@ -55,7 +55,6 @@ class OwnerDirective extends SchemaDirectiveVisitor {
       if (context.user.id !== userID)
         throw new AuthError(`Unauthorized field ${name}`);
 
-
       // runs if the condition above passes
       const result = await resolver.call(this, source, args, context, info);
 
@@ -63,7 +62,6 @@ class OwnerDirective extends SchemaDirectiveVisitor {
     };
   }
 }
-
 
 /***********************************************************************/
 
@@ -74,11 +72,8 @@ const attachUserToContext = ({ req }) => {
       token.replace("Bearer ", ""),
       process.env.JWT_PUBLIC
     );
-    console.log("user:uieauie", user);
     return { user };
-  }
-  else
-    return {user: null};
+  } else return { user: null };
 };
 
 module.exports = {
