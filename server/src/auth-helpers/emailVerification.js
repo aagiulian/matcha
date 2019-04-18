@@ -30,6 +30,5 @@ function sendMailToken(username, email) {
   );
 }
 module.exports = {
-  sendMailToken,
-  transporter
+  sendMailToken
 };
