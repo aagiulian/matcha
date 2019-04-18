@@ -209,6 +209,9 @@ spec:
           volumeMounts:
             - name: source-code
               mountPath: /usr/src/app
+          env:
+            - name: CHOKIDAR_USEPOLLING
+              value: "true"
       volumes:
         - name: source-code
           hostPath:
