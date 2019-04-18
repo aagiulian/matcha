@@ -5,7 +5,6 @@ import { useMutation } from "react-apollo-hooks";
 const SIGNUP = gql`
   mutation Signup($input: SignupInput!) {
     signup(input: $input) {
-      id
       email
     }
   }
