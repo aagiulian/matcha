@@ -1,55 +1,8 @@
+import { AuthenticationError } from "apollo-server";
 const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
 const { generateToken } = require("../auth-helpers/generateToken");
 const { pool } = require("../database");
-
-async function getProfileInfo(id) {
-  let text = "SELECT username, email FROM users WHERE id = $1";
-  let values = [id];
-  console.log("ID", id);
-  let res = await pool.query(text, values);
-  if (res.rowCount) {
-    return res.rows[0];
-  } else {
-    return null; // ici il faudra throw une error graphql
-  }
-}
-
-function sendMailToken(transporter, username, email) {
-  jwt.sign(
-    {
-      username: username
-    },
-    process.env.JWT_PRIVATE,
-    {
-      expiresIn: 60 * 60 * 24, // expires in 24 hours
-      algorithm: "RS256"
-    },
-    (err, emailToken) => {
-      const url = `http://localhost:3000/verify/${emailToken}`;
-      transporter.sendMail({
-        to: email,
-        subject: "Confirm Email",
-        html: `Please click this email to confirm your email: <a href="${url}">${url}</a>`
-      });
-    }
-  );
-}
-
-async function isVerified(username) {
-  // doesn't check if user actually exists
-  const text = "SELECT verified FROM users WHERE username = $1";
-  const values = [username];
-  const { rows: results, rowCount: resultsCount } = await pool.query(
-    text,
-    values
-  );
-  if (resultsCount && results[0].verified === true) {
-    return true;
-  } else {
-    return false;
-  }
-}
+import { getProfileInfo } from "../controllers/userCalls";
 
 const resolvers = {
   User: {
@@ -99,7 +52,6 @@ const resolvers = {
       return { email: email };
     },
     login: async (_, { input: { username, password } }) => {
-      isVerified(username);
       const text =
         "SELECT id, hashed_password, username, verified FROM users WHERE username = $1";
       const values = [username];
@@ -108,15 +60,21 @@ const resolvers = {
         values
       );
       console.log(results);
-      if (
-        resultsCount &&
-        (await bcrypt.compare(password, results[0].hashed_password))
-      ) {
-        /////// ICI CHECK SI VERIFIED A TRUE SINON ENVOYER VERIFIED GRAPHQL ERROR
-        const token = generateToken(results[0]);
-        return { success: true, token: token };
+      if (resultsCount) {
+        if (await bcrypt.compare(password, results[0].hashed_password)) {
+          if (results[0].verified === false) {
+            throw new AuthenticationError(
+              "Your email hasn't been verified yet."
+            );
+          } else {
+            const token = generateToken(results[0]);
+            return { success: true, token: token };
+          }
+        } else {
+          throw new AuthenticationError("Bad username or password.");
+        }
       } else {
-        return { success: false, token: null };
+        throw new AuthenticationError("Bad username or password.");
       }
     }
   }

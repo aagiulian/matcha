@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import gql from "graphql-tag";
 import { useMutation } from "react-apollo-hooks";
 import PropTypes from "prop-types";
+import axios from "axios";
 
 const LOGIN = gql`
   mutation Login($input: LoginInput!) {
@@ -13,28 +14,69 @@ const LOGIN = gql`
 `;
 
 export default function Login(props) {
+  const [errors, setErrors] = useState(null);
+  const [userCache, setUserCache] = useState(null);
   let password;
   let username;
+  let usernameCache;
 
   console.log(props);
   console.log(props.setToken);
   const Login = useMutation(LOGIN);
+  console.log("LOL", errors);
+  if (
+    errors &&
+    errors.message.includes("Your email hasn't been verified yet.")
+  ) {
+    return (
+      <div>
+        {errors.username + " :(  "}
+        {errors.message}
+        <br />
+        Check your emails or click the
+        <button
+          onClick={() =>
+            axios.get(
+              `http://192.168.99.100:30078/sendVerification/${errors.username}`
+            )
+          }
+        >
+          link
+        </button>
+        to resend email verification.
+        <br />
+      </div>
+    );
+  }
   return (
     <div>
       <form
         onSubmit={e => {
           e.preventDefault();
-          Login({
-            variables: {
-              input: { username: username.value, password: password.value }
-            }
-          }).then(res => {
-            if (res.data.login.success === true) {
-              props.setToken(res.data.login.token);
-            }
-          });
-          password.value = "";
-          username.value = "";
+          if (!username.value || !password.value) {
+            setErrors("Missing field.");
+          } else {
+            usernameCache = username.value;
+            Login({
+              variables: {
+                input: { username: username.value, password: password.value }
+              }
+            })
+              .then(res => {
+                if (res.data.login.success === true) {
+                  props.setToken(res.data.login.token);
+                }
+              })
+              .catch(res => {
+                console.log("LALALAL", username.value);
+                setErrors({
+                  message: res.graphQLErrors.map(error => error.message),
+                  username: usernameCache
+                });
+              });
+            password.value = "";
+            username.value = "";
+          }
         }}
       >
         <input
@@ -57,6 +99,8 @@ export default function Login(props) {
         <br />
         <button type="submit">Login User</button>
       </form>
+      <br />
+      {errors ? errors.message : null}
     </div>
   );
 }

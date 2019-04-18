@@ -3,7 +3,6 @@
 /*********************************************************************************/
 
 import express from "express";
-import nodemailer from "nodemailer";
 require("dotenv").config();
 const { ApolloServer, gql } = require("apollo-server");
 const { makeExecutableSchema } = require("graphql-tools");
@@ -19,17 +18,12 @@ const fakeProfiles = require("./fake_profiles.json");
 const { pool } = require("./database");
 const jwt = require("jsonwebtoken");
 
+import { getUserMail } from "./controllers/userCalls";
+import { transporter, sendMailToken } from "./auth-helpers/emailVerification";
+
 console.log("fake profile:", fakeProfiles[0]);
 
 const app = express();
-
-const transporter = nodemailer.createTransport({
-  service: "Gmail",
-  auth: {
-    user: "giuliano.arthur@gmail.com",
-    pass: "fyrquvpgysozpyip"
-  }
-});
 
 app.get("/verify/:token", async (req, res) => {
   const user = await jwt.verify(
@@ -60,6 +54,18 @@ app.get("/verify/:token", async (req, res) => {
     }
   );
   // res.redirect("http://localhost:3000/login"); // le redirect ne fonctionne pas
+});
+
+app.get("/sendVerification/:username", async (req, res) => {
+  const username = req.params.username;
+  const email = await getUserMail(username);
+  console.log("ici email:", email);
+  if (email) {
+    sendMailToken(username, email);
+    // res.send(200);
+  } //else {
+  //   res.send(404);
+  // }
 });
 
 const schema = makeExecutableSchema({
