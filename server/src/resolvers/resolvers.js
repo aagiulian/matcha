@@ -15,6 +15,42 @@ async function getProfileInfo(id) {
   }
 }
 
+function sendMailToken(transporter, username, email) {
+  jwt.sign(
+    {
+      username: username
+    },
+    process.env.JWT_PRIVATE,
+    {
+      expiresIn: 60 * 60 * 24, // expires in 24 hours
+      algorithm: "RS256"
+    },
+    (err, emailToken) => {
+      const url = `http://localhost:3000/verify/${emailToken}`;
+      transporter.sendMail({
+        to: email,
+        subject: "Confirm Email",
+        html: `Please click this email to confirm your email: <a href="${url}">${url}</a>`
+      });
+    }
+  );
+}
+
+async function isVerified(username) {
+  // doesn't check if user actually exists
+  const text = "SELECT verified FROM users WHERE username = $1";
+  const values = [username];
+  const { rows: results, rowCount: resultsCount } = await pool.query(
+    text,
+    values
+  );
+  if (resultsCount && results[0].verified === true) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
 const resolvers = {
   User: {
     profileInfo: async ({ id }) => ({ id })
@@ -59,27 +95,11 @@ const resolvers = {
         "INSERT INTO users(email, hashed_password, username, verified) VALUES($1, $2, $3, $4)";
       const values = [email, hashedPassword, username, false];
       pool.query(text, values);
-      jwt.sign(
-        {
-          username: username
-        },
-        process.env.JWT_PRIVATE,
-        {
-          expiresIn: 60 * 60 * 24, // expires in 24 hours
-          algorithm: "RS256"
-        },
-        (err, emailToken) => {
-          const url = `http://localhost:3000/verify/${emailToken}`;
-          transporter.sendMail({
-            to: email,
-            subject: "Confirm Email",
-            html: `Please click this email to confirm your email: <a href="${url}">${url}</a>`
-          });
-        }
-      );
+      sendMailToken(transporter, username, email);
       return { email: email };
     },
     login: async (_, { input: { username, password } }) => {
+      isVerified(username);
       const text =
         "SELECT id, hashed_password, username, verified FROM users WHERE username = $1";
       const values = [username];
