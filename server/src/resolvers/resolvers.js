@@ -1,8 +1,16 @@
 import { AuthenticationError } from "apollo-server";
+import jwt from "jsonwebtoken";
 const bcrypt = require("bcrypt");
 const { generateToken } = require("../auth-helpers/generateToken");
 const { pool } = require("../database");
 import { getProfileInfo } from "../controllers/userCalls";
+import { resetPasswordMail } from "../auth-helpers/passwordReset";
+import { sendMailToken } from "../auth-helpers/emailVerification";
+import {
+  getUserByEmail,
+  getUserById,
+  getUserByUsername
+} from "../controllers/userCalls";
 
 const resolvers = {
   User: {
@@ -35,6 +43,12 @@ const resolvers = {
       } else {
         return null;
       }
+    },
+    resetPasswordRequest: async (_, { email }, { transporter }) => {
+      const { username, id } = await getUserByEmail(email);
+      const token = generateToken({ id, username });
+      resetPasswordMail({ transporter, token, email });
+      return true;
     }
   },
   Mutation: {
@@ -76,6 +90,19 @@ const resolvers = {
       } else {
         throw new AuthenticationError("Bad username or password.");
       }
+    },
+    resetPassword: (_, { input: { token, password } }) => {
+      jwt.verify(token, process.env.JWT_PUBLIC, async (err, decoded) => {
+        if (err) {
+          console.log(err);
+        } else {
+          const hashedPassword = await bcrypt.hash(password, 10);
+          const text = "UPDATE users SET hashed_password = $1 WHERE id = $2";
+          const values = [hashedPassword, decoded.id];
+          pool.query(text, values);
+        }
+      });
+      return true;
     }
   }
 };

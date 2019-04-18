@@ -14,7 +14,49 @@ async function getUserId(username) {
   }
 }
 
-async function getUserMail(username) {
+async function getUserById(id) {
+  const text = "SELECT * FROM users WHERE id = $1";
+  const values = [id];
+  const { rows: results, rowCount: resultsCount } = await pool.query(
+    text,
+    values
+  );
+  if (resultsCount) {
+    return results[0];
+  } else {
+    return null;
+  }
+}
+
+async function getUserByUsername(username) {
+  const text = "SELECT * FROM users WHERE username = $1";
+  const values = [username];
+  const { rows: results, rowCount: resultsCount } = await pool.query(
+    text,
+    values
+  );
+  if (resultsCount) {
+    return results[0];
+  } else {
+    return null;
+  }
+}
+
+async function getUserByEmail(email) {
+  const text = "SELECT * FROM users WHERE email = $1";
+  const values = [email];
+  const { rows: results, rowCount: resultsCount } = await pool.query(
+    text,
+    values
+  );
+  if (resultsCount) {
+    return results[0];
+  } else {
+    return null;
+  }
+}
+
+async function getUserEmail(username) {
   const text = "SELECT email FROM users WHERE username = $1";
   const values = [username];
   const { rows: results, rowCount: resultsCount } = await pool.query(
@@ -51,13 +93,16 @@ async function getProfileInfo(id) {
   if (res.rowCount) {
     return res.rows[0];
   } else {
-    return null; // ici il faudra throw une error graphql
+    return null;
   }
 }
 
 module.exports = {
   getUserId,
-  getUserMail,
+  getUserEmail,
   isUserVerified,
-  getProfileInfo
+  getProfileInfo,
+  getUserById,
+  getUserByUsername,
+  getUserByEmail
 };

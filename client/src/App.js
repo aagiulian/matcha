@@ -2,6 +2,7 @@ import Signup from "./components/Signup";
 import Login from "./components/Login";
 import Logout from "./components/Logout";
 import Verify from "./components/Verify";
+import ResetPassword from "./components/ResetPassword";
 import React, { useState } from "react";
 
 import Header from "./components/Header";
@@ -25,6 +26,11 @@ const App = () => {
             <Route exact path="/signup" component={Signup} />
             <Route exact path="/login" component={Login} />
             <Route exact path="/verify/:emailToken" component={Verify} />
+            <Route
+              exact
+              path="/resetPassword/:token"
+              component={ResetPassword}
+            />
           </Switch>
         </div>
       </div>

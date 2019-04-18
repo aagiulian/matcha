@@ -117,10 +117,16 @@ const typeDefs = gql`
     password: String!
   }
 
+  input ResetPasswordInput {
+    token: String!
+    password: String!
+  }
+
   type Mutation {
     signup(input: SignupInput!): SignupResponse!
     login(input: LoginInput!): AuthPayload!
     visitedBy(userId: Int!): [User]!
+    resetPassword(input: ResetPasswordInput!): Boolean
   }
 
   type Query {
@@ -133,6 +139,7 @@ const typeDefs = gql`
       """
       id: ID!
     ): Node
+    resetPasswordRequest(email: String!): Boolean
   }
 `;
 
