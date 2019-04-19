@@ -1,6 +1,8 @@
 import nodemailer from "nodemailer";
 import jwt from "jsonwebtoken";
 
+const reactAppPort = 30080;
+
 const transporter = nodemailer.createTransport({
   service: "Gmail",
   auth: {
@@ -20,7 +22,7 @@ function sendMailToken(username, email) {
       algorithm: "RS256"
     },
     (err, emailToken) => {
-      const url = `http://localhost:3000/verify/${emailToken}`;
+      const url = `http://${process.env.HOST}:${reactAppPort}/verify/${emailToken}`;
       transporter.sendMail({
         to: email,
         subject: "Confirm Email",

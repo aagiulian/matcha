@@ -73,17 +73,7 @@ const schema = makeExecutableSchema({
   }
 });
 
-const attachToContext = (funs) => {
-  return (req) => {
-    let toAttach = {};
-
-    for(let fun of funs) {
-      Object.assign(toAttach, fun(req));
-    }
-
-    return toAttach 
-  }
-}
+const attachToContext = (funs) => (req) => funs.reduce( (toAttach, fun) => Object.assign(toAttach, fun(req)), {}) ;
 
 const server = new ApolloServer({
   schema,
