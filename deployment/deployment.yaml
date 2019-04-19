@@ -35,7 +35,6 @@ spec:
             - containerPort: 8080
 
 ---
-
 apiVersion: v1
 kind: Service
 metadata:
@@ -88,7 +87,7 @@ spec:
       #volumes:
       #- name: pgdata
       #hostPath:
-      #path: /Users/vfour/matcha/pgdata/
+      #path: /Users/agiulian/matcha/pgdata/
       #type: Directory
 
       volumes:
@@ -135,7 +134,7 @@ spec:
       volumes:
         - name: source-code
           hostPath:
-            path: /Users/vfour/dev/matcha/server
+            path: /Users/agiulian/dev/matcha/server
             type: Directory
 
 ---
@@ -215,7 +214,7 @@ spec:
       volumes:
         - name: source-code
           hostPath:
-            path: /Users/vfour/dev/matcha/client
+            path: /Users/agiulian/dev/matcha/client
             type: Directory
 
 ---
