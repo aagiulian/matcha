@@ -127,6 +127,7 @@ const typeDefs = gql`
     login(input: LoginInput!): AuthPayload!
     visitedBy(userId: Int!): [User]!
     resetPassword(input: ResetPasswordInput!): Boolean
+    resetPasswordRequest(email: String!): Boolean
   }
 
   type Query {
@@ -139,7 +140,6 @@ const typeDefs = gql`
       """
       id: ID!
     ): Node
-    resetPasswordRequest(email: String!): Boolean
   }
 `;
 
