@@ -1,17 +1,17 @@
 import React from "react";
 import gql from "graphql-tag";
-import { useQuery } from "react-apollo-hooks";
+import { useMutation } from "react-apollo-hooks";
 
 const RESETPASSWORD = gql`
-  query resetPasswordRequest($email: String!) {
-    resetPasswordRequest(email: $email)
+  mutation resetPassword($input: ResetPasswordInput!) {
+    resetPassword(input: $input)
   }
 `;
 
 export default function ResetPassword(props) {
   let password, passwordConfirm;
   const token = props.match.params.token;
-  const ResetPassword = useQuery(RESETPASSWORD);
+  const ResetPassword = useMutation(RESETPASSWORD);
   return (
     <div>
       <form
@@ -20,10 +20,19 @@ export default function ResetPassword(props) {
           if (password.value === passwordConfirm.value) {
             ResetPassword({
               variables: {
-                password: password.value,
-                token: token
+                input: {
+                  password: password.value,
+                  token: token
+                }
               }
-            });
+            })
+              .then(res => {
+                console.log("password changed");
+              })
+              .catch(e => {
+                console.log("password not changed probably bad token");
+                console.log(e);
+              });
             password.value = "";
             passwordConfirm.value = "";
           } else {

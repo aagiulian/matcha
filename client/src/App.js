@@ -9,6 +9,7 @@ import Header from "./components/Header";
 import { Switch, Route } from "react-router-dom";
 import "./index.css";
 import "./App.css";
+import ResetPasswordRequest from "./components/ResetPasswordRequest";
 
 const App = () => {
   const [token, setToken] = useState(sessionStorage.getItem("token"));
@@ -26,6 +27,11 @@ const App = () => {
             <Route exact path="/signup" component={Signup} />
             <Route exact path="/login" component={Login} />
             <Route exact path="/verify/:emailToken" component={Verify} />
+            <Route
+              exact
+              path="/resetPassword"
+              component={ResetPasswordRequest}
+            />
             <Route
               exact
               path="/resetPassword/:token"
