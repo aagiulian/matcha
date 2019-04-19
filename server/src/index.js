@@ -19,7 +19,7 @@ const { pool } = require("./database");
 const jwt = require("jsonwebtoken");
 
 import { getUserByUsername } from "./controllers/userCalls";
-import { transporter, sendMailToken } from "./auth-helpers/emailVerification";
+import { sendMailToken } from "./auth-helpers/emailVerification";
 
 console.log("fake profile:", fakeProfiles[0]);
 
@@ -73,9 +73,11 @@ const schema = makeExecutableSchema({
   }
 });
 
+const attachToContext = (funs) => (req) => funs.reduce( (toAttach, fun) => Object.assign(toAttach, fun(req)), {}) ;
+
 const server = new ApolloServer({
   schema,
-  context: { attachUserToContext, transporter }
+  context: attachToContext([attachUserToContext])
 });
 
 server.listen().then(({ url }) => {

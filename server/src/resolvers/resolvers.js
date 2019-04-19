@@ -34,7 +34,7 @@ const resolvers = {
 
       if (users.length) return users[0];
     },
-    async allUsers() {
+    async allUsers(obj, args, context, info) {
       const text = "SELECT username, email FROM users";
       const res = await pool.query(text);
       if (res.rowCount) {
@@ -49,8 +49,10 @@ const resolvers = {
     signup: async (
       _,
       { input: { email, password, username } },
-      { transporter }
+      context
     ) => {
+      //const transporter = context.transporter;
+      console.log("contexttttttttttt:", context);
       const hashedPassword = await bcrypt.hash(password, 10);
       const text =
         "INSERT INTO users(email, hashed_password, username, verified) VALUES($1, $2, $3, $4)";
