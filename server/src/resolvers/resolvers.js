@@ -43,12 +43,6 @@ const resolvers = {
       } else {
         return null;
       }
-    },
-    resetPasswordRequest: async (_, { email }, { transporter }) => {
-      const { username, id } = await getUserByEmail(email);
-      const token = generateToken({ id, username });
-      resetPasswordMail({ transporter, token, email });
-      return true;
     }
   },
   Mutation: {
@@ -62,7 +56,7 @@ const resolvers = {
         "INSERT INTO users(email, hashed_password, username, verified) VALUES($1, $2, $3, $4)";
       const values = [email, hashedPassword, username, false];
       pool.query(text, values);
-      sendMailToken(transporter, username, email);
+      sendMailToken(username, email);
       return { email: email };
     },
     login: async (_, { input: { username, password } }) => {
@@ -90,6 +84,12 @@ const resolvers = {
       } else {
         throw new AuthenticationError("Bad username or password.");
       }
+    },
+    resetPasswordRequest: async (_, { email }, { transporter }) => {
+      const { username, id } = await getUserByEmail(email);
+      const token = generateToken({ id, username });
+      resetPasswordMail({ transporter, token, email });
+      return true;
     },
     resetPassword: (_, { input: { token, password } }) => {
       jwt.verify(token, process.env.JWT_PUBLIC, async (err, decoded) => {
