@@ -3,14 +3,14 @@ const jwt = require("jsonwebtoken");
 const issuer = "matcha";
 const audience = "localhost";
 
-function generateToken(user) {
+function generateToken({ id, username }) {
   let jwtPayload = {
-    id: user.id,
+    id: id,
     role: "user"
   };
   let signOptions = {
     issuer,
-    subject: user.username,
+    subject: username,
     audience,
     expiresIn: 60 * 60 * 24, // expires in 24 hours
     algorithm: "RS256"

@@ -3,6 +3,7 @@ import gql from "graphql-tag";
 import { useMutation } from "react-apollo-hooks";
 import PropTypes from "prop-types";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 const LOGIN = gql`
   mutation Login($input: LoginInput!) {
@@ -101,6 +102,9 @@ export default function Login(props) {
       </form>
       <br />
       {errors ? errors.message : null}
+      <Link to="/resetPassword" className="ml1 no-underline black">
+        Reset password
+      </Link>
     </div>
   );
 }

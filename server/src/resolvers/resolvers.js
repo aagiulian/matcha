@@ -46,11 +46,7 @@ const resolvers = {
     }
   },
   Mutation: {
-    signup: async (
-      _,
-      { input: { email, password, username } },
-      context
-    ) => {
+    signup: async (_, { input: { email, password, username } }, context) => {
       //const transporter = context.transporter;
       console.log("contexttttttttttt:", context);
       const hashedPassword = await bcrypt.hash(password, 10);
@@ -87,11 +83,17 @@ const resolvers = {
         throw new AuthenticationError("Bad username or password.");
       }
     },
-    resetPasswordRequest: async (_, { email }, { transporter }) => {
-      const { username, id } = await getUserByEmail(email);
-      const token = generateToken({ id, username });
-      resetPasswordMail({ transporter, token, email });
-      return true;
+    resetPasswordRequest: async (_, { email }) => {
+      try {
+        const { username, id } = await getUserByEmail(email);
+        const token = generateToken({ username, id });
+        resetPasswordMail({ token, email });
+        return true;
+      } catch (e) {
+        console.log(e);
+        // si le user n'existe pas
+        return false;
+      }
     },
     resetPassword: (_, { input: { token, password } }) => {
       jwt.verify(token, process.env.JWT_PUBLIC, async (err, decoded) => {

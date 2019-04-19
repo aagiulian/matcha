@@ -1,5 +1,11 @@
-function resetPasswordMail({ transporter, token, email }) {
-  const url = `http://localhost:3000/resetpassword/${token}`;
+import { transporter } from "./mailTransporter";
+
+const reactAppPort = 30080;
+
+function resetPasswordMail({ token, email }) {
+  const url = `http://${
+    process.env.HOST
+  }:${reactAppPort}/resetpassword/${token}`;
   transporter.sendMail({
     to: email,
     subject: "Reset Password",
