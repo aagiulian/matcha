@@ -21,9 +21,9 @@ export default function Login(props) {
   let username;
   let usernameCache;
 
-  console.log("hello host:", `http://${process.env.REACT_APP_HOST}:30078/sendVerification`);
-  console.log(props);
-  console.log(props.setToken);
+  //console.log("hello host:", `http://${process.env.REACT_APP_HOST}:30078/sendVerification`);
+  //console.log(props);
+  //console.log(props.setToken);
   const Login = useMutation(LOGIN);
   console.log("LOL", errors);
   if (
@@ -66,7 +66,8 @@ export default function Login(props) {
             })
               .then(res => {
                 if (res.data.login.success === true) {
-                  props.setToken(res.data.login.token);
+                  //props.setToken(res.data.login.token);
+                  sessionStorage.setItem("token", res.data.login.token);
                 }
               })
               .catch(res => {

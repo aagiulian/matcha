@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { withRouter } from "react-router";
 
 function Header() {
+  const isLogged = sessionStorage.getItem('token');
   return (
     <div className="flex pa1 justify-between nowrap orange">
       <div className="flex flex-fixed black">
