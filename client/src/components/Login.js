@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import gql from "graphql-tag";
 import { useMutation } from "react-apollo-hooks";
-import PropTypes from "prop-types";
 import axios from "axios";
 import { Link } from "react-router-dom";
 
@@ -16,7 +15,7 @@ const LOGIN = gql`
 
 export default function Login(props) {
   const [errors, setErrors] = useState(null);
-  const [userCache, setUserCache] = useState(null);
+  //const [userCache, setUserCache] = useState(null);
   let password;
   let username;
   let usernameCache;

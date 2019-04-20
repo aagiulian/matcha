@@ -4,7 +4,7 @@ import Login from "./components/Login";
 import Maine from "./components/Maine";
 import Verify from "./components/Verify";
 import ResetPassword from "./components/ResetPassword";
-import React, { useState } from "react";
+import React from "react";
 
 import Header from "./components/Header";
 import { Switch, Route } from "react-router-dom";
@@ -18,7 +18,7 @@ const App = () => {
   return (
     <div>
       <div className="center w85">
-        <Header className=""/>
+        <Header className="header"/>
         <div className="ph3 pv1 background-gray">
           <Switch>
             <Route exact path="/signup" component={Signup} />

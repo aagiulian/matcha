@@ -26,6 +26,7 @@ console.log("fake profile:", fakeProfiles[0]);
 const app = express();
 
 app.get("/verify/:token", async (req, res) => {
+  console.log("express verify token");
   jwt.verify(req.params.token, process.env.JWT_PUBLIC, (err, decoded) => {
     if (err) {
       /// name: 'TokenExpiredError'
