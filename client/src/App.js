@@ -23,6 +23,7 @@ const App = () => {
       <div className="center w85">
         <Header />
         <div className="ph3 pv1 background-gray">
+          {process.env.REACT_APP_HOST}
           <Switch>
             <Route exact path="/signup" component={Signup} />
             <Route exact path="/login" component={Login} />

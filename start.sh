@@ -9,11 +9,12 @@ cat ./server/assets/keys/jwtRS256.key | sed 's/$/\\n/' | tr -d '\n' | sed 's/\\n
 echo -n "JWT_PUBLIC=\"" >> ./server/.env
 cat ./server/assets/keys/jwtRS256.key.pub | sed 's/$/\\n/' | tr -d '\n' | sed 's/\\n$/\"/' >> ./server/.env
 echo "HOST=\"$(minikube ip)\"" >> ./server/.env
+echo "REACT_APP_HOST=\"$(minikube ip)\"" >> ./client/.env
 
 #minikube setup
 
 #minikube start
-eval $(minikube docker-env)
+#eval $(minikube docker-env)
 
 #kubectl create secret generic jwt-keys \
 #	--from-file=JWT_PRIVATE=./server/assets/keys/jwtRS256.key
@@ -27,6 +28,5 @@ docker build -t postgres-local db
 #k8s deployment
 kubectl create -f deployment
 
-echo "minikube running on:" $(minikube ip)
+#echo "minikube running on:" $(minikube ip)
 
-echo -n "HOST=\"$(minikube ip)\"" >> ./server/.env

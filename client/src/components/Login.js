@@ -21,6 +21,7 @@ export default function Login(props) {
   let username;
   let usernameCache;
 
+  console.log("hello host:", `http://${process.env.REACT_APP_HOST}:30078/sendVerification`);
   console.log(props);
   console.log(props.setToken);
   const Login = useMutation(LOGIN);
@@ -38,7 +39,7 @@ export default function Login(props) {
         <button
           onClick={() =>
             axios.get(
-              `http://192.168.99.100:30078/sendVerification/${errors.username}`
+              `http://${process.env.REACT_APP_HOST}:30078/sendVerification/${errors.username}`
             )
           }
         >
@@ -109,6 +110,3 @@ export default function Login(props) {
   );
 }
 
-Login.propTypes = {
-  setToken: PropTypes.func.isRequired
-};
