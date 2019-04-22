@@ -1,6 +1,7 @@
 import React from "react";
 import gql from "graphql-tag";
 import { useMutation } from "react-apollo-hooks";
+import Formol, { Field } from "formol/lib/formol";
 
 const SIGNUP = gql`
   mutation Signup($input: SignupInput!) {
@@ -11,60 +12,24 @@ const SIGNUP = gql`
 `;
 
 export default function Signup() {
-  let email;
-  let password;
-  let username;
+  const signup = useMutation(SIGNUP);
 
-  const Signup = useMutation(SIGNUP);
   return (
     <div>
-      <form
-        onSubmit={e => {
-          e.preventDefault();
-          Signup({
+      <Formol
+        onSubmit = {(input) => {
+          signup({
             variables: {
-              input: {
-                email: email.value,
-                password: password.value,
-                username: username.value
-              }
+              input
             }
-          }).then(result => console.log(result));
-          email.value = "";
-          password.value = "";
-          username.value = "";
-        }}
+          }).then(result => console.log("signup then:",result))}}
       >
-        <input
-          ref={node => {
-            email = node;
-          }}
-          type="email"
-          placeholder="Email"
-          name="email"
-        />
+        <Field>Username</Field>
+        <Field type="email">Email</Field>
+        <Field>Password</Field>
+      </Formol>
 
-        <br />
-        <input
-          ref={node => {
-            username = node;
-          }}
-          type="username"
-          placeholder="Username"
-          name="username"
-        />
-        <br />
-        <input
-          ref={node => {
-            password = node;
-          }}
-          type="password"
-          placeholder="Password"
-          name="password"
-        />
-        <br />
-        <button type="submit">Signup User</button>
-      </form>
+      <br/>
     </div>
   );
 }
