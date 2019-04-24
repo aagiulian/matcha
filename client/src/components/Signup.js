@@ -2,6 +2,7 @@ import React from "react";
 import gql from "graphql-tag";
 import { useMutation } from "react-apollo-hooks";
 import Formol, { Field } from "formol/lib/formol";
+import "formol/lib/default.css";
 
 const SIGNUP = gql`
   mutation Signup($input: SignupInput!) {
@@ -17,19 +18,26 @@ export default function Signup() {
   return (
     <div>
       <Formol
-        onSubmit = {(input) => {
+        onSubmit={input => {
           signup({
             variables: {
-              input
+              input: input
             }
-          }).then(result => console.log("signup then:",result))}}
+          }).then(result => console.log("signup then:", result));
+        }}
       >
-        <Field>Username</Field>
-        <Field type="email">Email</Field>
-        <Field>Password</Field>
+        <Field required={true}>Username</Field>
+        <Field required={true} type="email">
+          Email
+        </Field>
+        <Field required={true} type="password">
+          Password
+        </Field>
       </Formol>
 
-      <br/>
+      <br />
     </div>
   );
 }
+
+//mettre le password en password strength

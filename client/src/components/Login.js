@@ -3,6 +3,8 @@ import gql from "graphql-tag";
 import { useMutation } from "react-apollo-hooks";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import Formol, { Field } from "formol/lib/formol";
+import "formol/lib/default.css";
 
 const LOGIN = gql`
   mutation Login($input: LoginInput!) {
@@ -16,14 +18,11 @@ const LOGIN = gql`
 export default function Login(props) {
   const [errors, setErrors] = useState(null);
   //const [userCache, setUserCache] = useState(null);
-  let password;
-  let username;
-  let usernameCache;
 
   //console.log("hello host:", `http://${process.env.REACT_APP_HOST}:30078/sendVerification`);
   //console.log(props);
   //console.log(props.setToken);
-  const Login = useMutation(LOGIN);
+  const login = useMutation(LOGIN);
   console.log("LOL", errors);
   if (
     errors &&
@@ -38,7 +37,9 @@ export default function Login(props) {
         <button
           onClick={() =>
             axios.get(
-              `http://${process.env.REACT_APP_HOST}:30078/sendVerification/${errors.username}`
+              `http://${process.env.REACT_APP_HOST}:30078/sendVerification/${
+                errors.username
+              }`
             )
           }
         >
@@ -51,16 +52,14 @@ export default function Login(props) {
   }
   return (
     <div>
-      <form
-        onSubmit={e => {
-          e.preventDefault();
-          if (!username.value || !password.value) {
+      <Formol
+        onSubmit={input => {
+          if (!input.username || !input.password) {
             setErrors("Missing field.");
           } else {
-            usernameCache = username.value;
-            Login({
+            login({
               variables: {
-                input: { username: username.value, password: password.value }
+                input: input
               }
             })
               .then(res => {
@@ -70,38 +69,20 @@ export default function Login(props) {
                 }
               })
               .catch(res => {
-                console.log("LALALAL", username.value);
+                console.log("LALALAL", input.username);
                 setErrors({
                   message: res.graphQLErrors.map(error => error.message),
-                  username: usernameCache
+                  username: input.username
                 });
               });
-            password.value = "";
-            username.value = "";
           }
         }}
       >
-        <input
-          ref={node => {
-            username = node;
-          }}
-          type="username"
-          placeholder="Username"
-          name="username"
-        />
-        <br />
-        <input
-          ref={node => {
-            password = node;
-          }}
-          type="password"
-          placeholder="Password"
-          name="password"
-        />
-        <br />
-        <button type="submit">Login User</button>
-      </form>
-      <br />
+        <Field required={true}>Username</Field>
+        <Field required={true} type="password">
+          Password
+        </Field>
+      </Formol>
       {errors ? errors.message : null}
       <Link to="/resetPassword" className="ml1 no-underline black">
         Reset password
@@ -109,4 +90,3 @@ export default function Login(props) {
     </div>
   );
 }
-

@@ -55,8 +55,7 @@ app.get("/verify/:token", async (req, res) => {
 
 app.get("/sendVerification/:username", async (req, res) => {
   const username = req.params.username;
-  const email = await getUserByUsername(username);
-  console.log("ici email:", email);
+  const { email } = await getUserByUsername(username);
   if (email) {
     sendMailToken(username, email);
     // res.send(200);
@@ -74,7 +73,8 @@ const schema = makeExecutableSchema({
   }
 });
 
-const attachToContext = (funs) => (req) => funs.reduce( (toAttach, fun) => Object.assign(toAttach, fun(req)), {}) ;
+const attachToContext = funs => req =>
+  funs.reduce((toAttach, fun) => Object.assign(toAttach, fun(req)), {});
 
 const server = new ApolloServer({
   schema,
