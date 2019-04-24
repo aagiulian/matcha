@@ -15,6 +15,31 @@ const LOGIN = gql`
   }
 `;
 
+// const onSubmit = ({ username, password }) => {
+//   if (!username || !password) {
+//     setErrors("Missing field.");
+//   } else {
+//     login({
+//       variables: {
+//         input: { username, password }
+//       }
+//     })
+//       .then(res => {
+//         if (res.data.login.success === true) {
+//           //props.setToken(res.data.login.token);
+//           sessionStorage.setItem("token", res.data.login.token);
+//         }
+//       })
+//       .catch(res => {
+//         username = "toto";
+//         setErrors({
+//           message: res.graphQLErrors.map(error => error.message),
+//           username: username
+//         });
+//       });
+//   }
+// };
+
 export default function Login(props) {
   const [errors, setErrors] = useState(null);
   //const [userCache, setUserCache] = useState(null);
@@ -24,6 +49,10 @@ export default function Login(props) {
   //console.log(props.setToken);
   const login = useMutation(LOGIN);
   console.log("LOL", errors);
+  // ({ username, password }) => ({
+  //   password: password === "cucu" ? "" : "Text1 must begin with a number",
+  //   username: username === "toto" ? "Text2 mustn’t begin with a number" : ""
+  // });
   if (
     errors &&
     errors.message.includes("Your email hasn't been verified yet.")
@@ -49,44 +78,58 @@ export default function Login(props) {
         <br />
       </div>
     );
-  }
-  return (
-    <div>
-      <Formol
-        onSubmit={input => {
-          if (!input.username || !input.password) {
-            setErrors("Missing field.");
-          } else {
-            login({
-              variables: {
-                input: input
-              }
-            })
-              .then(res => {
-                if (res.data.login.success === true) {
-                  //props.setToken(res.data.login.token);
-                  sessionStorage.setItem("token", res.data.login.token);
+  } else {
+    return (
+      <div>
+        <Formol
+          onSubmit={input => {
+            console.log(input);
+            if (!input.username || !input.password) {
+              setErrors({ message: "Missing field." });
+            } else {
+              login({
+                variables: {
+                  input: input
                 }
               })
-              .catch(res => {
-                console.log("LALALAL", input.username);
-                setErrors({
-                  message: res.graphQLErrors.map(error => error.message),
-                  username: input.username
+                .then(res => {
+                  if (res.data.login.success === true) {
+                    //props.setToken(res.data.login.token);
+                    sessionStorage.setItem("token", res.data.login.token);
+                  }
+                })
+                .catch(res => {
+                  setErrors({
+                    message: res.graphQLErrors.map(error => error.message),
+                    username: input.username
+                  });
                 });
-              });
-          }
-        }}
-      >
-        <Field required={true}>Username</Field>
-        <Field required={true} type="password">
-          Password
-        </Field>
-      </Formol>
-      {errors ? errors.message : null}
-      <Link to="/resetPassword" className="ml1 no-underline black">
-        Reset password
-      </Link>
-    </div>
-  );
+            }
+          }}
+        >
+          <Field required>Username</Field>
+          <Field
+            required
+            type="password"
+            minLength={8}
+            pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d@$!%*#?&']{8,}$"
+            validityErrors={({ patternMismatch, tooShort }) => {
+              if (tooShort) {
+                return "Password cannot be that short, it must contain minimum eight characters, at least one uppercase letter, one lowercase letter and one number";
+              }
+              if (patternMismatch) {
+                return "Password must contain minimum eight characters, at least one uppercase letter, one lowercase letter and one number.";
+              }
+            }}
+          >
+            Password
+          </Field>
+        </Formol>
+        {errors ? errors.message : null}
+        <Link to="/resetPassword" className="ml1 no-underline black">
+          Reset password
+        </Link>
+      </div>
+    );
+  }
 }

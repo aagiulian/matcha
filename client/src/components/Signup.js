@@ -27,7 +27,15 @@ export default function Signup() {
         }}
       >
         <Field required={true}>Username</Field>
-        <Field required={true} type="email">
+        <Field
+          required={true}
+          // pattern=""
+          // validityErrors={({ patternMismatch }) => {
+          //   if (patternMismatch) {
+          //     return "Please provide a valid email.";
+          //   }
+          // }}
+        >
           Email
         </Field>
         <Field required={true} type="password">
