@@ -18,29 +18,38 @@ export default function Signup() {
   return (
     <div>
       <Formol
-        onSubmit={input => {
-          signup({
+        onSubmit={async input => {
+          return await signup({
             variables: {
               input: input
             }
-          }).then(result => console.log("signup then:", result));
+          })
+            .then(result => console.log("signup then:", result))
+            .catch(e =>
+              e.graphQLErrors
+                .map(err => err.extensions.exception.invalidArgs)
+                .reduce((acc, error) => Object.assign(acc, error), {})
+            );
         }}
       >
-        <Field required={true}>Username</Field>
+        <Field required>Username</Field>
         <Field
-          required={true}
+          required
           // pattern=""
           // validityErrors={({ patternMismatch }) => {
           //   if (patternMismatch) {
           //     return "Please provide a valid email.";
           //   }
           // }}
+          // NEEDS TO BE PUT IN LOWERCASE TO AVOID DUPLICATE IN DB
         >
           Email
         </Field>
-        <Field required={true} type="password">
+        <Field required type="password">
           Password
         </Field>
+        <Field required>Name</Field>
+        <Field required>Surname</Field>
       </Formol>
 
       <br />

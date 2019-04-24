@@ -78,58 +78,61 @@ export default function Login(props) {
         <br />
       </div>
     );
-  } else {
-    return (
-      <div>
-        <Formol
-          onSubmit={input => {
-            console.log(input);
-            if (!input.username || !input.password) {
-              setErrors({ message: "Missing field." });
-            } else {
-              login({
-                variables: {
-                  input: input
-                }
-              })
-                .then(res => {
-                  if (res.data.login.success === true) {
-                    //props.setToken(res.data.login.token);
-                    sessionStorage.setItem("token", res.data.login.token);
-                  }
-                })
-                .catch(res => {
-                  setErrors({
-                    message: res.graphQLErrors.map(error => error.message),
-                    username: input.username
-                  });
-                });
+  }
+  return (
+    <div>
+      <Formol
+        onSubmit={async input => {
+          let ret = null;
+
+          try {
+            ret = await login({
+              variables: {
+                input: input
+              }
+            });
+            console.log("normal path:", ret);
+            if (ret.data.login.success === true) {
+              sessionStorage.setItem("token", ret.data.login.token);
+              return;
+            }
+          } catch (e) {
+            console.log("catch:", e);
+            const serverErrors = e.graphQLErrors
+              .map(err => err.extensions.exception.invalidArgs)
+              .reduce((acc, error) => Object.assign(acc, error), {});
+            setErrors({
+              message: e.graphQLErrors.map(error => error.message),
+              username: input.username
+            });
+            console.log("serverErrors:", serverErrors);
+            ret = serverErrors;
+          }
+          return ret;
+        }}
+      >
+        <Field required>Username</Field>
+        <Field
+          required
+          type="password"
+          minLength={8}
+          pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d@$!%*#?&']{8,}$"
+          validityErrors={({ patternMismatch, tooShort }) => {
+            if (tooShort) {
+              return "Password cannot be that short, it must contain minimum eight characters, at least one uppercase letter, one lowercase letter and one number";
+            }
+            if (patternMismatch) {
+              return "Password must contain minimum eight characters, at least one uppercase letter, one lowercase letter and one number.";
             }
           }}
         >
-          <Field required>Username</Field>
-          <Field
-            required
-            type="password"
-            minLength={8}
-            pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d@$!%*#?&']{8,}$"
-            validityErrors={({ patternMismatch, tooShort }) => {
-              if (tooShort) {
-                return "Password cannot be that short, it must contain minimum eight characters, at least one uppercase letter, one lowercase letter and one number";
-              }
-              if (patternMismatch) {
-                return "Password must contain minimum eight characters, at least one uppercase letter, one lowercase letter and one number.";
-              }
-            }}
-          >
-            Password
-          </Field>
-        </Formol>
-        {errors ? errors.message : null}
-        <Link to="/resetPassword" className="ml1 no-underline black">
-          Reset password
-        </Link>
-      </div>
-    );
-  }
+          Password
+        </Field>
+      </Formol>
+      {errors ? errors.message : null}
+      <Link to="/resetPassword" className="ml1 no-underline black">
+        Reset password
+      </Link>
+    </div>
+  );
 }

@@ -20,7 +20,7 @@ CREATE TYPE CONNECTION_TYPE AS ENUM (
 
 CREATE TABLE users (
        id SERIAL PRIMARY KEY,
-       username VARCHAR(42),
+       username VARCHAR(42) UNIQUE,
        hashed_password VARCHAR(60),
        first_name VARCHAR(42),
        last_name VARCHAR(42),
@@ -30,7 +30,7 @@ CREATE TABLE users (
        bio VARCHAR(420),
        num_pics SMALLINT,
        url_pp VARCHAR(420),
-       email VARCHAR(420),
+       email VARCHAR(420) UNIQUE,
        last_seen TIMESTAMP,
        position POINT,
        popularity_score SMALLINT,
@@ -39,7 +39,7 @@ CREATE TABLE users (
 
 CREATE TABLE hashtags (
        id SERIAL PRIMARY KEY,
-       name VARCHAR(42));
+       name VARCHAR(42) UNIQUE);
 
 CREATE TABLE users_hashtags (
        id SERIAL PRIMARY KEY,

@@ -1,4 +1,4 @@
-import { AuthenticationError } from "apollo-server";
+import { AuthenticationError, UserInputError } from "apollo-server";
 import jwt from "jsonwebtoken";
 const bcrypt = require("bcrypt");
 const { generateToken } = require("../auth-helpers/generateToken");
@@ -9,7 +9,8 @@ import { sendMailToken } from "../auth-helpers/emailVerification";
 import {
   getUserByEmail,
   getUserById,
-  getUserByUsername
+  getUserByUsername,
+  newUser
 } from "../controllers/userCalls";
 
 const resolvers = {
@@ -46,14 +47,19 @@ const resolvers = {
     }
   },
   Mutation: {
-    signup: async (_, { input: { email, password, username } }, context) => {
-      //const transporter = context.transporter;
-      console.log("contexttttttttttt:", context);
-      const hashedPassword = await bcrypt.hash(password, 10);
-      const text =
-        "INSERT INTO users(email, hashed_password, username, verified) VALUES($1, $2, $3, $4)";
-      const values = [email, hashedPassword, username, false];
-      pool.query(text, values);
+    signup: async (
+      _,
+      { input: { email, password, username, name, surname } },
+      context
+    ) => {
+      const res = await newUser({ email, password, username, name, surname });
+      if (res !== true) {
+        throw new UserInputError("Duplicate", {
+          invalidArgs: {
+            [res.field]: "Already exists"
+          }
+        });
+      }
       sendMailToken(username, email);
       return { email: email };
     },
@@ -77,10 +83,19 @@ const resolvers = {
             return { success: true, token: token };
           }
         } else {
-          throw new AuthenticationError("Bad username or password.");
+          throw new UserInputError("Wrong password", {
+            //Only a POC, we are not supposed to specify which field failed in this case
+            invalidArgs: {
+              password: "Wrong password"
+            }
+          });
         }
       } else {
-        throw new AuthenticationError("Bad username or password.");
+        throw new UserInputError("Bad username", {
+          invalidArgs: {
+            username: "Bad username"
+          }
+        });
       }
     },
     resetPasswordRequest: async (_, { email }) => {

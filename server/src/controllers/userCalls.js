@@ -1,4 +1,5 @@
-const { pool } = require("../database");
+import { pool } from "../database";
+import bcrypt from "bcrypt";
 
 async function getUserId(username) {
   const text = "SELECT id FROM users WHERE username = $1";
@@ -97,6 +98,22 @@ async function getProfileInfo(id) {
   }
 }
 
+async function newUser({ email, password, username, name, surname }) {
+  const hashedPassword = await bcrypt.hash(password, 10);
+  const text =
+    "INSERT INTO users(email, hashed_password, username, first_name, last_name, verified) VALUES($1, $2, $3, $4, $5, $6)";
+  const values = [email, hashedPassword, username, name, surname, false];
+  try {
+    await pool.query(text, values);
+    return true;
+  } catch (e) {
+    return {
+      routine: e.routine,
+      field: e.constraint.split("_")[1]
+    };
+  }
+}
+
 module.exports = {
   getUserId,
   getUserEmail,
@@ -104,5 +121,6 @@ module.exports = {
   getProfileInfo,
   getUserById,
   getUserByUsername,
-  getUserByEmail
+  getUserByEmail,
+  newUser
 };
