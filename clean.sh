@@ -1,5 +1,7 @@
 #!/bin/bash
 
+eval $(minikube docker-env)
+
 kubectl delete deployment --all
 kubectl delete svc --all
 kubectl delete pvc --all

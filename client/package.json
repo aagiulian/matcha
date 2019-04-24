@@ -11,6 +11,8 @@
     "apollo-link-http": "^1.5.14",
     "apollo-link-state": "^0.4.2",
     "axios": "^0.18.0",
+    "date-fns": "^2.0.0-alpha.27",
+    "formol": "^2.5.10",
     "graphql": "^14.2.0",
     "prop-types": "^15.7.2",
     "react": "^16.8.5",

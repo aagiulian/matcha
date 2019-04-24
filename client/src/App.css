@@ -31,3 +31,11 @@
     transform: rotate(360deg);
   }
 }
+
+.background-gray {
+  background-color: #aaaaaa
+}
+
+.header {
+  background-color: #aaccaa
+}
