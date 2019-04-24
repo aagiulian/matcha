@@ -53,33 +53,41 @@ export default function Login(props) {
   return (
     <div>
       <Formol
-        onSubmit={input => {
+        onSubmit={async (input) => {
+          let ret = null;
+
           if (!input.username || !input.password) {
             setErrors("Missing field.");
           } else {
-            login({
-              variables: {
-                input: input
+            try {
+	      ret = await login({
+		variables: {
+		  input: input
+		}
+	      });
+              console.log("normal path:", ret);
+              if (ret.data.login.success === true) {
+                sessionStorage.setItem("token", ret.data.login.token);
+                return ;
               }
-            })
-              .then(res => {
-                if (res.data.login.success === true) {
-                  //props.setToken(res.data.login.token);
-                  sessionStorage.setItem("token", res.data.login.token);
-                }
-              })
-              .catch(res => {
-                console.log("LALALAL", input.username);
+            } catch (e) {
+                console.log("catch:", e);
+                const serverErrors = e.graphQLErrors
+                      .map(err => err.extensions.exception.invalidArgs)
+                      .reduce((acc, error) => Object.assign(acc, error), {});
                 setErrors({
-                  message: res.graphQLErrors.map(error => error.message),
+                  message: e.graphQLErrors.map(error => error.message),
                   username: input.username
                 });
-              });
+                console.log("serverErrors:", serverErrors);
+                ret = serverErrors;
+            }
           }
+          return ret;
         }}
       >
-        <Field required={true}>Username</Field>
-        <Field required={true} type="password">
+        <Field required>Username</Field>
+        <Field required type="password">
           Password
         </Field>
       </Formol>

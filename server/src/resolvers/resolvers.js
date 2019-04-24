@@ -1,4 +1,4 @@
-import { AuthenticationError } from "apollo-server";
+import { AuthenticationError, UserInputError } from "apollo-server";
 import jwt from "jsonwebtoken";
 const bcrypt = require("bcrypt");
 const { generateToken } = require("../auth-helpers/generateToken");
@@ -77,10 +77,19 @@ const resolvers = {
             return { success: true, token: token };
           }
         } else {
-          throw new AuthenticationError("Bad username or password.");
+          throw new UserInputError("Wrong password",  {
+            //Only a POC, we are not supposed to specify which field failed in this case
+            invalidArgs: {
+              "password": "Wrong password"
+            }
+          });
         }
       } else {
-        throw new AuthenticationError("Bad username or password.");
+        throw new UserInputError("Bad username", {
+          invalidArgs: {
+            "username" : "Bad username"
+          }
+        });
       }
     },
     resetPasswordRequest: async (_, { email }) => {

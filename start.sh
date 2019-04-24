@@ -2,6 +2,7 @@
 
 #gen keys
 rm -f server/.env
+rm -f client/.env
 yes y | ssh-keygen -t rsa -b 2048 -m PEM -f ./server/assets/keys/jwtRS256.key -N "" -q
 openssl rsa -in ./server/assets/keys/jwtRS256.key -pubout -outform PEM -out ./server/assets/keys/jwtRS256.key.pub
 echo -n "JWT_PRIVATE=\"" >> ./server/.env

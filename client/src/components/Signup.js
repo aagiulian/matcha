@@ -26,11 +26,11 @@ export default function Signup() {
           }).then(result => console.log("signup then:", result));
         }}
       >
-        <Field required={true}>Username</Field>
-        <Field required={true} type="email">
+        <Field required>Username</Field>
+        <Field required type="email">
           Email
         </Field>
-        <Field required={true} type="password">
+        <Field required type="password">
           Password
         </Field>
       </Formol>
