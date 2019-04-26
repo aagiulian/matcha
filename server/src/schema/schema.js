@@ -46,7 +46,7 @@ const typeDefs = gql`
   type ProfileInfo {
     username: String!
     firstname: String!
-    lastName: String!
+    lastname: String!
     gender: Gender!
     dob: String!
     bio: String!
@@ -122,16 +122,21 @@ const typeDefs = gql`
     password: String!
   }
 
+  input UpdateMeInput {
+    gender: Gender!
+  }
+
   type Mutation {
     signup(input: SignupInput!): SignupResponse!
     login(input: LoginInput!): AuthPayload!
     visitedBy(userId: Int!): [User]!
     resetPassword(input: ResetPasswordInput!): Boolean
     resetPasswordRequest(email: String!): Boolean
+    updateMe(input: UpdateMeInput!): User
   }
 
   type Query {
-    me(userID: Int!): User @isOwner
+    me: User @isOwner
     user(id: Int!): User
     allUsers: [User]
     node(

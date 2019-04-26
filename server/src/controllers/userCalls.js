@@ -98,20 +98,40 @@ async function getProfileInfo(id) {
   }
 }
 
+async function availEmail(email) {
+  const text = "SELECT id FROM users WHERE email = $1";
+  const values = [email];
+  const { rowCount: resultsCount } = await pool.query(text, values);
+  if (resultsCount) {
+    return false;
+  }
+  return true;
+}
+
+async function availUsername(username) {
+  const text = "SELECT id FROM users WHERE username = $1";
+  const values = [username];
+  const { rowCount: resultsCount } = await pool.query(text, values);
+  if (resultsCount) {
+    return false;
+  }
+  return true;
+}
+
 async function newUser({ email, password, username, name, surname }) {
+  const available = {
+    username: (await availUsername(username)) ? undefined : "Already exists",
+    email: (await availEmail(email)) ? undefined : "Already exists"
+  };
+  if (available.username !== undefined || available.email !== undefined) {
+    return available;
+  }
   const hashedPassword = await bcrypt.hash(password, 10);
   const text =
     "INSERT INTO users(email, hashed_password, username, first_name, last_name, verified) VALUES($1, $2, $3, $4, $5, $6)";
   const values = [email, hashedPassword, username, name, surname, false];
-  try {
-    await pool.query(text, values);
-    return true;
-  } catch (e) {
-    return {
-      routine: e.routine,
-      field: e.constraint.split("_")[1]
-    };
-  }
+  pool.query(text, values);
+  return true;
 }
 
 module.exports = {

@@ -15,12 +15,37 @@ import {
 
 const resolvers = {
   User: {
+    hashtags: async ({ id }) => ({ id }),
     profileInfo: async ({ id }) => ({ id })
   },
   ProfileInfo: {
     username: async ({ id }) => {
       const { username } = await getProfileInfo(id);
       return username;
+    },
+    firstname: async ({ id }) => {
+      const { firstname } = await getProfileInfo(id);
+      return firstname;
+    },
+    lastname: async ({ id }) => {
+      const { lastname } = await getProfileInfo(id);
+      return lastname;
+    },
+    gender: async ({ id }) => {
+      const { gender } = await getProfileInfo(id);
+      return gender;
+    },
+    dob: async ({ id }) => {
+      const { dob } = await getProfileInfo(id);
+      return dob;
+    },
+    bio: async ({ id }) => {
+      const { bio } = await getProfileInfo(id);
+      return bio;
+    },
+    sexualOrientation: async ({ id }) => {
+      const { sexualOrientation } = await getProfileInfo(id);
+      return sexualOrientation;
     },
     email: async ({ id }) => {
       const { email } = await getProfileInfo(id);
@@ -29,11 +54,9 @@ const resolvers = {
   },
   Query: {
     user: (_, { id }) => ({ id }),
-    me(_, args) {
-      return database.users[0];
-      const users = database.users.filter(user => user.id == args.userID);
-
-      if (users.length) return users[0];
+    me(_, args, { id }) {
+      const user = getUserById(id);
+      console.log(user);
     },
     async allUsers(obj, args, context, info) {
       const text = "SELECT username, email FROM users";
@@ -52,12 +75,12 @@ const resolvers = {
       { input: { email, password, username, name, surname } },
       context
     ) => {
+      email = email.toLowerCase();
+      username = username.toLowerCase();
       const res = await newUser({ email, password, username, name, surname });
       if (res !== true) {
         throw new UserInputError("Duplicate", {
-          invalidArgs: {
-            [res.field]: "Already exists"
-          }
+          invalidArgs: res
         });
       }
       sendMailToken(username, email);
