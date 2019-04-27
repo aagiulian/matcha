@@ -13,6 +13,9 @@ import {
   newUser
 } from "../controllers/userCalls";
 
+
+const USER_LOGGED = "USER_LOGGED";
+
 const resolvers = {
   User: {
     profileInfo: async ({ id }) => ({ id })
@@ -63,7 +66,7 @@ const resolvers = {
       sendMailToken(username, email);
       return { email: email };
     },
-    login: async (_, { input: { username, password } }) => {
+    login: async (_, { input: { username, password } }, { pubsub }) => {
       const text =
         "SELECT id, hashed_password, username, verified FROM users WHERE username = $1";
       const values = [username];
@@ -80,6 +83,9 @@ const resolvers = {
             );
           } else {
             const token = generateToken(results[0]);
+	    pubsub.publish(USER_LOGGED, {
+              username
+	    });
             return { success: true, token: token };
           }
         } else {
@@ -122,6 +128,11 @@ const resolvers = {
         }
       });
       return true;
+    }
+  },
+  Subscription: {
+    userLogged: {
+      subcribe: (parent, args, {pubsub}) => pubsub.asyncIterator(USER_LOGGED)
     }
   }
 };

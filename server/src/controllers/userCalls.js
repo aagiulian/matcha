@@ -107,6 +107,7 @@ async function newUser({ email, password, username, name, surname }) {
     await pool.query(text, values);
     return true;
   } catch (e) {
+    console.log("new user catch:", e);
     return {
       routine: e.routine,
       field: e.constraint.split("_")[1]

@@ -141,6 +141,11 @@ const typeDefs = gql`
       id: ID!
     ): Node
   }
+
+  type Subscription {
+    userLogged: String
+  }
+
 `;
 
 module.exports = {

@@ -4,7 +4,7 @@
 
 import express from "express";
 require("dotenv").config();
-const { ApolloServer, gql } = require("apollo-server");
+const { PubSub, ApolloServer, gql } = require("apollo-server");
 const { makeExecutableSchema } = require("graphql-tools");
 const {
   attachUserToContext,
@@ -76,9 +76,12 @@ const schema = makeExecutableSchema({
 const attachToContext = funs => req =>
   funs.reduce((toAttach, fun) => Object.assign(toAttach, fun(req)), {});
 
+const pubsub = new PubSub();
+
 const server = new ApolloServer({
   schema,
-  context: attachToContext([attachUserToContext])
+  context: attachToContext([attachUserToContext,
+                            ({ req, res }) => ({req, res, pubsub })])
 });
 
 server.listen().then(({ url }) => {

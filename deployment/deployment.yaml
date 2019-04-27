@@ -87,7 +87,7 @@ spec:
       #volumes:
       #- name: pgdata
       #hostPath:
-      #path: /Users/agiulian/matcha/pgdata/
+      #path: /Users/vfour/matcha/pgdata/
       #type: Directory
 
       volumes:
@@ -128,13 +128,15 @@ spec:
               name: graphql-port
             - containerPort: 4001
               name: express-port
+            - containerPort: 5000
+              name: subscript-port
           volumeMounts:
             - name: source-code
               mountPath: /usr/src/app
       volumes:
         - name: source-code
           hostPath:
-            path: /Users/agiulian/dev/matcha/server
+            path: /Users/vfour/dev/matcha/server
             type: Directory
 
 ---
@@ -155,6 +157,10 @@ spec:
       protocol: TCP
       nodePort: 30078
       name: express-port
+    - port: 5000
+      protocol: TCP
+      nodePort: 30079
+      name: subscript-port
   selector:
     app: graphql-api
 
@@ -214,7 +220,7 @@ spec:
       volumes:
         - name: source-code
           hostPath:
-            path: /Users/agiulian/dev/matcha/client
+            path: /Users/vfour/dev/matcha/client
             type: Directory
 
 ---

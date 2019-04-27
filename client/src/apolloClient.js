@@ -1,7 +1,9 @@
 import { InMemoryCache } from "apollo-cache-inmemory";
 import { ApolloClient } from "apollo-client";
-import { ApolloLink } from "apollo-link";
+import { ApolloLink, split } from "apollo-link";
 import { HttpLink } from "apollo-link-http";
+import { getMainDefinition } from "apollo-utilities";
+import { WebSocketLink } from "apollo-link-ws";
 import { setContext } from "apollo-link-context";
 import { onError } from "apollo-link-error";
 import { withClientState } from "apollo-link-state";
@@ -42,8 +44,27 @@ const authLink = setContext((_, { headers }) => {
 // const httpLink = new HttpLink({ uri: "http://localhost:4000" });
 const httpLink = new HttpLink({ uri: `http://${process.env.REACT_APP_HOST}:30077/` });
 
+const wsLink = new WebSocketLink({
+  uri: `ws://${process.env.REACT_APP_HOST}:30079`,
+  options: {
+    reconnect: true
+  }
+});
+
+
+const webLink = split(
+  ({ query }) => {
+    const definition = getMainDefinition(query);
+    return (definition.kind === 'OperationDefinition'
+            && definition.operation === 'subscription');
+  },
+  wsLink,
+  httpLink
+);
+
+
 const client = new ApolloClient({
-  link: ApolloLink.from([errorLink, authLink, stateLink, httpLink]),
+  link: ApolloLink.from([errorLink, authLink, stateLink, webLink]),
   cache
 });
 
