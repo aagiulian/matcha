@@ -55,6 +55,7 @@ const resolvers = {
       { input: { email, password, username, name, surname } },
       context
     ) => {
+      console.log("context:", context);
       const res = await newUser({ email, password, username, name, surname });
       if (res !== true) {
         throw new UserInputError("Duplicate", {
@@ -84,7 +85,7 @@ const resolvers = {
           } else {
             const token = generateToken(results[0]);
 	    pubsub.publish(USER_LOGGED, {
-              username
+              userLogged: username
 	    });
             return { success: true, token: token };
           }
@@ -132,7 +133,10 @@ const resolvers = {
   },
   Subscription: {
     userLogged: {
-      subcribe: (parent, args, {pubsub}) => pubsub.asyncIterator(USER_LOGGED)
+      subcribe: (parent, args, {pubsub}) => {
+        console.log("pubsub:", pubsub);
+        return pubsub.asyncIterator(USER_LOGGED);
+      }
     }
   }
 };

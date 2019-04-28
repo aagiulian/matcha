@@ -5,19 +5,14 @@ const AuthorizationError = createError("AuthorizationError", {
   message: "You are not authorized."
 });
 
-const attachUserToContext = (req, res, next) => {
-  const token = req.headers.authorization;
+const attachUserToContext = ({req, res}) => {
+  const token = req.headers ? req.headers.authorization : null;
   if (token) {
-    const decoded = jwt.verify(
+    const user = jwt.verify(
       token.replace("Bearer ", ""),
       process.env.JWT_PUBLIC
     );
-    req.user = decoded;
-    next();
-  } else {
-    res
-      .status(401)
-      .send({ message: "You must supply a JWT for authorization!" });
+    return { user }
   }
 };
 

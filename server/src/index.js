@@ -21,7 +21,7 @@ const jwt = require("jsonwebtoken");
 import { getUserByUsername } from "./controllers/userCalls";
 import { sendMailToken } from "./auth-helpers/emailVerification";
 
-console.log("fake profile:", fakeProfiles[0]);
+//console.log("fake profile:", fakeProfiles[0]);
 
 const app = express();
 
@@ -78,10 +78,46 @@ const attachToContext = funs => req =>
 
 const pubsub = new PubSub();
 
+console.log("pubsub async:", pubsub.asyncIterator);
+
+const getUserFromToken = (token) => {
+  if (token) {
+    const user = jwt.verify(
+      token.replace("Bearer ", ""),
+      process.env.JWT_PUBLIC
+    );
+    return user;
+  } else {
+    return null;
+  }
+}
+
+
+// TODO: check this => https://spectrum.chat/apollo/apollo-server/using-subscriptions-with-apollo-server-modules~b0f852c2-6134-48af-9ac1-63f95738970d
 const server = new ApolloServer({
   schema,
-  context: attachToContext([attachUserToContext,
-                            ({ req, res }) => ({req, res, pubsub })])
+  context: ({ req, connection }) => {
+    if (connection) {
+      return {
+        ...connection.context,
+        pubsub
+      };
+    } else {
+      const token = req.header["authorization"] || null;
+      return {
+        pubsub,
+        user: getUserFromToken(token)
+      }
+    }
+  },
+  onConnect: async (connectionParams, webSocket, context) => {
+    console.log(`Subscription client connected using Apollo server's built-in SubscriptionServer.`)
+  },
+  onDisconnect: async (webSocket, context) => {
+    console.log(`Subscription client disconnected.`)
+  }
+//  attachToContext([attachUserToContext,
+//                            ({ req, res }) => ({req, res, pubsub })])
 });
 
 server.listen().then(({ url }) => {
