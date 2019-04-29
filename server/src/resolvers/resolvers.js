@@ -1,4 +1,4 @@
-import { AuthenticationError, UserInputError } from "apollo-server";
+import { PubSub, AuthenticationError, UserInputError } from "apollo-server";
 import jwt from "jsonwebtoken";
 const bcrypt = require("bcrypt");
 const { generateToken } = require("../auth-helpers/generateToken");
@@ -13,6 +13,7 @@ import {
   newUser
 } from "../controllers/userCalls";
 
+const pubsub = new PubSub();
 
 const USER_LOGGED = "USER_LOGGED";
 
@@ -67,7 +68,7 @@ const resolvers = {
       sendMailToken(username, email);
       return { email: email };
     },
-    login: async (_, { input: { username, password } }, { pubsub }) => {
+    login: async (_, { input: { username, password } }) => {
       const text =
         "SELECT id, hashed_password, username, verified FROM users WHERE username = $1";
       const values = [username];
@@ -133,7 +134,7 @@ const resolvers = {
   },
   Subscription: {
     userLogged: {
-      subcribe: (parent, args, {pubsub}) => {
+      subscribe:  (parent, args) => {
         console.log("pubsub:", pubsub);
         return pubsub.asyncIterator(USER_LOGGED);
       }

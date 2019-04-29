@@ -4,7 +4,7 @@
 
 import express from "express";
 require("dotenv").config();
-const { PubSub, ApolloServer, gql } = require("apollo-server");
+const { ApolloServer, gql } = require("apollo-server");
 const { makeExecutableSchema } = require("graphql-tools");
 const {
   attachUserToContext,
@@ -76,9 +76,9 @@ const schema = makeExecutableSchema({
 const attachToContext = funs => req =>
   funs.reduce((toAttach, fun) => Object.assign(toAttach, fun(req)), {});
 
-const pubsub = new PubSub();
+//const pubsub = new PubSub();
 
-console.log("pubsub async:", pubsub.asyncIterator);
+//console.log("pubsub async:", pubsub.asyncIterator);
 
 const getUserFromToken = (token) => {
   if (token) {
@@ -100,12 +100,12 @@ const server = new ApolloServer({
     if (connection) {
       return {
         ...connection.context,
-        pubsub
+        //pubsub
       };
     } else {
       const token = req.header["authorization"] || null;
       return {
-        pubsub,
+        //pubsub,
         user: getUserFromToken(token)
       }
     }
