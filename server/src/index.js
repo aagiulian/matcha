@@ -2,27 +2,36 @@
 /* Use script `gen-jwt-keys.sh` to generate public and private keys in .env file */
 /*********************************************************************************/
 
-import express from "express";
 require("dotenv").config();
-const { PubSub, ApolloServer, gql } = require("apollo-server");
-const { makeExecutableSchema } = require("graphql-tools");
-const {
+import express from "express";
+//import { ApolloServer, gql } from "apollo-server";
+import { graphqlExpress,
+         grahpiqlExpress,
+} from "apollo-server-express";
+import bodyParser from "body-parser";
+import cors from "cors";
+
+import { execute, subscribe } from "graphql";
+import { createServer } from "http";
+import { SubscriptionServer } from 'subscriptions-transport-ws';
+
+import { makeExecutableSchema } from "graphql-tools";
+import jwt from "jsonwebtoken";
+import { pool } from "./database";
+import { typeDefs } from "./schema/schema";
+import fakeProfiles from "./fake_profiles.json";
+import { resolvers } from "./resolvers/resolvers";
+import {
   attachUserToContext,
   OwnerDirective,
   AuthenticationDirective
-} = require("./auth-helpers/directives");
-const { typeDefs } = require("./schema/schema");
-const { resolvers } = require("./resolvers/resolvers");
-
-const fakeProfiles = require("./fake_profiles.json");
-const { pool } = require("./database");
-const jwt = require("jsonwebtoken");
-
+} from"./auth-helpers/directives";
 import { getUserByUsername } from "./controllers/userCalls";
 import { sendMailToken } from "./auth-helpers/emailVerification";
 
 //console.log("fake profile:", fakeProfiles[0]);
 
+const PORT = 4000;
 const app = express();
 
 app.get("/verify/:token", async (req, res) => {
@@ -73,12 +82,12 @@ const schema = makeExecutableSchema({
   }
 });
 
-const attachToContext = funs => req =>
+const attachToContext = funs => ({ req }) =>
   funs.reduce((toAttach, fun) => Object.assign(toAttach, fun(req)), {});
 
-const pubsub = new PubSub();
+//const pubsub = new PubSub();
 
-console.log("pubsub async:", pubsub.asyncIterator);
+//console.log("pubsub async:", pubsub.asyncIterator);
 
 const getUserFromToken = (token) => {
   if (token) {
@@ -92,30 +101,48 @@ const getUserFromToken = (token) => {
   }
 }
 
-
-// TODO: check this => https://spectrum.chat/apollo/apollo-server/using-subscriptions-with-apollo-server-modules~b0f852c2-6134-48af-9ac1-63f95738970d
-const server = new ApolloServer({
+app.use('/', bodyParser.json(), graphqlExpress({
   schema,
-  context: ({ req, connection }) => {
+  context: async ({ req, connection }) => {
     if (connection) {
       return {
         ...connection.context,
-        pubsub
       };
     } else {
       const token = req.header["authorization"] || null;
       return {
-        pubsub,
         user: getUserFromToken(token)
       }
     }
   },
-  onConnect: async (connectionParams, webSocket, context) => {
-    console.log(`Subscription client connected using Apollo server's built-in SubscriptionServer.`)
+}));
+
+app.use('/graphiql', graphiqlExpress({
+  endpointURL: '/',
+  subscriptionsEndpoint: `ws://localhost:${PORT}/subscriptions`
+}));
+
+const ws = createServer(app);
+ws.listen(PORT, () => {
+  console.log(`Apollo Server is now running on http://${process.env.HOST}:${PORT}/subscriptions`)
+}
+
+// TODO: check this => https://spectrum.chat/apollo/apollo-server/using-subscriptions-with-apollo-server-modules~b0f852c2-6134-48af-9ac1-63f95738970d
+/*
+const server = new ApolloServer({
+  schema,
+  context: async ({ req, connection }) => {
+    if (connection) {
+      return {
+        ...connection.context,
+      };
+    } else {
+      const token = req.header["authorization"] || null;
+      return {
+        user: getUserFromToken(token)
+      }
+    }
   },
-  onDisconnect: async (webSocket, context) => {
-    console.log(`Subscription client disconnected.`)
-  }
 //  attachToContext([attachUserToContext,
 //                            ({ req, res }) => ({req, res, pubsub })])
 });
@@ -127,3 +154,5 @@ server.listen().then(({ url }) => {
 app.listen(4001, () => {
   console.log(`Server is running on PORT 4001`);
 });
+
+*/

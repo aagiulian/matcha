@@ -1,8 +1,9 @@
 import { AuthenticationError, UserInputError } from "apollo-server";
+import { PubSub } from "graphql-subscriptions";
 import jwt from "jsonwebtoken";
-const bcrypt = require("bcrypt");
-const { generateToken } = require("../auth-helpers/generateToken");
-const { pool } = require("../database");
+import bcrypt from "bcrypt";
+import { generateToken } from "../auth-helpers/generateToken";
+import { pool } from "../database";
 import { getProfileInfo } from "../controllers/userCalls";
 import { resetPasswordMail } from "../auth-helpers/passwordReset";
 import { sendMailToken } from "../auth-helpers/emailVerification";
@@ -15,6 +16,8 @@ import {
 
 
 const USER_LOGGED = "USER_LOGGED";
+
+const pubsub = new PubSub();
 
 const resolvers = {
   User: {
@@ -67,7 +70,7 @@ const resolvers = {
       sendMailToken(username, email);
       return { email: email };
     },
-    login: async (_, { input: { username, password } }, { pubsub }) => {
+    login: async (_, { input: { username, password } }) => {
       const text =
         "SELECT id, hashed_password, username, verified FROM users WHERE username = $1";
       const values = [username];
@@ -133,7 +136,7 @@ const resolvers = {
   },
   Subscription: {
     userLogged: {
-      subcribe: (parent, args, {pubsub}) => {
+      subcribe: () => {
         console.log("pubsub:", pubsub);
         return pubsub.asyncIterator(USER_LOGGED);
       }
