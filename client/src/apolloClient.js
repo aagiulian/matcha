@@ -31,11 +31,11 @@ const errorLink = onError(({ graphQLErrors, networkError, operation }) => {
 });
 
 const authLink = setContext((_, { headers }) => {
-  let JWT = sessionStorage.getItem("token");
+  const authToken = sessionStorage.getItem("token");
   const context = {
     headers: {
       ...headers,
-      Authorization: JWT ? `Bearer ${JWT}` : ""
+      Authorization: authToken ? `Bearer ${authToken}` : ""
     }
   };
   return context;
@@ -45,9 +45,12 @@ const authLink = setContext((_, { headers }) => {
 const httpLink = new HttpLink({ uri: `http://${process.env.REACT_APP_HOST}:30077/` });
 
 const wsLink = new WebSocketLink({
-  uri: `ws://${process.env.REACT_APP_HOST}:30079`,
+  uri: `ws://${process.env.REACT_APP_HOST}:30077/graphql`,
   options: {
-    reconnect: true
+    reconnect: true,
+    connectionParams: {
+      authToken: sessionStorage.getItem("token")
+    }
   }
 });
 

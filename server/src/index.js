@@ -7,6 +7,7 @@ require("dotenv").config();
 const { ApolloServer, gql } = require("apollo-server");
 const { makeExecutableSchema } = require("graphql-tools");
 const {
+  getUserFromToken,
   attachUserToContext,
   OwnerDirective,
   AuthenticationDirective
@@ -80,20 +81,7 @@ const attachToContext = funs => req =>
 
 //console.log("pubsub async:", pubsub.asyncIterator);
 
-const getUserFromToken = (token) => {
-  if (token) {
-    const user = jwt.verify(
-      token.replace("Bearer ", ""),
-      process.env.JWT_PUBLIC
-    );
-    return user;
-  } else {
-    return null;
-  }
-}
 
-
-// TODO: check this => https://spectrum.chat/apollo/apollo-server/using-subscriptions-with-apollo-server-modules~b0f852c2-6134-48af-9ac1-63f95738970d
 const server = new ApolloServer({
   schema,
   context: ({ req, connection }) => {
@@ -110,11 +98,30 @@ const server = new ApolloServer({
       }
     }
   },
-  onConnect: async (connectionParams, webSocket, context) => {
-    console.log(`Subscription client connected using Apollo server's built-in SubscriptionServer.`)
-  },
-  onDisconnect: async (webSocket, context) => {
-    console.log(`Subscription client disconnected.`)
+  subscriptions: {
+    onConnect: (connectionParams, webSocket, context) => {
+      console.log(`Subscription client connected using Apollo server's built-in SubscriptionServer.`);
+      if (connectionParams.authToken) {
+        const user = getUserFromToken(connectionParams.authToken);
+        return {
+          user
+        }
+      }
+      console.log("Missing auth token for websocket");
+      /*
+      console.log("connection params:", connectionParams);
+      console.log("websocket", webSocket);
+      console.log("context", context);
+      */
+    },
+    onDisconnect: (webSocket, context) => {
+      console.log(`Subscription client disconnected.`)
+
+      /*
+      console.log("websocket", webSocket);
+      console.log("context", context);
+      */
+    }
   }
 //  attachToContext([attachUserToContext,
 //                            ({ req, res }) => ({req, res, pubsub })])

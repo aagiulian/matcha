@@ -76,7 +76,20 @@ const attachUserToContext = ({ req }) => {
   } else return { user: null };
 };
 
+const getUserFromToken = (token) => {
+  if (token) {
+    const user = jwt.verify(
+      token.replace("Bearer ", ""),
+      process.env.JWT_PUBLIC
+    );
+    return user;
+  } else {
+    return null;
+  }
+}
+
 module.exports = {
+  getUserFromToken,
   attachUserToContext,
   OwnerDirective,
   AuthenticationDirective

@@ -128,8 +128,6 @@ spec:
               name: graphql-port
             - containerPort: 4001
               name: express-port
-            - containerPort: 5000
-              name: subscript-port
           volumeMounts:
             - name: source-code
               mountPath: /usr/src/app
@@ -157,10 +155,6 @@ spec:
       protocol: TCP
       nodePort: 30078
       name: express-port
-    - port: 5000
-      protocol: TCP
-      nodePort: 30079
-      name: subscript-port
   selector:
     app: graphql-api
 

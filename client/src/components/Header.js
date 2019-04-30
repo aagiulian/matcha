@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import Login from "./Login";
 import Logout from "./Logout";
 import { withRouter } from "react-router";
+import UserLogged from "./UserLogged.js";
 
 function Header() {
   const token = sessionStorage.getItem('token');
@@ -12,6 +13,7 @@ function Header() {
   return (
     <div className="flex pa1 justify-between nowrap orange">
       <div className="flex flex-fixed black">
+        <UserLogged />
         <div className="fw7 mr1">Header</div>
         {isLogged ? (
           <div>
