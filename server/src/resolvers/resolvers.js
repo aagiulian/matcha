@@ -35,9 +35,9 @@ const resolvers = {
       const { gender } = await getProfileInfo(id);
       return gender;
     },
-    dob: async ({ id }) => {
-      const { dob } = await getProfileInfo(id);
-      return dob;
+    dateOfBirth: async ({ id }) => {
+      const { dateOfBirth } = await getProfileInfo(id);
+      return dateOfBirth;
     },
     bio: async ({ id }) => {
       const { bio } = await getProfileInfo(id);
@@ -54,9 +54,20 @@ const resolvers = {
   },
   Query: {
     user: (_, { id }) => ({ id }),
-    me(_, args, { id }) {
+    me(
+      _,
+      args,
+      {
+        user: { id }
+      }
+    ) {
+      if (!id) {
+        console.log("Needs to be logged"); // to work
+        return null;
+      }
       const user = getUserById(id);
       console.log(user);
+      return user;
     },
     async allUsers(obj, args, context, info) {
       const text = "SELECT username, email FROM users";
@@ -88,7 +99,7 @@ const resolvers = {
     },
     login: async (_, { input: { username, password } }) => {
       const text =
-        "SELECT id, hashed_password, username, verified FROM users WHERE username = $1";
+        'SELECT id, hashed_password as "hashedPassword", username, verified FROM users WHERE username = $1';
       const values = [username];
       const { rows: results, rowCount: resultsCount } = await pool.query(
         text,
@@ -96,7 +107,7 @@ const resolvers = {
       );
       console.log(results);
       if (resultsCount) {
-        if (await bcrypt.compare(password, results[0].hashed_password)) {
+        if (await bcrypt.compare(password, results[0].hashedPassword)) {
           if (results[0].verified === false) {
             throw new AuthenticationError(
               "Your email hasn't been verified yet."

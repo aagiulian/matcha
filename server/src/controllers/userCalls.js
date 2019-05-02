@@ -1,3 +1,4 @@
+/// * = id, username, hashed_password as "hashedPassword", firstname, lastname, date_of_birth as "dateOfBirth", gender, sexual_orientation as "sexualOrientation", bio, num_pics as "numPics", url_pp as "urlPp", email, last_seen as "lastSeen", position, popularity_score, verified
 import { pool } from "../database";
 import bcrypt from "bcrypt";
 
@@ -16,7 +17,8 @@ async function getUserId(username) {
 }
 
 async function getUserById(id) {
-  const text = "SELECT * FROM users WHERE id = $1";
+  const text =
+    'SELECT id, username, hashed_password as "hashedPassword", firstname, lastname, date_of_birth as "dateOfBirth", gender, sexual_orientation as "sexualOrientation", bio, num_pics as "numPics", url_pp as "urlPp", email, last_seen as "lastSeen", position, popularity_score, verified FROM users WHERE id = $1';
   const values = [id];
   const { rows: results, rowCount: resultsCount } = await pool.query(
     text,
@@ -30,7 +32,8 @@ async function getUserById(id) {
 }
 
 async function getUserByUsername(username) {
-  const text = "SELECT * FROM users WHERE username = $1";
+  const text =
+    'SELECT  id, username, hashed_password as "hashedPassword", firstname, lastname, date_of_birth as "dateOfBirth", gender, sexual_orientation as "sexualOrientation", bio, num_pics as "numPics", url_pp as "urlPp", email, last_seen as "lastSeen", position, popularity_score, verified FROM users WHERE username = $1';
   const values = [username];
   const { rows: results, rowCount: resultsCount } = await pool.query(
     text,
@@ -44,7 +47,8 @@ async function getUserByUsername(username) {
 }
 
 async function getUserByEmail(email) {
-  const text = "SELECT * FROM users WHERE email = $1";
+  const text =
+    'SELECT  id, username, hashed_password as "hashedPassword", firstname, lastname, date_of_birth as "dateOfBirth", gender, sexual_orientation as "sexualOrientation", bio, num_pics as "numPics", url_pp as "urlPp", email, last_seen as "lastSeen", position, popularity_score, verified FROM users WHERE email = $1';
   const values = [email];
   const { rows: results, rowCount: resultsCount } = await pool.query(
     text,
@@ -128,8 +132,8 @@ async function newUser({ email, password, username, name, surname }) {
   }
   const hashedPassword = await bcrypt.hash(password, 10);
   const text =
-    "INSERT INTO users(email, hashed_password, username, first_name, last_name, verified) VALUES($1, $2, $3, $4, $5, $6)";
-  const values = [email, hashedPassword, username, name, surname, false];
+    "INSERT INTO users(email, hashed_password, username, firstname, lastname, verified) VALUES($1, $2, $3, $4, $5, $6)";
+  const values = [email, hashedPassword, username, name, surname, true]; // TRUE TO FALSE TO ENABLE VERIFICATION
   pool.query(text, values);
   return true;
 }

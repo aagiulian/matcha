@@ -16,18 +16,23 @@ const UPDATEME = gql`
 `;
 const ME = gql`
   query Me {
-    me(input: $input) {
-      success
-      token
+    me {
+      username
+      lastname
     }
   }
 `;
 
 export default function Profile(props) {
+  const { data, error, loading } = useQuery(ME);
+  if (loading) {
+    return <div>Loading</div>;
+  }
+  console.log(data);
   return (
-    <Formol>
+    <Formol item={data}>
       <Field>Username</Field>
-      <Field>Password</Field>
+      <Field>Lastname</Field>
     </Formol>
   );
 }

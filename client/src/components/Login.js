@@ -115,8 +115,8 @@ export default function Login(props) {
         <Field
           required
           type="password"
-          minLength={8}
-          pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d@$!%*#?&']{8,}$"
+          //minLength={8}
+          //pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d@$!%*#?&']{8,}$"
           validityErrors={({ patternMismatch, tooShort }) => {
             if (tooShort) {
               return "Password cannot be that short, it must contain minimum eight characters, at least one uppercase letter, one lowercase letter and one number";

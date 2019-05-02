@@ -33,7 +33,7 @@ const typeDefs = gql`
     position: String!
     hashtags: [Hashtag]
     isOnline: Boolean!
-    popularity_score: String!
+    popularityScore: String!
     lastSeen: String!
     verified: Boolean!
     protected: ProtectedInfo!
@@ -48,7 +48,7 @@ const typeDefs = gql`
     firstname: String!
     lastname: String!
     gender: Gender!
-    dob: String!
+    dateOfBirth: String!
     bio: String!
     numPics: Int!
     urlPp: String!
@@ -136,7 +136,10 @@ const typeDefs = gql`
   }
 
   type Query {
-    me: User @isOwner
+    me: User
+    """
+    @isOwner
+    """
     user(id: Int!): User
     allUsers: [User]
     node(

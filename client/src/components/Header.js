@@ -5,7 +5,7 @@ import Logout from "./Logout";
 import { withRouter } from "react-router";
 
 function Header() {
-  const token = sessionStorage.getItem('token');
+  const token = sessionStorage.getItem("token");
   const isLogged = token !== null;
   console.log("token:", token);
   console.log("isLogged:", isLogged);
@@ -15,10 +15,11 @@ function Header() {
         <div className="fw7 mr1">Header</div>
         {isLogged ? (
           <div>
-          <Link to="/" className="ml1 no-underline black">
-            Home
-          </Link>
-          <Logout />
+            <Link to="/" className="ml1 no-underline black">
+              Home
+            </Link>
+            <Link to="/profile">Profile</Link>
+            <Logout />
           </div>
         ) : (
           <Login />

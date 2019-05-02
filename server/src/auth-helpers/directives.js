@@ -72,6 +72,7 @@ const attachUserToContext = ({ req }) => {
       token.replace("Bearer ", ""),
       process.env.JWT_PUBLIC
     );
+    console.log(user);
     return { user };
   } else return { user: null };
 };
