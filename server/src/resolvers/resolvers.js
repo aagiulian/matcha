@@ -54,24 +54,7 @@ const resolvers = {
   },
   Query: {
     user: (_, { id }) => ({ id }),
-    async me(
-      _,
-      args,
-      {
-        user: { id }
-      }
-    ) {
-      if (!id) {
-        console.log("Needs to be logged"); // to work
-        return null;
-      }
-      return { id };
-      console.log(user(id));
-      return user(id);
-      const user = await getUserById(id);
-      console.log(user);
-      return user;
-    },
+    me: (_, args, { user: { id } }) => ({ id }),
     async allUsers(obj, args, context, info) {
       const text = "SELECT username, email FROM users";
       const res = await pool.query(text);

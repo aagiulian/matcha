@@ -123,7 +123,15 @@ const typeDefs = gql`
   }
 
   input UpdateMeInput {
-    gender: Gender!
+    username: String!
+    firstname: String!
+    lastname: String!
+    email: String!
+    password: String
+    gender: Gender
+    bio: String
+    # hashtag: Hashtag
+    # images: Picture
   }
 
   type Mutation {
