@@ -48,7 +48,7 @@ async function getUserByUsername(username) {
 
 async function getUserByEmail(email) {
   const text =
-    'SELECT  id, username, hashed_password as "hashedPassword", firstname, lastname, date_of_birth as "dateOfBirth", gender, sexual_orientation as "sexualOrientation", bio, num_pics as "numPics", url_pp as "urlPp", email, last_seen as "lastSeen", position, popularity_score, verified FROM users WHERE email = $1';
+    'SELECT id, username, hashed_password as "hashedPassword", firstname, lastname, date_of_birth as "dateOfBirth", gender, sexual_orientation as "sexualOrientation", bio, num_pics as "numPics", url_pp as "urlPp", email, last_seen as "lastSeen", position, popularity_score, verified FROM users WHERE email = $1';
   const values = [email];
   const { rows: results, rowCount: resultsCount } = await pool.query(
     text,
@@ -91,10 +91,12 @@ async function isUserVerified(username) {
 }
 
 async function getProfileInfo(id) {
-  let text = "SELECT username, email FROM users WHERE id = $1";
+  let text =
+    'SELECT id, username, hashed_password as "hashedPassword", firstname, lastname, date_of_birth as "dateOfBirth", gender, sexual_orientation as "sexualOrientation", bio, num_pics as "numPics", url_pp as "urlPp", email, last_seen as "lastSeen", position, popularity_score, verified FROM users WHERE id = $1';
   let values = [id];
   console.log("ID", id);
   let res = await pool.query(text, values);
+  console.log(res);
   if (res.rowCount) {
     return res.rows[0];
   } else {

@@ -54,7 +54,7 @@ const resolvers = {
   },
   Query: {
     user: (_, { id }) => ({ id }),
-    me(
+    async me(
       _,
       args,
       {
@@ -65,7 +65,10 @@ const resolvers = {
         console.log("Needs to be logged"); // to work
         return null;
       }
-      const user = getUserById(id);
+      return { id };
+      console.log(user(id));
+      return user(id);
+      const user = await getUserById(id);
       console.log(user);
       return user;
     },
