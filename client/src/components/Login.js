@@ -55,67 +55,67 @@ export default function Login(props) {
   // });
   if (
     errors &&
-      errors.message.includes("Your email hasn't been verified yet.")
+    errors.message.includes("Your email hasn't been verified yet.")
   ) {
     return (
       <div>
-	{errors.username + " :(  "}
-	{errors.message}
-	<br />
-	Check your emails or click the
-	<button
-	  onClick={() =>
-		   axios.get(
-		     `http://${process.env.REACT_APP_HOST}:30078/sendVerification/${
-		errors.username
-	      }`
-		   )
-		  }
-	>
-	  link
-	</button>
-	to resend email verification.
-	<br />
+        {errors.username + " :(  "}
+        {errors.message}
+        <br />
+        Check your emails or click the
+        <button
+          onClick={() =>
+            axios.get(
+              `http://${process.env.REACT_APP_HOST}:30078/sendVerification/${
+                errors.username
+              }`
+            )
+          }
+        >
+          link
+        </button>
+        to resend email verification.
+        <br />
       </div>
     );
   }
   return (
     <div>
       <Suspense fallback={<div> Loading ...</div>}>
-	<Formol
-	  onSubmit={async input => {
-	    let ret = null;
+        <Formol
+          onSubmit={async input => {
+            let ret = null;
 
-	    try {
-	      ret = await login({
-		variables: {
-		  input: input
-		}
-	      });
-	      console.log("normal path:", ret);
-	      if (ret.data.login.success === true) {
-		sessionStorage.setItem("token", ret.data.login.token);
-		return;
-	      }
-	    } catch (e) {
-	      console.log("catch:", e);
-	      const serverErrors = e.graphQLErrors
-		    .map(err => err.extensions.exception.invalidArgs)
-		    .reduce((acc, error) => Object.assign(acc, error), {});
-	      setErrors({
-		message: e.graphQLErrors.map(error => error.message),
-		username: input.username
-	      });
-	      console.log("serverErrors:", serverErrors);
-	      ret = serverErrors;
-	    }
-	    return ret;
-	  }}
-	>
-	  <Field required>Username</Field>
-	  <Field
-	    required
-	    type="password"
+            try {
+              ret = await login({
+                variables: {
+                  input: input
+                }
+              });
+              console.log("normal path:", ret);
+              if (ret.data.login.success === true) {
+                sessionStorage.setItem("token", ret.data.login.token);
+                return;
+              }
+            } catch (e) {
+              console.log("catch:", e);
+              const serverErrors = e.graphQLErrors
+                .map(err => err.extensions.exception.invalidArgs)
+                .reduce((acc, error) => Object.assign(acc, error), {});
+              setErrors({
+                message: e.graphQLErrors.map(error => error.message),
+                username: input.username
+              });
+              console.log("serverErrors:", serverErrors);
+              ret = serverErrors;
+            }
+            return ret;
+          }}
+        >
+          <Field required>Username</Field>
+          <Field
+            required
+            type="password"
             /*
 	    minLength={8}
 	    pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d@$!%*#?&']{8,}$"
@@ -128,10 +128,10 @@ export default function Login(props) {
 	      }
 	    }}
     */
-	  >
-	    Password
-	  </Field>
-	</Formol>
+          >
+            Password
+          </Field>
+        </Formol>
       </Suspense>
 
       {errors ? errors.message : null}

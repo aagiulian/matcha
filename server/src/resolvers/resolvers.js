@@ -10,7 +10,8 @@ import {
   getUserByEmail,
   getUserById,
   getUserByUsername,
-  newUser
+  newUser,
+  updateUser
 } from "../controllers/userCalls";
 
 const pubsub = new PubSub();
@@ -19,12 +20,37 @@ const USER_LOGGED = "USER_LOGGED";
 
 const resolvers = {
   User: {
+    hashtags: async ({ id }) => ({ id }),
     profileInfo: async ({ id }) => ({ id })
   },
   ProfileInfo: {
     username: async ({ id }) => {
       const { username } = await getProfileInfo(id);
       return username;
+    },
+    firstname: async ({ id }) => {
+      const { firstname } = await getProfileInfo(id);
+      return firstname;
+    },
+    lastname: async ({ id }) => {
+      const { lastname } = await getProfileInfo(id);
+      return lastname;
+    },
+    gender: async ({ id }) => {
+      const { gender } = await getProfileInfo(id);
+      return gender;
+    },
+    dateOfBirth: async ({ id }) => {
+      const { dateOfBirth } = await getProfileInfo(id);
+      return dateOfBirth;
+    },
+    bio: async ({ id }) => {
+      const { bio } = await getProfileInfo(id);
+      return bio;
+    },
+    sexualOrientation: async ({ id }) => {
+      const { sexualOrientation } = await getProfileInfo(id);
+      return sexualOrientation;
     },
     email: async ({ id }) => {
       const { email } = await getProfileInfo(id);
@@ -33,12 +59,7 @@ const resolvers = {
   },
   Query: {
     user: (_, { id }) => ({ id }),
-    me(_, args) {
-      return database.users[0];
-      const users = database.users.filter(user => user.id == args.userID);
-
-      if (users.length) return users[0];
-    },
+    me: (_, args, { user: { id } }) => ({ id }),
     async allUsers(obj, args, context, info) {
       const text = "SELECT username, email FROM users";
       const res = await pool.query(text);
@@ -53,16 +74,20 @@ const resolvers = {
   Mutation: {
     signup: async (
       _,
-      { input: { email, password, username, name, surname } },
-      context
+      { input: { email, password, username, firstname, lastname } }
     ) => {
-      console.log("context:", context);
-      const res = await newUser({ email, password, username, name, surname });
+      email = email.toLowerCase();
+      username = username.toLowerCase();
+      const res = await newUser({
+        email,
+        password,
+        username,
+        firstname,
+        lastname
+      });
       if (res !== true) {
         throw new UserInputError("Duplicate", {
-          invalidArgs: {
-            [res.field]: "Already exists"
-          }
+          invalidArgs: res
         });
       }
       sendMailToken(username, email);
@@ -70,7 +95,7 @@ const resolvers = {
     },
     login: async (_, { input: { username, password } }) => {
       const text =
-        "SELECT id, hashed_password, username, verified FROM users WHERE username = $1";
+        'SELECT id, hashed_password as "hashedPassword", username, verified FROM users WHERE username = $1';
       const values = [username];
       const { rows: results, rowCount: resultsCount } = await pool.query(
         text,
@@ -78,16 +103,16 @@ const resolvers = {
       );
       console.log(results);
       if (resultsCount) {
-        if (await bcrypt.compare(password, results[0].hashed_password)) {
+        if (await bcrypt.compare(password, results[0].hashedPassword)) {
           if (results[0].verified === false) {
             throw new AuthenticationError(
               "Your email hasn't been verified yet."
             );
           } else {
             const token = generateToken(results[0]);
-	    pubsub.publish(USER_LOGGED, {
+            pubsub.publish(USER_LOGGED, {
               userLogged: username
-	    });
+            });
             return { success: true, token: token };
           }
         } else {
@@ -130,11 +155,25 @@ const resolvers = {
         }
       });
       return true;
+    },
+    updateMe: async (_, { input }, { user: { id } }) => {
+      if (!id) {
+        throw new AuthenticationError(
+          "You need to be logged in order to update your profile."
+        );
+      }
+      const res = await updateUser(input, id);
+      if (res !== true) {
+        throw new UserInputError("Duplicate", {
+          invalidArgs: res
+        });
+      }
+      return await getUserById(id);
     }
   },
   Subscription: {
     userLogged: {
-      subscribe:  (parent, args) => {
+      subscribe: (parent, args) => {
         console.log("pubsub:", pubsub);
         return pubsub.asyncIterator(USER_LOGGED);
       }

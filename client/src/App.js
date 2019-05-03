@@ -3,6 +3,7 @@ import Login from "./components/Login";
 //import Logout from "./components/Logout";
 import Maine from "./components/Maine";
 import Verify from "./components/Verify";
+import Profile from "./components/Profile";
 import ResetPassword from "./components/ResetPassword";
 import React from "react";
 
@@ -18,13 +19,19 @@ const App = () => {
   return (
     <div>
       <div className="center w85">
-        <Header className="header"/>
-        <div className="ph3 pv1 background-gray">
+        <Header className="header" />
+        <div className="ph3 pv1">
           <Switch>
+            {/* <Route exact path="/" component={App} /> */}
             <Route exact path="/signup" component={Signup} />
             <Route exact path="/login" component={Login} />
+            <Route exact path="/profile" component={Profile} />
             <Route exact path="/verify/:emailToken" component={Verify} />
-            <Route exact path="/resetPassword" component={ResetPasswordRequest}/>
+            <Route
+              exact
+              path="/resetPassword"
+              component={ResetPasswordRequest}
+            />
             <Route
               exact
               path="/resetPassword/:token"

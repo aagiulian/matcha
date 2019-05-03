@@ -1,5 +1,7 @@
+/// * = id, username, hashed_password as "hashedPassword", firstname, lastname, date_of_birth as "dateOfBirth", gender, sexual_orientation as "sexualOrientation", bio, num_pics as "numPics", url_pp as "urlPp", email, last_seen as "lastSeen", position, popularity_score, verified
 import { pool } from "../database";
 import bcrypt from "bcrypt";
+import moment from "moment";
 
 async function getUserId(username) {
   const text = "SELECT id FROM users WHERE username = $1";
@@ -16,7 +18,8 @@ async function getUserId(username) {
 }
 
 async function getUserById(id) {
-  const text = "SELECT * FROM users WHERE id = $1";
+  const text =
+    'SELECT id, username, hashed_password as "hashedPassword", firstname, lastname, date_of_birth as "dateOfBirth", gender, sexual_orientation as "sexualOrientation", bio, num_pics as "numPics", url_pp as "urlPp", email, last_seen as "lastSeen", position, popularity_score, verified FROM users WHERE id = $1';
   const values = [id];
   const { rows: results, rowCount: resultsCount } = await pool.query(
     text,
@@ -30,7 +33,8 @@ async function getUserById(id) {
 }
 
 async function getUserByUsername(username) {
-  const text = "SELECT * FROM users WHERE username = $1";
+  const text =
+    'SELECT  id, username, hashed_password as "hashedPassword", firstname, lastname, date_of_birth as "dateOfBirth", gender, sexual_orientation as "sexualOrientation", bio, num_pics as "numPics", url_pp as "urlPp", email, last_seen as "lastSeen", position, popularity_score, verified FROM users WHERE username = $1';
   const values = [username];
   const { rows: results, rowCount: resultsCount } = await pool.query(
     text,
@@ -44,7 +48,8 @@ async function getUserByUsername(username) {
 }
 
 async function getUserByEmail(email) {
-  const text = "SELECT * FROM users WHERE email = $1";
+  const text =
+    'SELECT id, username, hashed_password as "hashedPassword", firstname, lastname, date_of_birth as "dateOfBirth", gender, sexual_orientation as "sexualOrientation", bio, num_pics as "numPics", url_pp as "urlPp", email, last_seen as "lastSeen", position, popularity_score, verified FROM users WHERE email = $1';
   const values = [email];
   const { rows: results, rowCount: resultsCount } = await pool.query(
     text,
@@ -87,32 +92,100 @@ async function isUserVerified(username) {
 }
 
 async function getProfileInfo(id) {
-  let text = "SELECT username, email FROM users WHERE id = $1";
+  let text =
+    'SELECT id, username, hashed_password as "hashedPassword", firstname, lastname, date_of_birth as "dateOfBirth", gender, sexual_orientation as "sexualOrientation", bio, num_pics as "numPics", url_pp as "urlPp", email, last_seen as "lastSeen", position, popularity_score, verified FROM users WHERE id = $1';
   let values = [id];
-  console.log("ID", id);
   let res = await pool.query(text, values);
   if (res.rowCount) {
+    if (res.rows[0].dateOfBirth !== null) {
+      res.rows[0].dateOfBirth = moment(res.rows[0].dateOfBirth).format(
+        "YYYY-MM-DD"
+      );
+    }
     return res.rows[0];
   } else {
     return null;
   }
 }
 
-async function newUser({ email, password, username, name, surname }) {
+async function availEmail(email) {
+  const text = "SELECT id FROM users WHERE email = $1";
+  const values = [email];
+  const { rowCount: resultsCount } = await pool.query(text, values);
+  if (resultsCount) {
+    return false;
+  }
+  return true;
+}
+
+async function availUsername(username) {
+  const text = "SELECT id FROM users WHERE username = $1";
+  const values = [username];
+  const { rowCount: resultsCount } = await pool.query(text, values);
+  if (resultsCount) {
+    return false;
+  }
+  return true;
+}
+
+async function newUser({ email, password, username, firstname, lastname }) {
+  const available = {
+    username: (await availUsername(username)) ? undefined : "Already exists",
+    email: (await availEmail(email)) ? undefined : "Already exists"
+  };
+  if (available.username !== undefined || available.email !== undefined) {
+    return available;
+  }
   const hashedPassword = await bcrypt.hash(password, 10);
   const text =
-    "INSERT INTO users(email, hashed_password, username, first_name, last_name, verified) VALUES($1, $2, $3, $4, $5, $6)";
-  const values = [email, hashedPassword, username, name, surname, false];
-  try {
-    await pool.query(text, values);
-    return true;
-  } catch (e) {
-    console.log("new user catch:", e);
-    return {
-      routine: e.routine,
-      field: e.constraint.split("_")[1]
-    };
+    "INSERT INTO users(email, hashed_password, username, firstname, lastname, verified) VALUES($1, $2, $3, $4, $5, $6)";
+  const values = [email, hashedPassword, username, firstname, lastname, true]; // TRUE TO FALSE TO ENABLE VERIFICATION
+  pool.query(text, values);
+  return true;
+}
+
+// missing images, hashtagslj
+async function updateUser(
+  {
+    username,
+    firstname,
+    lastname,
+    email,
+    gender,
+    bio,
+    dateOfBirth,
+    sexualOrientation
+  },
+  id
+) {
+  let available = {};
+  const user = await getUserById(id);
+  if (user.username !== username) {
+    available.username = (await availUsername(username))
+      ? undefined
+      : "Already exists";
   }
+  if (user.email !== email) {
+    available.email = (await availEmail(email)) ? undefined : "Already exists";
+  }
+  if (available.username !== undefined || available.email !== undefined) {
+    return available;
+  }
+  const text =
+    "UPDATE users SET email = $2, username = $3, firstname = $4, lastname = $5, gender = $6, bio = $7, date_of_birth = $8, sexual_orientation = $9 WHERE id = $1";
+  const values = [
+    id,
+    email,
+    username,
+    firstname,
+    lastname,
+    gender,
+    bio,
+    dateOfBirth,
+    sexualOrientation
+  ];
+  pool.query(text, values);
+  return true;
 }
 
 module.exports = {
@@ -123,5 +196,6 @@ module.exports = {
   getUserById,
   getUserByUsername,
   getUserByEmail,
-  newUser
+  newUser,
+  updateUser
 };

@@ -19,6 +19,7 @@ export default function Signup() {
     <div>
       <Formol
         onSubmit={async input => {
+          console.log(input);
           return await signup({
             variables: {
               input: input
@@ -35,6 +36,7 @@ export default function Signup() {
         <Field required>Username</Field>
         <Field
           required
+          normalizer={v => v.toLowerCase()}
           // pattern=""
           // validityErrors={({ patternMismatch }) => {
           //   if (patternMismatch) {
@@ -48,8 +50,8 @@ export default function Signup() {
         <Field required type="password">
           Password
         </Field>
-        <Field required>Name</Field>
-        <Field required>Surname</Field>
+        <Field required>Firstname</Field>
+        <Field required>Lastname</Field>
       </Formol>
 
       <br />

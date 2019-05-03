@@ -4,27 +4,27 @@ const typeDefs = gql`
   directive @isAuthenticated on FIELD_DEFINITION
   directive @isOwner on FIELD_DEFINITION
 
-  scalar DateTime
+  scalar Date
   enum SexualOrientation {
-    HETEROSEXUAL
-    HOMOSEXUAL
-    BISEXUAL
+    heterosexual
+    homosexual
+    bisexual
   }
   enum Gender {
-    MALE
-    FEMALE
-    FTM
-    MTF
+    male
+    female
+    ftm
+    mtf
   }
   enum ConnectionType {
-    CONNECTED
-    DISCONNECTED
+    connected
+    disconnected
   }
 
   type Node {
     id: ID!
-    createdAt: DateTime!
-    updatedAt: DateTime!
+    createdAt: Date!
+    updatedAt: Date!
   }
 
   type User {
@@ -33,7 +33,7 @@ const typeDefs = gql`
     position: String!
     hashtags: [Hashtag]
     isOnline: Boolean!
-    popularity_score: String!
+    popularityScore: String!
     lastSeen: String!
     verified: Boolean!
     protected: ProtectedInfo!
@@ -46,14 +46,14 @@ const typeDefs = gql`
   type ProfileInfo {
     username: String!
     firstname: String!
-    lastName: String!
-    gender: Gender!
-    dob: String!
-    bio: String!
-    numPics: Int!
-    urlPp: String!
+    lastname: String!
+    gender: Gender
+    dateOfBirth: String
+    bio: String
+    numPics: Int
+    urlPp: String
     pictures: [Picture]
-    sexualOrientation: SexualOrientation!
+    sexualOrientation: SexualOrientation
     email: String!
   }
 
@@ -107,8 +107,8 @@ const typeDefs = gql`
   input SignupInput {
     email: String!
     username: String!
-    name: String!
-    surname: String!
+    firstname: String!
+    lastname: String!
     password: String!
   }
 
@@ -122,16 +122,34 @@ const typeDefs = gql`
     password: String!
   }
 
+  input UpdateMeInput {
+    username: String!
+    firstname: String!
+    lastname: String!
+    email: String!
+    # password: String
+    gender: Gender
+    bio: String
+    dateOfBirth: Date
+    sexualOrientation: SexualOrientation
+    # hashtag: Hashtag
+    # images: Picture
+  }
+
   type Mutation {
     signup(input: SignupInput!): SignupResponse!
     login(input: LoginInput!): AuthPayload!
     visitedBy(userId: Int!): [User]!
     resetPassword(input: ResetPasswordInput!): Boolean
     resetPasswordRequest(email: String!): Boolean
+    updateMe(input: UpdateMeInput!): User
   }
 
   type Query {
-    me(userID: Int!): User @isOwner
+    me: User
+    """
+    @isOwner
+    """
     user(id: Int!): User
     allUsers: [User]
     node(
