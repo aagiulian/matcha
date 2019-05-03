@@ -2,6 +2,9 @@
 /* Use script `gen-jwt-keys.sh` to generate public and private keys in .env file */
 /*********************************************************************************/
 
+import geoip from "geoip-lite";
+import expressip from "express-ip";
+import util from "util";
 import express from "express";
 require("dotenv").config();
 const { ApolloServer, gql } = require("apollo-server");
@@ -81,11 +84,25 @@ const attachToContext = funs => req =>
 
 //console.log("pubsub async:", pubsub.asyncIterator);
 
+const clientIpAddress = (headers) => {
+  if (headers) {
+    const ipAddress = headers['x-forwarded-for'];
+    if (ipAddress)
+      return ipAddress;
+  }
+  return null;
+}
 
 const server = new ApolloServer({
   schema,
   context: ({ req, connection }) => {
+
+    //console.log("server req:", util.inspect(req, {showHidden: false, depth:1}));
+    //console.log("server req:", Object.keys(req));
+
+    //console.log("server req headers:", util.inspect(req.headers,{showHidden: false, depth:null}));
     if (connection) {
+      //console.log("connection:", util.inspect(connection, {showHidden: false, depth:null}));
       return {
         ...connection.context,
         //pubsub
@@ -94,15 +111,18 @@ const server = new ApolloServer({
       const token = req.header["authorization"] || null;
       return {
         //pubsub,
-        user: getUserFromToken(token)
+        user: getUserFromToken(token),
+        location : geoip.lookup(clientIpAddress(req.headers))
       }
     }
   },
   subscriptions: {
     onConnect: (connectionParams, webSocket, context) => {
       console.log(`Subscription client connected using Apollo server's built-in SubscriptionServer.`);
+      console.log("connectio params:", connectionParams);
       if (connectionParams.authToken) {
         const user = getUserFromToken(connectionParams.authToken);
+        //console.log("user:", user);
         return {
           user
         }

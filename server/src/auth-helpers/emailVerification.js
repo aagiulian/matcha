@@ -15,7 +15,7 @@ function sendMailToken(username, email) {
     },
     (err, emailToken) => {
       const url = `http://${
-        process.env.HOST
+        process.env.REACT_APP_HOST
       }:${reactAppPort}/verify/${emailToken}`;
       transporter.sendMail({
         to: email,
