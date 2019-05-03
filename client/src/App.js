@@ -20,8 +20,9 @@ const App = () => {
     <div>
       <div className="center w85">
         <Header className="header" />
-        <div className="ph3 pv1 background-gray">
+        <div className="ph3 pv1">
           <Switch>
+            {/* <Route exact path="/" component={App} /> */}
             <Route exact path="/signup" component={Signup} />
             <Route exact path="/login" component={Login} />
             <Route exact path="/profile" component={Profile} />

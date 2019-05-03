@@ -50,8 +50,8 @@ export default function Signup() {
         <Field required type="password">
           Password
         </Field>
-        <Field required>Name</Field>
-        <Field required>Surname</Field>
+        <Field required>Firstname</Field>
+        <Field required>Lastname</Field>
       </Formol>
 
       <br />

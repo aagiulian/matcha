@@ -10,7 +10,8 @@ import {
   getUserByEmail,
   getUserById,
   getUserByUsername,
-  newUser
+  newUser,
+  updateUser
 } from "../controllers/userCalls";
 
 const resolvers = {
@@ -69,12 +70,17 @@ const resolvers = {
   Mutation: {
     signup: async (
       _,
-      { input: { email, password, username, name, surname } },
-      context
+      { input: { email, password, username, firstname, lastname } }
     ) => {
       email = email.toLowerCase();
       username = username.toLowerCase();
-      const res = await newUser({ email, password, username, name, surname });
+      const res = await newUser({
+        email,
+        password,
+        username,
+        firstname,
+        lastname
+      });
       if (res !== true) {
         throw new UserInputError("Duplicate", {
           invalidArgs: res
@@ -142,6 +148,20 @@ const resolvers = {
         }
       });
       return true;
+    },
+    updateMe: async (_, { input }, { user: { id } }) => {
+      if (!id) {
+        throw new AuthenticationError(
+          "You need to be logged in order to update your profile."
+        );
+      }
+      const res = await updateUser(input, id);
+      if (res !== true) {
+        throw new UserInputError("Duplicate", {
+          invalidArgs: res
+        });
+      }
+      return await getUserById(id);
     }
   }
 };

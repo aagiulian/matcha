@@ -4,27 +4,27 @@ const typeDefs = gql`
   directive @isAuthenticated on FIELD_DEFINITION
   directive @isOwner on FIELD_DEFINITION
 
-  scalar DateTime
+  scalar Date
   enum SexualOrientation {
-    HETEROSEXUAL
-    HOMOSEXUAL
-    BISEXUAL
+    heterosexual
+    homosexual
+    bisexual
   }
   enum Gender {
-    MALE
-    FEMALE
-    FTM
-    MTF
+    male
+    female
+    ftm
+    mtf
   }
   enum ConnectionType {
-    CONNECTED
-    DISCONNECTED
+    connected
+    disconnected
   }
 
   type Node {
     id: ID!
-    createdAt: DateTime!
-    updatedAt: DateTime!
+    createdAt: Date!
+    updatedAt: Date!
   }
 
   type User {
@@ -47,13 +47,13 @@ const typeDefs = gql`
     username: String!
     firstname: String!
     lastname: String!
-    gender: Gender!
-    dateOfBirth: String!
-    bio: String!
-    numPics: Int!
-    urlPp: String!
+    gender: Gender
+    dateOfBirth: String
+    bio: String
+    numPics: Int
+    urlPp: String
     pictures: [Picture]
-    sexualOrientation: SexualOrientation!
+    sexualOrientation: SexualOrientation
     email: String!
   }
 
@@ -107,8 +107,8 @@ const typeDefs = gql`
   input SignupInput {
     email: String!
     username: String!
-    name: String!
-    surname: String!
+    firstname: String!
+    lastname: String!
     password: String!
   }
 
@@ -127,9 +127,11 @@ const typeDefs = gql`
     firstname: String!
     lastname: String!
     email: String!
-    password: String
+    # password: String
     gender: Gender
     bio: String
+    dateOfBirth: Date
+    sexualOrientation: SexualOrientation
     # hashtag: Hashtag
     # images: Picture
   }

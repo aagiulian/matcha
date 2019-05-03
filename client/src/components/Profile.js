@@ -2,16 +2,21 @@ import React, { useState } from "react";
 import gql from "graphql-tag";
 import { useMutation } from "react-apollo-hooks";
 import { useQuery } from "react-apollo-hooks";
-import axios from "axios";
-import { Link } from "react-router-dom";
 import Formol, { Field } from "formol/lib/formol";
 import "formol/lib/default.css";
 
 const UPDATEME = gql`
   mutation UpdateMe($input: UpdateMeInput!) {
     updateMe(input: $input) {
-      success
-      token
+      profileInfo {
+        username
+        firstname
+        lastname
+        email
+        gender
+        sexualOrientation
+        bio
+      }
     }
   }
 `;
@@ -20,11 +25,29 @@ const ME = gql`
     me {
       profileInfo {
         username
+        firstname
         lastname
+        email
+        gender
+        sexualOrientation
+        bio
+        dateOfBirth
       }
     }
   }
 `;
+
+const Gender = {
+  Male: "male",
+  Female: "female",
+  "Female to male": "ftm",
+  Mtf: "mtf"
+};
+const SexualOrientations = {
+  Heterosexual: "heterosexual",
+  Homosexual: "homosexual",
+  Bisexual: "bisexual"
+};
 
 export default function Profile(props) {
   const updateMe = useMutation(UPDATEME);
@@ -35,7 +58,7 @@ export default function Profile(props) {
   } else if (!error) {
     profile = data.me.profileInfo;
   }
-  console.log(data);
+  console.log(profile);
   return (
     <Formol
       item={profile}
@@ -58,12 +81,17 @@ export default function Profile(props) {
       <Field>Firstname</Field>
       <Field>Lastname</Field>
       <Field>Email</Field>
-      <Field>Password</Field>
-      <Field>Gender</Field>
-      <Field>Sexual Orientation</Field>
-      <Field>Bio</Field>
-      <Field>Hashtag</Field>
-      <Field>Images</Field>
+      {/* <Field>Password</Field> */}
+      <Field type="select" choices={Gender}>
+        Gender
+      </Field>
+      <Field type="select" choices={SexualOrientations}>
+        Sexual Orientation
+      </Field>
+      <Field type="area">Bio</Field>
+      <Field type="date">Date of Birth</Field>
+      {/* <Field>Hashtag</Field> */}
+      {/* <Field type="file">Images</Field> */}
     </Formol>
   );
 }
