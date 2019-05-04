@@ -9,9 +9,9 @@ const pool = new Pool({
 });
 
 // TO CLEAN DB
-var DatabaseCleaner = require("database-cleaner");
-var databaseCleaner = new DatabaseCleaner("postgresql");
-databaseCleaner.clean(pool, () => console.log("Database cleaned !"));
+// var DatabaseCleaner = require("database-cleaner");
+// var databaseCleaner = new DatabaseCleaner("postgresql");
+// databaseCleaner.clean(pool, () => console.log("Database cleaned !"));
 //
 
 module.exports = {

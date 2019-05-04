@@ -95,6 +95,7 @@ export default function Login(props) {
               console.log("normal path:", ret);
               if (ret.data.login.success === true) {
                 sessionStorage.setItem("token", ret.data.login.token);
+                window.location.reload();
                 return;
               }
             } catch (e) {

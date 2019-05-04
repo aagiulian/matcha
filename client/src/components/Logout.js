@@ -1,4 +1,5 @@
 import React from "react";
+import { Redirect } from "react-router-dom"
 
 /*
 import gql from "graphql-tag";
@@ -21,6 +22,8 @@ export default function Logout() {
         onSubmit={e => {
           //   e.preventDefault();
           sessionStorage.removeItem("token");
+          return (<Redirect to="/login"/>)
+
         }}
       >
         <button type="submit">Logout</button>
