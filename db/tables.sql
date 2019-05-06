@@ -25,18 +25,18 @@ CREATE TYPE CONNECTION_TYPE AS ENUM
 CREATE TABLE users
 (
   id SERIAL PRIMARY KEY,
-  username VARCHAR(42) UNIQUE,
-  hashed_password VARCHAR(60),
-  firstname VARCHAR(42),
-  lastname VARCHAR(42),
-  date_of_birth TIMESTAMP,
+  username TEXT UNIQUE,
+  hashed_password TEXT,
+  firstname TEXT,
+  lastname TEXT,
+  date_of_birth TIMESTAMPTZ,
   gender GENDER,
   sexual_orientation SEXUAL_ORIENTATION,
-  bio VARCHAR(420),
+  bio TEXT,
   num_pics SMALLINT,
-  url_pp VARCHAR(420),
-  email VARCHAR(420) UNIQUE,
-  last_seen TIMESTAMP,
+  url_pp TEXT,
+  email TEXT UNIQUE,
+  last_seen TIMESTAMPTZ,
   position POINT,
   popularity_score SMALLINT,
   verified BOOLEAN
@@ -46,7 +46,7 @@ CREATE TABLE users
 CREATE TABLE hashtags
 (
   id SERIAL PRIMARY KEY,
-  name VARCHAR(42) UNIQUE
+  name TEXT UNIQUE
 );
 
 CREATE TABLE users_hashtags
@@ -63,7 +63,7 @@ CREATE TABLE pics
 (
   id SERIAL PRIMARY KEY,
   user_id INTEGER,
-  url VARCHAR(420),
+  url TEXT,
   is_main BOOLEAN,
   FOREIGN KEY(user_id) REFERENCES users(id)
 );
@@ -91,7 +91,7 @@ CREATE TABLE blocked
 CREATE TABLE visited
 (
   id SERIAL PRIMARY KEY,
-  datetime TIMESTAMP,
+  datetime TIMESTAMPTZ,
   user_id INTEGER,
   user_visited INTEGER,
   FOREIGN KEY(user_id) REFERENCES users(id),
@@ -111,16 +111,16 @@ CREATE TABLE messages
 (
   id SERIAL PRIMARY KEY,
   conversation_id INTEGER,
-  text VARCHAR(420),
+  text TEXT,
   is_read BOOLEAN,
-  datetime TIMESTAMP,
+  datetime TIMESTAMPTZ,
   FOREIGN KEY(conversation_id) REFERENCES conversations(id)
 );
 
 CREATE TABLE connections
 (
   id SERIAL PRIMARY KEY,
-  datetime TIMESTAMP,
+  datetime TIMESTAMPTZ,
   event_type CONNECTION_TYPE,
   user_id INTEGER,
   FOREIGN KEY(user_id) REFERENCES users(id)
