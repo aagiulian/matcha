@@ -188,6 +188,33 @@ async function updateUser(
   return true;
 }
 
+async function addVisit(userId, userVisitedId) {
+  let text = "SELECT id FROM visited WHERE user_id = $1 AND user_visited = $2";
+  let values = [userId, userVisitedId, moment.now()];
+  let res = await pool.query(text, values);
+  if (res.rowCount) {
+    text =
+      "UPDATE visited SET datetime = $3 WHERE user_id = $1 AND user_visited = $2";
+    pool.query(text, values);
+  } else {
+    text =
+      "INSERT INTO visited(user_id, user_visited, datetime) VALUES ($1, $2, $3)";
+    pool.query(text, values);
+  }
+}
+
+async function getVisit(userVisitedId) {
+  const text = "SELECT datetime, user_id FROM visited WHERE user_visited = $1";
+  const values = [userVisitedId];
+  let res = await pool.query(text, values);
+  if (res.rowCount) {
+    console.log(res);
+    return res;
+  } else {
+    return null;
+  }
+}
+
 module.exports = {
   getUserId,
   getUserEmail,
@@ -197,5 +224,7 @@ module.exports = {
   getUserByUsername,
   getUserByEmail,
   newUser,
-  updateUser
+  updateUser,
+  getVisit,
+  addVisit
 };
