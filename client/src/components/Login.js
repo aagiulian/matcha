@@ -66,7 +66,7 @@ export default function Login(props) {
 	<button
 	  onClick={() =>
 		   axios.get(
-		     `http://${process.env.REACT_APP_HOST}:30078/sendVerification/${
+		     `http://${process.env.API_HOST}:30078/sendVerification/${
 		errors.username
 	      }`
 		   )

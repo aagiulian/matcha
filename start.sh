@@ -1,5 +1,8 @@
 #!/bin/bash
 
+MATCHA_API="matcha-api-$(whoami)"
+MATCHA_FRONT="matcha-front-$(whoami)"
+
 #gen keys
 rm -f server/.env
 rm -f client/.env
@@ -9,8 +12,12 @@ echo -n "JWT_PRIVATE=\"" >> ./server/.env
 cat ./server/assets/keys/jwtRS256.key | sed 's/$/\\n/' | tr -d '\n' | sed 's/\\n$/\"/' >> ./server/.env
 echo -n "JWT_PUBLIC=\"" >> ./server/.env
 cat ./server/assets/keys/jwtRS256.key.pub | sed 's/$/\\n/' | tr -d '\n' | sed 's/\\n$/\"/' >> ./server/.env
-echo "HOST=\"$(minikube ip)\"" >> ./server/.env
-echo "REACT_APP_HOST=\"$(minikube ip)\"" >> ./client/.env
+echo "API_HOST=$MATCHA_API.serveo.net" >> ./server/.env
+echo "API_HOST=$MATCHA_API.serveo.net" >> ./client/.env
+echo "REACT_APP_HOST=$MATCHA_FRONT.serveo.net" >> ./server/.env
+echo "REACT_APP_HOST=$MATCHA_FRONT.serveo.net" >> ./client/.env
+ssh -R $MATCHA_API:80:$(minikube ip):30077 serveo.net 1>> ./logs/graphql.out 2>> ./logs/graphql.err &
+ssh -R $MATCHA_FRONT:80:$(minikube ip):30080 serveo.net 1>> ./logs/react.out 2>> ./logs/react.err &
 
 #minikube setup
 
