@@ -125,3 +125,7 @@ CREATE TABLE connections
   user_id INTEGER,
   FOREIGN KEY(user_id) REFERENCES users(id)
 );
+
+
+
+\COPY users (id,bio,email,firstname,gender,hashed_password,lastname,num_pics,popularity_score,position,sexual_orientation,url_pp,username,verified,date_of_birth,last_seen) FROM '/docker-entrypoint-initdb.d/fake_profiles.csv' DELIMITER ';' CSV HEADER;
