@@ -13,6 +13,7 @@ import {
   newUser,
   updateUser
 } from "../controllers/userCalls";
+import { readdirSync } from "fs";
 
 const resolvers = {
   User: {
@@ -57,7 +58,7 @@ const resolvers = {
     user: (_, { id }) => ({ id }),
     me: (_, args, { user: { id } }) => ({ id }),
     async allUsers(obj, args, context, info) {
-      const text = "SELECT username, email FROM users";
+      const text = "SELECT id FROM users";
       const res = await pool.query(text);
       if (res.rowCount) {
         console.log(res.rows);
@@ -65,6 +66,26 @@ const resolvers = {
       } else {
         return null;
       }
+    },
+    suggestions: async (_, args, { user: { id } }) => {
+      let dict = {
+        man: {
+          heterosexual: ["female"],
+          homosexual: ["man"],
+          bisexual: ["man", "female"]
+        },
+        female: {
+          heterosexual: ["man"],
+          homosexual: ["female"],
+          bisexual: ["man", "female"]
+        }
+      };
+      let text = "SELECT gender, sexual_orientation FROM users WHERE id = $1";
+      let values = [id];
+      let res = await pool.query(text, values);
+      let wants = dict[res.rows[0].gender][res.rows[0].sexualOrientation];
+      console.log(wants);
+      return 1;
     }
   },
   Mutation: {

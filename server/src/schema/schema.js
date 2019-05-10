@@ -152,6 +152,7 @@ const typeDefs = gql`
     """
     user(id: Int!): User
     allUsers: [User]
+    suggestions: [User]
     node(
       """
       The ID of the object
