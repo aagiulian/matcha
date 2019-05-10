@@ -1,7 +1,6 @@
 import jwt from "jsonwebtoken";
 import { transporter } from "./mailTransporter";
 
-const reactAppPort = 30080;
 
 function sendMailToken(username, email) {
   jwt.sign(
@@ -15,8 +14,8 @@ function sendMailToken(username, email) {
     },
     (err, emailToken) => {
       const url = `http://${
-        process.env.HOST
-      }:${reactAppPort}/verify/${emailToken}`;
+        process.env.REACT_APP_HOST
+      }/verify/${emailToken}`;
       transporter.sendMail({
         to: email,
         subject: "Confirm Email",

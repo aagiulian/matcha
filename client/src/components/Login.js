@@ -44,7 +44,7 @@ export default function Login(props) {
   const [errors, setErrors] = useState(null);
   //const [userCache, setUserCache] = useState(null);
 
-  //console.log("hello host:", `http://${process.env.REACT_APP_HOST}:30078/sendVerification`);
+  //console.log("hello host:", `http://${process.env.REACT_APP_HOST}/sendVerification`);
   //console.log(props);
   //console.log(props.setToken);
   const login = useMutation(LOGIN);
@@ -66,7 +66,7 @@ export default function Login(props) {
         <button
           onClick={() =>
             axios.get(
-              `http://${process.env.REACT_APP_HOST}:30078/sendVerification/${
+              `http://${process.env.REACT_APP_EMAIL_CHECK}/sendVerification/${
                 errors.username
               }`
             )
