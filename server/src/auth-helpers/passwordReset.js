@@ -5,7 +5,7 @@ const reactAppPort = 30080;
 function resetPasswordMail({ token, email }) {
   const url = `http://${
     process.env.REACT_APP_HOST
-  }:${reactAppPort}/resetpassword/${token}`;
+  }/resetpassword/${token}`;
   transporter.sendMail({
     to: email,
     subject: "Reset Password",

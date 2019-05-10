@@ -42,10 +42,10 @@ const authLink = setContext((_, { headers }) => {
 });
 
 // const httpLink = new HttpLink({ uri: "http://localhost:4000" });
-const httpLink = new HttpLink({ uri: `http://${process.env.API_HOST}:30077/` });
+const httpLink = new HttpLink({ uri: `http://${process.env.REACT_APP_API_HOST}/` });
 
 const wsLink = new WebSocketLink({
-  uri: `ws://${process.env.API_HOST}:30077/graphql`,
+  uri: `ws://${process.env.REACT_APP_API_HOST}/graphql`,
   options: {
     reconnect: true,
     connectionParams: {

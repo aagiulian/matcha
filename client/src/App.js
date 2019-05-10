@@ -15,6 +15,10 @@ import ResetPasswordRequest from "./components/ResetPasswordRequest";
 const App = () => {
   const token = sessionStorage.getItem("token");
 
+  console.log("process.env.REACT_APP_API_HOST:", process.env.REACT_APP_API_HOST);
+  console.log("process.env:", process.env);
+
+
   return (
     <div>
       <div className="center w85">
