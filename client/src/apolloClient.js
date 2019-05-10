@@ -30,12 +30,37 @@ const errorLink = onError(({ graphQLErrors, networkError, operation }) => {
   }
 });
 
+function getCurrentLocation(options) {
+  return new Promise((resolve, reject) => {
+    navigator.geolocation.getCurrentPosition(resolve, ({code, message}) =>
+      reject(Object.assign(new Error(message), {name: "PositionError", code})),
+      options);
+    });
+};
+
+async function getLocation() {
+  let location = undefined;
+  if (navigator.geolocation) {
+    try {
+      location = await getCurrentLocation({
+        enableHighAccuracy: true,
+        timeout: 5000,
+        maximumAge: 0
+      });
+    } catch (e) {
+      console.log("location error:", e);
+    }
+  }
+  return location;
+}
+
 const authLink = setContext((_, { headers }) => {
   const authToken = sessionStorage.getItem("token");
   const context = {
     headers: {
       ...headers,
-      Authorization: authToken ? `Bearer ${authToken}` : ""
+      Authorization: authToken ? `Bearer ${authToken}` : "",
+      location: getLocation()
     }
   };
   return context;
