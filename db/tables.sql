@@ -33,6 +33,7 @@ CREATE TABLE users
   gender GENDER,
   sexual_orientation SEXUAL_ORIENTATION,
   bio TEXT,
+  lookingfor TEXT [],
   num_pics SMALLINT,
   url_pp TEXT,
   email TEXT UNIQUE,

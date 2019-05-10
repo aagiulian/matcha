@@ -138,8 +138,17 @@ async function newUser({ email, password, username, firstname, lastname }) {
   }
   const hashedPassword = await bcrypt.hash(password, 10);
   const text =
-    "INSERT INTO users(email, hashed_password, username, firstname, lastname, verified) VALUES($1, $2, $3, $4, $5, $6)";
-  const values = [email, hashedPassword, username, firstname, lastname, true]; // TRUE TO FALSE TO ENABLE VERIFICATION
+    "INSERT INTO users(email, hashed_password, username, firstname, lastname, sexual_orientation, lookingfor, verified) VALUES($1, $2, $3, $4, $5, $6, $7, $8)";
+  const values = [
+    email,
+    hashedPassword,
+    username,
+    firstname,
+    lastname,
+    "bisexual",
+    "{male, female}",
+    true
+  ]; // TRUE TO FALSE TO ENABLE VERIFICATION
   pool.query(text, values);
   return true;
 }
@@ -158,6 +167,19 @@ async function updateUser(
   },
   id
 ) {
+  let dict = {
+    male: {
+      heterosexual: "{female}",
+      homosexual: "{male}",
+      bisexual: "{male,female}"
+    },
+    female: {
+      heterosexual: "{male}",
+      homosexual: "{female}",
+      bisexual: "{male,female}"
+    }
+  };
+  const lookingfor = gender ? dict[gender][sexualOrientation] : "{male,female}";
   let available = {};
   const user = await getUserById(id);
   if (user.username !== username) {
@@ -171,8 +193,9 @@ async function updateUser(
   if (available.username !== undefined || available.email !== undefined) {
     return available;
   }
+
   const text =
-    "UPDATE users SET email = $2, username = $3, firstname = $4, lastname = $5, gender = $6, bio = $7, date_of_birth = $8, sexual_orientation = $9 WHERE id = $1";
+    "UPDATE users SET email = $2, username = $3, firstname = $4, lastname = $5, gender = $6, bio = $7, date_of_birth = $8, sexual_orientation = $9, lookingfor = $10 WHERE id = $1";
   const values = [
     id,
     email,
@@ -182,7 +205,8 @@ async function updateUser(
     gender,
     bio,
     dateOfBirth,
-    sexualOrientation
+    sexualOrientation,
+    lookingfor
   ];
   pool.query(text, values);
   return true;
