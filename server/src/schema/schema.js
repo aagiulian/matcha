@@ -143,6 +143,7 @@ const typeDefs = gql`
     resetPassword(input: ResetPasswordInput!): Boolean
     resetPasswordRequest(email: String!): Boolean
     updateMe(input: UpdateMeInput!): User
+    view(userId: Int!): User
   }
 
   type Query {
@@ -164,7 +165,6 @@ const typeDefs = gql`
   type Subscription {
     userLogged: String
   }
-
 `;
 
 module.exports = {

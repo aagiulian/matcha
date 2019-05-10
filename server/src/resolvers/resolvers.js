@@ -192,6 +192,9 @@ const resolvers = {
         });
       }
       return await getUserById(id);
+    },
+    view: (_, { userId }, { user: { id } }) => {
+      return { id: userId };
     }
   },
   Subscription: {
