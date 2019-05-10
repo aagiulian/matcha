@@ -67,25 +67,27 @@ const resolvers = {
         return null;
       }
     },
+    // NE FAIRE QU'UNE SEULE QUERY POSTGRE
     suggestions: async (_, args, { user: { id } }) => {
-      let dict = {
-        man: {
-          heterosexual: ["female"],
-          homosexual: ["man"],
-          bisexual: ["man", "female"]
-        },
-        female: {
-          heterosexual: ["man"],
-          homosexual: ["female"],
-          bisexual: ["man", "female"]
-        }
-      };
-      let text = "SELECT gender, sexual_orientation FROM users WHERE id = $1";
+      let text = "SELECT gender, lookingfor FROM users WHERE id = $1";
       let values = [id];
-      let res = await pool.query(text, values);
-      let wants = dict[res.rows[0].gender][res.rows[0].sexualOrientation];
-      console.log(wants);
-      return 1;
+      var res = await pool.query(text, values);
+      if (res.rowCount) {
+        const { gender, lookingfor } = res.rows[0];
+        if (lookingfor.length == 1) {
+          text =
+            "SELECT id FROM users WHERE id != $1 AND $2 = ANY (lookingfor) AND gender = $3 ";
+          values = [id, gender, lookingfor[0]];
+        } else {
+          text =
+            "SELECT id FROM users WHERE id != $1 AND $2 = ANY (lookingfor)";
+          values = [id, gender];
+        }
+        let suggestions = await pool.query(text, values);
+        console.log(suggestions);
+        return suggestions.rows;
+      }
+      return null;
     }
   },
   Mutation: {

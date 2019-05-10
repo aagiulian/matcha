@@ -32,6 +32,7 @@ CREATE TABLE users
   date_of_birth TIMESTAMP,
   gender GENDER,
   sexual_orientation SEXUAL_ORIENTATION,
+  lookingfor TEXT [],
   bio VARCHAR(420),
   num_pics SMALLINT,
   url_pp VARCHAR(420),

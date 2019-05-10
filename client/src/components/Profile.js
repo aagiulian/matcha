@@ -39,9 +39,7 @@ const ME = gql`
 
 const Gender = {
   Male: "male",
-  Female: "female",
-  "Female to male": "ftm",
-  Mtf: "mtf"
+  Female: "female"
 };
 const SexualOrientations = {
   Heterosexual: "heterosexual",
