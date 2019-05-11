@@ -3,7 +3,6 @@
 /*********************************************************************************/
 
 import geoip from "geoip-lite";
-import expressip from "express-ip";
 import util from "util";
 import express from "express";
 require("dotenv").config();

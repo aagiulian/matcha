@@ -1,5 +1,12 @@
 #!/bin/bash
 
+#replace any username with actual username in deployment.yaml file
+sed -i.bak "s/vfour/$(whoami)/g" deployment/deployment.yaml
+sed -i.bak "s/vico/$(whoami)/g" deployment/deployment.yaml
+sed -i.bak "s/agiulian/$(whoami)/g" deployment/deployment.yaml
+sed -i.bak "s/Workstation/$(whoami)/g" deployment/deployment.yaml
+rm deployment/*.bak
+
 MATCHA_API="matcha-api-$(whoami)"
 MATCHA_FRONT="matcha-front-$(whoami)"
 MATCHA_EMAIL_CHECK="matcha-email-check-$(whoami)"
