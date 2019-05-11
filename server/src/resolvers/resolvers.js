@@ -82,10 +82,20 @@ const resolvers = {
           text =
             "SELECT id FROM users WHERE id != $1 AND $2 = ANY (lookingfor) AND gender = $3 ";
           values = [id, gender, lookingfor[0]];
+          let text2 =
+            "SELECT id FROM users LEFT OUTER JOIN ( SELECT gender, lookingfor FROM users WHERE id = $1) as ME ON ME.id = users.id WHERE id != 1 AND ME.lookingfor = ANY (users.lookingfor) AND users.gender = ME.gender";
+          let values2 = [id, gender];
+          let lol = await pool.query(text2, values2);
+          console.log(lol);
         } else {
           text =
             "SELECT id FROM users WHERE id != $1 AND $2 = ANY (lookingfor)";
           values = [id, gender];
+          let text2 =
+            "SELECT id FROM users LEFT OUTER JOIN ( SELECT gender, lookingfor FROM users WHERE id = $1) as ME ON ME.id = users.id WHERE id != 1 AND ME.lookingfor = ANY (users.lookingfor)";
+          let values2 = [id, gender];
+          let lol = await pool.query(text2, values2);
+          console.log(lol);
         }
         let suggestions = await pool.query(text, values);
         console.log(suggestions);
