@@ -129,4 +129,4 @@ CREATE TABLE connections
 
 
 
-\COPY users (id,bio,email,firstname,gender,hashed_password,lastname,lookingfor,num_pics,popularity_score,position,sexual_orientation,url_pp,username,verified,date_of_birth,last_seen) FROM '/docker-entrypoint-initdb.d/fake_profiles.csv' DELIMITER ';' CSV HEADER;
+\COPY users (bio,email,firstname,gender,hashed_password,lastname,lookingfor,num_pics,popularity_score,position,sexual_orientation,url_pp,username,verified,date_of_birth,last_seen) FROM '/docker-entrypoint-initdb.d/fake_profiles.csv' DELIMITER ';' CSV HEADER;

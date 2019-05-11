@@ -2,24 +2,27 @@
 /* Use script `gen-jwt-keys.sh` to generate public and private keys in .env file */
 /*********************************************************************************/
 
+
+require("dotenv").config();
 import geoip from "geoip-lite";
 import util from "util";
+import jwt from "jsonwebtoken";
 import express from "express";
-require("dotenv").config();
-const { ApolloServer, gql } = require("apollo-server");
-const { makeExecutableSchema } = require("graphql-tools");
-const {
+import { ApolloServer, gql } from "apollo-server";
+import { RedisPubSub } from 'graphql-redis-subscriptions';
+
+import { makeExecutableSchema } from "graphql-tools";
+import {
   getUserFromToken,
   attachUserToContext,
   OwnerDirective,
   AuthenticationDirective
-} = require("./auth-helpers/directives");
-const { typeDefs } = require("./schema/schema");
-const { resolvers } = require("./resolvers/resolvers");
+} from "./auth-helpers/directives";
+import { typeDefs } from "./schema/schema";
+import { resolvers } from "./resolvers/resolvers";
 
-const fakeProfiles = require("./fake_profiles.json");
-const { pool } = require("./database");
-const jwt = require("jsonwebtoken");
+import fakeProfiles from "./fake_profiles.json";
+import { pool } from "./database";
 
 import { getUserByUsername } from "./controllers/userCalls";
 import { sendMailToken } from "./auth-helpers/emailVerification";

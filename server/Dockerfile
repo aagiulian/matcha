@@ -1,8 +1,7 @@
-FROM node:10.15.3-alpine
+FROM node:10.15.3
 WORKDIR /usr/src/app
 
 EXPOSE 4000
 EXPOSE 4001
-EXPOSE 5000
 
 CMD sh run-dev.sh
