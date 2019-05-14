@@ -2,14 +2,13 @@
 /* Use script `gen-jwt-keys.sh` to generate public and private keys in .env file */
 /*********************************************************************************/
 
-
 require("dotenv").config();
 import geoip from "geoip-lite";
 import util from "util";
 import jwt from "jsonwebtoken";
 import express from "express";
 import { ApolloServer, gql } from "apollo-server";
-import { RedisPubSub } from 'graphql-redis-subscriptions';
+import { RedisPubSub } from "graphql-redis-subscriptions";
 
 import { makeExecutableSchema } from "graphql-tools";
 import {
@@ -86,19 +85,17 @@ const attachToContext = funs => req =>
 
 //console.log("pubsub async:", pubsub.asyncIterator);
 
-const clientIpAddress = (headers) => {
+const clientIpAddress = headers => {
   if (headers) {
-    const ipAddress = headers['x-forwarded-for'];
-    if (ipAddress)
-      return ipAddress;
+    const ipAddress = headers["x-forwarded-for"];
+    if (ipAddress) return ipAddress;
   }
   return null;
-}
+};
 
 const server = new ApolloServer({
   schema,
   context: ({ req, connection }) => {
-
     //console.log("server req:", util.inspect(req, {showHidden: false, depth:1}));
     //console.log("server req:", Object.keys(req));
 
@@ -106,28 +103,30 @@ const server = new ApolloServer({
     if (connection) {
       //console.log("connection:", util.inspect(connection, {showHidden: false, depth:null}));
       return {
-        ...connection.context,
+        ...connection.context
         //pubsub
       };
     } else {
-      const token = req.header["authorization"] || null;
+      const token = req.headers["authorization"] || null;
       return {
         //pubsub,
         user: getUserFromToken(token),
-        location : geoip.lookup(clientIpAddress(req.headers))
-      }
+        location: geoip.lookup(clientIpAddress(req.headers))
+      };
     }
   },
   subscriptions: {
     onConnect: (connectionParams, webSocket, context) => {
-      console.log(`Subscription client connected using Apollo server's built-in SubscriptionServer.`);
+      console.log(
+        `Subscription client connected using Apollo server's built-in SubscriptionServer.`
+      );
       console.log("connectio params:", connectionParams);
       if (connectionParams.authToken) {
         const user = getUserFromToken(connectionParams.authToken);
         //console.log("user:", user);
         return {
           user
-        }
+        };
       }
       console.log("Missing auth token for websocket");
       /*
@@ -137,7 +136,7 @@ const server = new ApolloServer({
       */
     },
     onDisconnect: (webSocket, context) => {
-      console.log(`Subscription client disconnected.`)
+      console.log(`Subscription client disconnected.`);
 
       /*
       console.log("websocket", webSocket);
@@ -145,10 +144,9 @@ const server = new ApolloServer({
       */
     }
   }
-//  attachToContext([attachUserToContext,
-//                            ({ req, res }) => ({req, res, pubsub })])
+  //  attachToContext([attachUserToContext,
+  //                            ({ req, res }) => ({req, res, pubsub })])
 });
-
 
 server.listen().then(({ url }) => {
   console.log(`🚀  Server ready at ${url}`);
