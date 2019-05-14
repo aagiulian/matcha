@@ -163,7 +163,8 @@ async function updateUser(
     gender,
     bio,
     dateOfBirth,
-    sexualOrientation
+    sexualOrientation,
+    tags
   },
   id
 ) {
@@ -209,6 +210,7 @@ async function updateUser(
     lookingfor
   ];
   pool.query(text, values);
+  updateTag(tags, id);
   return true;
 }
 
@@ -239,6 +241,41 @@ async function getVisit(userVisitedId) {
   }
 }
 
+async function updateTag(tags, user_id) {
+  // const text = "INSERT INTO users_hashtags(user_id, hashtag_id) SELECT u.unnest, h.name FROM unnest($1) u, hashtags h WHERE h.name = $2"
+  const text =
+    "INSERT INTO users_hashtags(hashtag_name, user_id) SELECT unnest,$2 FROM unnest($1::text[])";
+
+  console.log(tags);
+  console.log(user_id);
+
+  const values = [tags, user_id];
+  pool.query(text, values);
+}
+
+async function getUserHashtags(id) {
+  const text = "SELECT hashtag_name FROM users_hashtags WHERE user_id = $1";
+  const values = [id];
+  let res = await pool.query(text, values);
+  if (res.rowCount) {
+    return { hashtags: res.rows.map(i => i.hashtag_name) };
+  } else {
+    return null;
+  }
+}
+
+async function getHashtagsList() {
+  const text = "SELECT name FROM hashtags";
+  let res = await pool.query(text);
+  if (res.rowCount) {
+    let test = res.rows.map(i => i.name);
+    console.log("ici", test);
+    return test;
+  } else {
+    return null;
+  }
+}
+
 module.exports = {
   getUserId,
   getUserEmail,
@@ -250,5 +287,7 @@ module.exports = {
   newUser,
   updateUser,
   getVisit,
-  addVisit
+  addVisit,
+  getUserHashtags,
+  getHashtagsList
 };

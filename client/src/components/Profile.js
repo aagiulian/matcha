@@ -16,6 +16,7 @@ const UPDATEME = gql`
         gender
         sexualOrientation
         bio
+        hashtags
       }
     }
   }
@@ -32,8 +33,15 @@ const ME = gql`
         sexualOrientation
         bio
         dateOfBirth
+        hashtags
       }
     }
+  }
+`;
+
+const HASHTAGS = gql`
+  query Hashtags {
+    hashtags
   }
 `;
 
@@ -50,11 +58,20 @@ const SexualOrientations = {
 export default function Profile(props) {
   const updateMe = useMutation(UPDATEME);
   const { data, error, loading } = useQuery(ME);
+  const { data: dat, error: err, loading: load } = useQuery(HASHTAGS);
+  console.log(dat);
   let profile;
-  if (loading) {
+  let tags;
+  if (loading || load) {
     return <div>Loading</div>;
-  } else if (!error) {
+  } else if (!error && !err) {
     profile = data.me.profileInfo;
+    console.log(dat);
+    tags = dat.hashtags
+      .map(t => {
+        return { ["#" + t]: t };
+      })
+      .reduce((acc, cur) => Object.assign(acc, cur), {});
   }
   console.log(profile);
   return (
@@ -88,7 +105,9 @@ export default function Profile(props) {
       </Field>
       <Field type="area">Bio</Field>
       <Field type="date">Date of Birth</Field>
-      {/* <Field>Hashtag</Field> */}
+      <Field type="checkbox-set" choices={tags}>
+        Hashtags
+      </Field>
       {/* <Field type="file">Images</Field> */}
     </Formol>
   );

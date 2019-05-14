@@ -31,7 +31,6 @@ const typeDefs = gql`
     id: ID!
     profileInfo: ProfileInfo
     position: String!
-    hashtags: [Hashtag]
     isOnline: Boolean!
     popularityScore: String!
     lastSeen: String!
@@ -55,6 +54,7 @@ const typeDefs = gql`
     pictures: [Picture]
     sexualOrientation: SexualOrientation
     email: String!
+    hashtags: [String]
   }
 
   type Relation {
@@ -132,6 +132,7 @@ const typeDefs = gql`
     bio: String
     dateOfBirth: Date
     sexualOrientation: SexualOrientation
+    hashtags: [String]
     # hashtag: Hashtag
     # images: Picture
   }
@@ -154,6 +155,7 @@ const typeDefs = gql`
     user(id: Int!): User
     allUsers: [User]
     suggestions: [User]
+    hashtags: [String]
     node(
       """
       The ID of the object

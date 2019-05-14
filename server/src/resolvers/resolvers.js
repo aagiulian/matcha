@@ -10,6 +10,8 @@ import {
   getUserByEmail,
   getUserById,
   getUserByUsername,
+  getUserHashtags,
+  getHashtagsList,
   newUser,
   updateUser
 } from "../controllers/userCalls";
@@ -21,7 +23,6 @@ const USER_LOGGED = "USER_LOGGED";
 
 const resolvers = {
   User: {
-    hashtags: async ({ id }) => ({ id }),
     profileInfo: async ({ id }) => ({ id })
   },
   ProfileInfo: {
@@ -56,6 +57,10 @@ const resolvers = {
     email: async ({ id }) => {
       const { email } = await getProfileInfo(id);
       return email;
+    },
+    hashtags: async ({ id }) => {
+      const { hashtags } = await getUserHashtags(id);
+      return hashtags;
     }
   },
   Query: {
@@ -81,6 +86,7 @@ const resolvers = {
         if (lookingfor.length == 1) {
           text =
             "SELECT id FROM users WHERE id != $1 AND $2 = ANY (lookingfor) AND gender = $3 ";
+          // "SELECT id FROM users WHERE SELECT gender, lookingfor FROM users WHERE id = $1";
           values = [id, gender, lookingfor[0]];
         } else {
           text =
@@ -92,7 +98,8 @@ const resolvers = {
         return suggestions.rows;
       }
       return null;
-    }
+    },
+    hashtags: async _ => await getHashtagsList()
   },
   Mutation: {
     signup: async (

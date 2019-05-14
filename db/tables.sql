@@ -46,7 +46,6 @@ CREATE TABLE users
 
 CREATE TABLE hashtags
 (
-  id SERIAL PRIMARY KEY,
   name TEXT UNIQUE
 );
 
@@ -54,10 +53,10 @@ CREATE TABLE users_hashtags
 (
   id SERIAL PRIMARY KEY,
   user_id INTEGER,
-  hashtag_id INTEGER,
+  hashtag_name TEXT,
 
   FOREIGN KEY(user_id) REFERENCES users(id),
-  FOREIGN KEY(hashtag_id) REFERENCES hashtags(id)
+  FOREIGN KEY(hashtag_name) REFERENCES hashtags(name)
 );
 
 CREATE TABLE pics
@@ -130,3 +129,4 @@ CREATE TABLE connections
 
 
 \COPY users (bio,email,firstname,gender,hashed_password,lastname,lookingfor,num_pics,popularity_score,position,sexual_orientation,url_pp,username,verified,date_of_birth,last_seen) FROM '/docker-entrypoint-initdb.d/fake_profiles.csv' DELIMITER ';' CSV HEADER;
+

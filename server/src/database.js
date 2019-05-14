@@ -13,7 +13,11 @@ const pool = new Pool({
 // var databaseCleaner = new DatabaseCleaner("postgresql");
 // databaseCleaner.clean(pool, () => console.log("Database cleaned !"));
 //
-
+const hashtags = ["Beachbody", "McDo", "Diet", "AssToMouth", "JustHereForFun"];
+const text =
+  "INSERT INTO hashtags(name) SELECT unnest FROM unnest($1::text[]) ON CONFLICT DO NOTHING";
+const values = [hashtags];
+pool.query(text, values);
 module.exports = {
   pool
 };
