@@ -21,23 +21,20 @@ cat ./server/assets/keys/jwtRS256.key | sed 's/$/\\n/' | tr -d '\n' | sed 's/\\n
 echo -n "JWT_PUBLIC=\"" >> ./server/.env
 cat ./server/assets/keys/jwtRS256.key.pub | sed 's/$/\\n/' | tr -d '\n' | sed 's/\\n$/\"/' >> ./server/.env
 
+cat ./server/secrets >> ./server/.env
 echo "API_HOST=$MATCHA_API.serveo.net" >> ./server/.env
 echo "EMAIL_CHECK=$MATCHA_EMAIL_CHECK.serveo.net" >> ./server/.env
 echo "REACT_APP_HOST=$MATCHA_FRONT.serveo.net" >> ./server/.env
 
+cat ./client/secrets >> ./client/.env
 echo "REACT_APP_API_HOST=$MATCHA_API.serveo.net" >> ./client/.env
 echo "REACT_APP_EMAIL_CHECK=$MATCHA_EMAIL_CHECK.serveo.net" >> ./client/.env
 echo "REACT_APP_HOST=$MATCHA_FRONT.serveo.net" >> ./client/.env
 
-ssh -R $MATCHA_API:80:$(minikube ip):30077 serveo.net 1>> ./logs/graphql.out 2>> ./logs/graphql.err &
-
-ssh -R $MATCHA_EMAIL_CHECK:80:$(minikube ip):30078 serveo.net 1>> ./logs/email_check.out 2>> ./logs/email_check.err &
-ssh -R $MATCHA_FRONT:80:$(minikube ip):30080 serveo.net 1>> ./logs/react.out 2>> ./logs/react.err &
-
 #minikube setup
 
 #minikube start
-#eval $(minikube docker-env)
+eval $(minikube docker-env)
 
 #kubectl create secret generic jwt-keys \
 #	--from-file=JWT_PRIVATE=./server/assets/keys/jwtRS256.key
@@ -50,6 +47,10 @@ docker build -t postgres-local db
 
 #k8s deployment
 kubectl create -f deployment
+
+ssh -o PubkeyAuthentication=no -R $MATCHA_API:80:$(minikube ip):30077 serveo.net 1>> ./logs/graphql.out 2>> ./logs/graphql.err &
+ssh -o PubkeyAuthentication=no -R $MATCHA_EMAIL_CHECK:80:$(minikube ip):30078 serveo.net 1>> ./logs/email_check.out 2>> ./logs/email_check.err &
+ssh -o PubkeyAuthentication=no -R $MATCHA_FRONT:80:$(minikube ip):30080 serveo.net 1>> ./logs/react.out 2>> ./logs/react.err &
 
 #echo "minikube running on:" $(minikube ip)
 

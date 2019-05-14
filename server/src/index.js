@@ -3,12 +3,12 @@
 /*********************************************************************************/
 
 require("dotenv").config();
-import geoip from "geoip-lite";
 import util from "util";
 import jwt from "jsonwebtoken";
 import express from "express";
 import { ApolloServer, gql } from "apollo-server";
 import { RedisPubSub } from "graphql-redis-subscriptions";
+import { getUserLocation } from "./controllers/geolocation.js";
 
 import { makeExecutableSchema } from "graphql-tools";
 import {
@@ -85,17 +85,9 @@ const attachToContext = funs => req =>
 
 //console.log("pubsub async:", pubsub.asyncIterator);
 
-const clientIpAddress = headers => {
-  if (headers) {
-    const ipAddress = headers["x-forwarded-for"];
-    if (ipAddress) return ipAddress;
-  }
-  return null;
-};
-
 const server = new ApolloServer({
   schema,
-  context: ({ req, connection }) => {
+  context: async ({ req, connection }) => {
     //console.log("server req:", util.inspect(req, {showHidden: false, depth:1}));
     //console.log("server req:", Object.keys(req));
 
@@ -111,7 +103,8 @@ const server = new ApolloServer({
       return {
         //pubsub,
         user: getUserFromToken(token),
-        location: geoip.lookup(clientIpAddress(req.headers))
+        location: await getUserLocation(req.headers),
+        //location: geoip.lookup(clientIpAddress(req.headers))
       };
     }
   },
@@ -120,7 +113,7 @@ const server = new ApolloServer({
       console.log(
         `Subscription client connected using Apollo server's built-in SubscriptionServer.`
       );
-      console.log("connectio params:", connectionParams);
+      //console.log("connectio params:", connectionParams);
       if (connectionParams.authToken) {
         const user = getUserFromToken(connectionParams.authToken);
         //console.log("user:", user);

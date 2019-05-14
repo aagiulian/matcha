@@ -4,3 +4,4 @@ package-lock.json
 **/.DS_STORE
 **/.ipynb_checkpoints
 logs/*
+**/secrets
