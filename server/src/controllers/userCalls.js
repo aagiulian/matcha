@@ -4,7 +4,13 @@ import bcrypt from "bcrypt";
 import moment from "moment";
 
 async function getUserId(username) {
-  const text = "SELECT id FROM users WHERE username = $1";
+  const text = `
+    SELECT 
+      id 
+    FROM 
+      users 
+    WHERE 
+      username = $1`;
   const values = [username];
   const { rows: results, rowCount: resultsCount } = await pool.query(
     text,
@@ -18,8 +24,28 @@ async function getUserId(username) {
 }
 
 async function getUserById(id) {
-  const text =
-    'SELECT id, username, hashed_password as "hashedPassword", firstname, lastname, date_of_birth as "dateOfBirth", gender, sexual_orientation as "sexualOrientation", bio, num_pics as "numPics", url_pp as "urlPp", email, last_seen as "lastSeen", position, popularity_score, verified FROM users WHERE id = $1';
+  const text = `
+    SELECT 
+      id, 
+      username, 
+      hashed_password as "hashedPassword", 
+      firstname, 
+      lastname, 
+      date_of_birth as "dateOfBirth", 
+      gender, 
+      sexual_orientation as "sexualOrientation", 
+      bio, 
+      num_pics as "numPics", 
+      url_pp as "urlPp", 
+      email, 
+      last_seen as "lastSeen", 
+      position, 
+      popularity_score, 
+      verified 
+    FROM 
+      users 
+    WHERE 
+      id = $1`;
   const values = [id];
   const { rows: results, rowCount: resultsCount } = await pool.query(
     text,
@@ -63,7 +89,13 @@ async function getUserByEmail(email) {
 }
 
 async function getUserEmail(username) {
-  const text = "SELECT email FROM users WHERE username = $1";
+  const text = `
+    SELECT 
+      email 
+    FROM 
+      users 
+    WHERE 
+      username = $1 `;
   const values = [username];
   const { rows: results, rowCount: resultsCount } = await pool.query(
     text,
@@ -78,7 +110,13 @@ async function getUserEmail(username) {
 
 async function isUserVerified(username) {
   // doesn't check if user actually exists
-  const text = "SELECT verified FROM users WHERE username = $1";
+  const text = `
+    SELECT 
+      verified 
+    FROM 
+      users 
+    WHERE 
+      username = $1`;
   const values = [username];
   const { rows: results, rowCount: resultsCount } = await pool.query(
     text,
@@ -92,8 +130,32 @@ async function isUserVerified(username) {
 }
 
 async function getProfileInfo(id) {
-  let text =
-    'SELECT id, username, hashed_password as "hashedPassword", firstname, lastname, date_of_birth as "dateOfBirth", gender, sexual_orientation as "sexualOrientation", bio, num_pics as "numPics", url_pp as "urlPp", email, last_seen as "lastSeen", position, popularity_score, verified FROM users WHERE id = $1';
+  let text = `
+    SELECT 
+      users.id, 
+      username, 
+      hashed_password as "hashedPassword", 
+      firstname, 
+      lastname, 
+      date_of_birth as "dateOfBirth", 
+      gender, 
+      sexual_orientation as "sexualOrientation", 
+      bio, 
+      num_pics as "numPics", 
+      url_pp as "urlPp", 
+      email, 
+      last_seen as "lastSeen", 
+      position, 
+      popularity_score, 
+      verified 
+    FROM 
+      users 
+    LEFT JOIN 
+      pics 
+    ON 
+      pics.user_id = users.id 
+    WHERE 
+      users.id = $1`;
   let values = [id];
   let res = await pool.query(text, values);
   if (res.rowCount) {
@@ -109,7 +171,13 @@ async function getProfileInfo(id) {
 }
 
 async function availEmail(email) {
-  const text = "SELECT id FROM users WHERE email = $1";
+  const text = `
+    SELECT 
+      id 
+    FROM 
+      users 
+    WHERE 
+      email = $1`;
   const values = [email];
   const { rowCount: resultsCount } = await pool.query(text, values);
   if (resultsCount) {
@@ -119,7 +187,13 @@ async function availEmail(email) {
 }
 
 async function availUsername(username) {
-  const text = "SELECT id FROM users WHERE username = $1";
+  const text = `
+    SELECT 
+      id 
+    FROM 
+      users 
+    WHERE 
+      username = $1`;
   const values = [username];
   const { rowCount: resultsCount } = await pool.query(text, values);
   if (resultsCount) {
@@ -137,8 +211,17 @@ async function newUser({ email, password, username, firstname, lastname }) {
     return available;
   }
   const hashedPassword = await bcrypt.hash(password, 10);
-  const text =
-    "INSERT INTO users(email, hashed_password, username, firstname, lastname, sexual_orientation, lookingfor, verified) VALUES($1, $2, $3, $4, $5, $6, $7, $8)";
+  const text = `
+    INSERT INTO 
+      users(email, 
+            hashed_password, 
+            username, firstname, 
+            lastname, 
+            sexual_orientation, 
+            lookingfor, 
+            verified) 
+    VALUES
+      ($1, $2, $3, $4, $5, $6, $7, $8)`;
   const values = [
     email,
     hashedPassword,
@@ -195,8 +278,21 @@ async function updateUser(
     return available;
   }
 
-  const text =
-    "UPDATE users SET email = $2, username = $3, firstname = $4, lastname = $5, gender = $6, bio = $7, date_of_birth = $8, sexual_orientation = $9, lookingfor = $10 WHERE id = $1";
+  const text = `
+    UPDATE 
+      users 
+    SET 
+      email = $2, 
+      username = $3, 
+      firstname = $4, 
+      lastname = $5, 
+      gender = $6, 
+      bio = $7, 
+      date_of_birth = $8, 
+      sexual_orientation = $9, 
+      lookingfor = $10 
+    WHERE 
+      id = $1`;
   const values = [
     id,
     email,
@@ -215,22 +311,43 @@ async function updateUser(
 }
 
 async function addVisit(userId, userVisitedId) {
-  let text = "SELECT id FROM visited WHERE user_id = $1 AND user_visited = $2";
+  let text = `
+    SELECT 
+      id 
+    FROM 
+      visited 
+    WHERE 
+      user_id = $1 AND user_visited = $2`;
   let values = [userId, userVisitedId, moment.now()];
   let res = await pool.query(text, values);
   if (res.rowCount) {
-    text =
-      "UPDATE visited SET datetime = $3 WHERE user_id = $1 AND user_visited = $2";
+    text = `
+      UPDATE 
+        visited 
+      SET 
+        datetime = $3 
+      WHERE 
+        user_id = $1 AND user_visited = $2`;
     pool.query(text, values);
   } else {
-    text =
-      "INSERT INTO visited(user_id, user_visited, datetime) VALUES ($1, $2, $3)";
+    text = `
+      INSERT INTO 
+        visited(user_id, user_visited, datetime) 
+      VALUES 
+        ($1, $2, $3)`;
     pool.query(text, values);
   }
 }
 
 async function getVisit(userVisitedId) {
-  const text = "SELECT datetime, user_id FROM visited WHERE user_visited = $1";
+  const text = `
+    SELECT 
+      datetime, 
+      user_id 
+    FROM 
+      visited 
+    WHERE 
+      user_visited = $1`;
   const values = [userVisitedId];
   let res = await pool.query(text, values);
   if (res.rowCount) {
@@ -243,15 +360,27 @@ async function getVisit(userVisitedId) {
 
 async function updateTag(tags, user_id) {
   // const text = "INSERT INTO users_hashtags(user_id, hashtag_id) SELECT u.unnest, h.name FROM unnest($1) u, hashtags h WHERE h.name = $2"
-  const text =
-    "INSERT INTO users_hashtags(hashtag_name, user_id) SELECT unnest,$2 FROM unnest($1::text[])";
+  const text = `
+    INSERT INTO 
+      users_hashtags(hashtag_name, user_id) 
+    SELECT 
+      unnest,
+      $2 
+    FROM 
+      unnest($1::text[])`;
 
   const values = [tags, user_id];
   pool.query(text, values);
 }
 
 async function getUserHashtags(id) {
-  const text = "SELECT hashtag_name FROM users_hashtags WHERE user_id = $1";
+  const text = `
+    SELECT 
+      hashtag_name 
+    FROM 
+      users_hashtags 
+    WHERE 
+      user_id = $1`;
   const values = [id];
   let res = await pool.query(text, values);
   if (res.rowCount) {
@@ -262,13 +391,41 @@ async function getUserHashtags(id) {
 }
 
 async function getHashtagsList() {
-  const text = "SELECT name FROM hashtags";
+  const text = `
+    SELECT 
+      name 
+    FROM 
+      hashtags`;
   let res = await pool.query(text);
   if (res.rowCount) {
     return res.rows.map(i => i.name);
   } else {
     return null;
   }
+}
+
+async function addImage(images, userId) {
+  const text = `
+    INSERT INTO 
+      pics(url, user_id) 
+    VALUES 
+      SELECT 
+        unnest, 
+        $2 
+      FROM 
+        unnest($1::text[])`;
+  const values = [images, userId];
+  pool.query(text, values);
+}
+
+async function deleteImage(imageId, userId) {
+  const text = `
+    DELETE FROM 
+      pics 
+    WHERE 
+      pics.id = $1 AND pics.user_id = $2`;
+  const values = [imageId, userId];
+  pool.query(text, values);
 }
 
 module.exports = {
