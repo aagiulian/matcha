@@ -246,9 +246,6 @@ async function updateTag(tags, user_id) {
   const text =
     "INSERT INTO users_hashtags(hashtag_name, user_id) SELECT unnest,$2 FROM unnest($1::text[])";
 
-  console.log(tags);
-  console.log(user_id);
-
   const values = [tags, user_id];
   pool.query(text, values);
 }
@@ -260,7 +257,7 @@ async function getUserHashtags(id) {
   if (res.rowCount) {
     return { hashtags: res.rows.map(i => i.hashtag_name) };
   } else {
-    return null;
+    return { hashtags: null };
   }
 }
 
@@ -268,9 +265,7 @@ async function getHashtagsList() {
   const text = "SELECT name FROM hashtags";
   let res = await pool.query(text);
   if (res.rowCount) {
-    let test = res.rows.map(i => i.name);
-    console.log("ici", test);
-    return test;
+    return res.rows.map(i => i.name);
   } else {
     return null;
   }

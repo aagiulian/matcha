@@ -15,6 +15,7 @@ import {
   newUser,
   updateUser
 } from "../controllers/userCalls";
+import { storeUpload } from "../controllers/imageUtils";
 import { readdirSync } from "fs";
 
 const pubsub = new PubSub();
@@ -86,7 +87,6 @@ const resolvers = {
         if (lookingfor.length == 1) {
           text =
             "SELECT id FROM users WHERE id != $1 AND $2 = ANY (lookingfor) AND gender = $3 ";
-          // "SELECT id FROM users WHERE SELECT gender, lookingfor FROM users WHERE id = $1";
           values = [id, gender, lookingfor[0]];
         } else {
           text =
@@ -99,7 +99,7 @@ const resolvers = {
       }
       return null;
     },
-    hashtags: async _ => await getHashtagsList()
+    hashtags: async () => await getHashtagsList()
   },
   Mutation: {
     signup: async (
@@ -202,6 +202,12 @@ const resolvers = {
     },
     view: (_, { userId }, { user: { id } }) => {
       return { id: userId };
+    },
+    uploadFile: async (_, { file: [file] }) => {
+      const { createReadStream, filename } = await file;
+      const stream = createReadStream();
+      await storeUpload({ stream, filename });
+      return true;
     }
   },
   Subscription: {

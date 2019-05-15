@@ -5,6 +5,7 @@ import Maine from "./components/Maine";
 import Verify from "./components/Verify";
 import Profile from "./components/Profile";
 import ResetPassword from "./components/ResetPassword";
+import Upload from "./components/Upload";
 import React from "react";
 
 import Header from "./components/Header";
@@ -16,9 +17,11 @@ import ResetPasswordRequest from "./components/ResetPasswordRequest";
 const App = () => {
   const token = sessionStorage.getItem("token");
 
-  console.log("process.env.REACT_APP_API_HOST:", process.env.REACT_APP_API_HOST);
+  console.log(
+    "process.env.REACT_APP_API_HOST:",
+    process.env.REACT_APP_API_HOST
+  );
   console.log("process.env:", process.env);
-
 
   return (
     <div>
@@ -31,6 +34,7 @@ const App = () => {
             <Route exact path="/login" component={Login} />
             <Route exact path="/profile" component={Profile} />
             <Route exact path="/verify/:emailToken" component={Verify} />
+            <Route exact path="/upload" component={Upload} />
             <Route
               exact
               path="/resetPassword"

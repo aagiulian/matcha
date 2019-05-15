@@ -5,6 +5,8 @@ const typeDefs = gql`
   directive @isOwner on FIELD_DEFINITION
 
   scalar Date
+  scalar Upload
+
   enum SexualOrientation {
     heterosexual
     homosexual
@@ -145,6 +147,7 @@ const typeDefs = gql`
     resetPasswordRequest(email: String!): Boolean
     updateMe(input: UpdateMeInput!): User
     view(userId: Int!): User
+    uploadFile(file: Upload!): Boolean!
   }
 
   type Query {

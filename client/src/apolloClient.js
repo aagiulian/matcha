@@ -7,6 +7,7 @@ import { WebSocketLink } from "apollo-link-ws";
 import { setContext } from "apollo-link-context";
 import { onError } from "apollo-link-error";
 import { withClientState } from "apollo-link-state";
+import { createUploadLink } from "apollo-upload-client";
 
 const cache = new InMemoryCache();
 
@@ -32,11 +33,16 @@ const errorLink = onError(({ graphQLErrors, networkError, operation }) => {
 
 function getCurrentLocation(options) {
   return new Promise((resolve, reject) => {
-    navigator.geolocation.getCurrentPosition(resolve, ({code, message}) =>
-      reject(Object.assign(new Error(message), {name: "PositionError", code})),
-      options);
-    });
-};
+    navigator.geolocation.getCurrentPosition(
+      resolve,
+      ({ code, message }) =>
+        reject(
+          Object.assign(new Error(message), { name: "PositionError", code })
+        ),
+      options
+    );
+  });
+}
 
 async function getLocation() {
   let location = undefined;
@@ -67,7 +73,12 @@ const authLink = setContext((_, { headers }) => {
 });
 
 // const httpLink = new HttpLink({ uri: "http://localhost:4000" });
-const httpLink = new HttpLink({ uri: `http://${process.env.REACT_APP_API_HOST}/` });
+// const httpLink = new HttpLink({
+//   uri: `http://${process.env.REACT_APP_API_HOST}/`
+// });
+const uploadLink = createUploadLink({
+  uri: `http://${process.env.REACT_APP_API_HOST}/`
+});
 
 const wsLink = new WebSocketLink({
   uri: `ws://${process.env.REACT_APP_API_HOST}/graphql`,
@@ -79,17 +90,17 @@ const wsLink = new WebSocketLink({
   }
 });
 
-
 const webLink = split(
   ({ query }) => {
     const definition = getMainDefinition(query);
-    return (definition.kind === 'OperationDefinition'
-            && definition.operation === 'subscription');
+    return (
+      definition.kind === "OperationDefinition" &&
+      definition.operation === "subscription"
+    );
   },
   wsLink,
-  httpLink
+  uploadLink
 );
-
 
 const client = new ApolloClient({
   link: ApolloLink.from([errorLink, authLink, stateLink, webLink]),
