@@ -133,21 +133,22 @@ async function getProfileInfo(id) {
   let text = `
     SELECT 
       users.id, 
-      username, 
-      hashed_password as "hashedPassword", 
-      firstname, 
-      lastname, 
-      date_of_birth as "dateOfBirth", 
-      gender, 
-      sexual_orientation as "sexualOrientation", 
-      bio, 
-      num_pics as "numPics", 
-      url_pp as "urlPp", 
-      email, 
-      last_seen as "lastSeen", 
-      position, 
-      popularity_score, 
-      verified 
+      users.username, 
+      users.hashed_password as "hashedPassword", 
+      users.firstname, 
+      users.lastname, 
+      users.date_of_birth as "dateOfBirth", 
+      users.gender, 
+      users.sexual_orientation as "sexualOrientation", 
+      users.bio, 
+      users.num_pics as "numPics", 
+      users.url_pp as "urlPp", 
+      users.email, 
+      users.last_seen as "lastSeen", 
+      users.position, 
+      users.popularity_score, 
+      users.verified,
+      pics.url
     FROM 
       users 
     LEFT JOIN 

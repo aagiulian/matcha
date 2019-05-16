@@ -72,11 +72,7 @@ const authLink = setContext((_, { headers }) => {
   return context;
 });
 
-// const httpLink = new HttpLink({ uri: "http://localhost:4000" });
-// const httpLink = new HttpLink({
-//   uri: `http://${process.env.REACT_APP_API_HOST}/`
-// });
-const uploadLink = createUploadLink({
+const httpLink = createUploadLink({
   uri: `http://${process.env.REACT_APP_API_HOST}/`
 });
 
@@ -99,7 +95,7 @@ const webLink = split(
     );
   },
   wsLink,
-  uploadLink
+  httpLink
 );
 
 const client = new ApolloClient({

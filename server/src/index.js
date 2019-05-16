@@ -29,7 +29,7 @@ import { sendMailToken } from "./auth-helpers/emailVerification";
 //console.log("fake profile:", fakeProfiles[0]);
 
 const app = express();
-
+const pubsub = RedisPubSub();
 app.get("/verify/:token", async (req, res) => {
   console.log("express verify token");
   jwt.verify(req.params.token, process.env.JWT_PUBLIC, (err, decoded) => {
@@ -109,9 +109,9 @@ const server = new ApolloServer({
     } else {
       const token = req.headers["authorization"] || null;
       return {
-        //pubsub,
         user: getUserFromToken(token),
-        location: geoip.lookup(clientIpAddress(req.headers))
+        location: geoip.lookup(clientIpAddress(req.headers)),
+        pubsub
       };
     }
   },

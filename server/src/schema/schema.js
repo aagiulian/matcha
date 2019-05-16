@@ -75,7 +75,7 @@ const typeDefs = gql`
 
   type Picture {
     id: ID!
-    user: User!
+    # user: User!
     url: String!
     # ismain: Boolean!
   }

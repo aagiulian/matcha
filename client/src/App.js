@@ -1,3 +1,4 @@
+import React from "react";
 import Signup from "./components/Signup";
 import Login from "./components/Login";
 //import Logout from "./components/Logout";
@@ -6,7 +7,7 @@ import Verify from "./components/Verify";
 import Profile from "./components/Profile";
 import ResetPassword from "./components/ResetPassword";
 import Upload from "./components/Upload";
-import React from "react";
+import Chat from "./components/Chat";
 
 import Header from "./components/Header";
 import { Switch, Route } from "react-router-dom";
@@ -35,6 +36,7 @@ const App = () => {
             <Route exact path="/profile" component={Profile} />
             <Route exact path="/verify/:emailToken" component={Verify} />
             <Route exact path="/upload" component={Upload} />
+            <Route exact path="/chat" component={Chat} />
             <Route
               exact
               path="/resetPassword"

@@ -2,7 +2,7 @@ import { PubSub, AuthenticationError, UserInputError } from "apollo-server";
 import jwt from "jsonwebtoken";
 const bcrypt = require("bcrypt");
 const { generateToken } = require("../auth-helpers/generateToken");
-const { pool } = require("../database");
+import { pool } from "../database";
 import { getProfileInfo } from "../controllers/userCalls";
 import { resetPasswordMail } from "../auth-helpers/passwordReset";
 import { sendMailToken } from "../auth-helpers/emailVerification";

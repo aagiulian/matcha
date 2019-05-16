@@ -1,0 +1,9 @@
+type MessageInput {
+    text: String!
+    recipient: String!
+    conversationId: ID!
+}
+
+type Mutation {
+    createMessage(message: MessageInput!)
+}
