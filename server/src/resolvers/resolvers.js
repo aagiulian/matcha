@@ -56,6 +56,11 @@ const resolvers = {
     email: async ({ id }) => {
       const { email } = await getProfileInfo(id);
       return email;
+    },
+    location: async ({ id }) => {
+      const { location } = await getProfileInfo(id);
+      console.log("location resolver:", location);
+      return location;
     }
   },
   Query: {

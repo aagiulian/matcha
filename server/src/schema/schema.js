@@ -27,10 +27,14 @@ const typeDefs = gql`
     updatedAt: Date!
   }
 
+  type Location {
+    lng: Float
+    lat: Float
+  }
+
   type User {
     id: ID!
     profileInfo: ProfileInfo
-    position: String!
     hashtags: [Hashtag]
     isOnline: Boolean!
     popularityScore: String!
@@ -44,6 +48,7 @@ const typeDefs = gql`
   }
 
   type ProfileInfo {
+    location: Location
     username: String!
     firstname: String!
     lastname: String!

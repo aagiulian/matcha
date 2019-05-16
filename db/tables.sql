@@ -38,7 +38,7 @@ CREATE TABLE users
   url_pp TEXT,
   email TEXT UNIQUE,
   last_seen TIMESTAMPTZ,
-  position POINT,
+  location POINT,
   popularity_score SMALLINT,
   verified BOOLEAN
 );
@@ -128,5 +128,4 @@ CREATE TABLE connections
 );
 
 
-
-\COPY users (bio,email,firstname,gender,hashed_password,lastname,lookingfor,num_pics,popularity_score,position,sexual_orientation,url_pp,username,verified,date_of_birth,last_seen) FROM '/docker-entrypoint-initdb.d/fake_profiles.csv' DELIMITER ';' CSV HEADER;
+\COPY users (bio,email,firstname,gender,hashed_password,lastname,location,lookingfor,num_pics,popularity_score,sexual_orientation,url_pp,username,verified,date_of_birth,last_seen) FROM '/docker-entrypoint-initdb.d/fake_profiles.csv' DELIMITER ';' CSV HEADER;

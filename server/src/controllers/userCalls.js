@@ -1,4 +1,4 @@
-/// * = id, username, hashed_password as "hashedPassword", firstname, lastname, date_of_birth as "dateOfBirth", gender, sexual_orientation as "sexualOrientation", bio, num_pics as "numPics", url_pp as "urlPp", email, last_seen as "lastSeen", position, popularity_score, verified
+/// * = id, username, hashed_password as "hashedPassword", firstname, lastname, date_of_birth as "dateOfBirth", gender, sexual_orientation as "sexualOrientation", bio, num_pics as "numPics", url_pp as "urlPp", email, last_seen as "lastSeen", location, popularity_score, verified
 import { pool } from "../database";
 import bcrypt from "bcrypt";
 import moment from "moment";
@@ -19,7 +19,7 @@ async function getUserId(username) {
 
 async function getUserById(id) {
   const text =
-    'SELECT id, username, hashed_password as "hashedPassword", firstname, lastname, date_of_birth as "dateOfBirth", gender, sexual_orientation as "sexualOrientation", bio, num_pics as "numPics", url_pp as "urlPp", email, last_seen as "lastSeen", position, popularity_score, verified FROM users WHERE id = $1';
+    `SELECT id, username, hashed_password as "hashedPassword", firstname, lastname, date_of_birth as "dateOfBirth", gender, sexual_orientation as "sexualOrientation", bio, num_pics as "numPics", url_pp as "urlPp", email, last_seen as "lastSeen", location, popularity_score, verified FROM users WHERE id = $1`;
   const values = [id];
   const { rows: results, rowCount: resultsCount } = await pool.query(
     text,
@@ -34,7 +34,7 @@ async function getUserById(id) {
 
 async function getUserByUsername(username) {
   const text =
-    'SELECT  id, username, hashed_password as "hashedPassword", firstname, lastname, date_of_birth as "dateOfBirth", gender, sexual_orientation as "sexualOrientation", bio, num_pics as "numPics", url_pp as "urlPp", email, last_seen as "lastSeen", position, popularity_score, verified FROM users WHERE username = $1';
+    'SELECT  id, username, hashed_password as "hashedPassword", firstname, lastname, date_of_birth as "dateOfBirth", gender, sexual_orientation as "sexualOrientation", bio, num_pics as "numPics", url_pp as "urlPp", email, last_seen as "lastSeen", location, popularity_score, verified FROM users WHERE username = $1';
   const values = [username];
   const { rows: results, rowCount: resultsCount } = await pool.query(
     text,
@@ -49,7 +49,7 @@ async function getUserByUsername(username) {
 
 async function getUserByEmail(email) {
   const text =
-    'SELECT id, username, hashed_password as "hashedPassword", firstname, lastname, date_of_birth as "dateOfBirth", gender, sexual_orientation as "sexualOrientation", bio, num_pics as "numPics", url_pp as "urlPp", email, last_seen as "lastSeen", position, popularity_score, verified FROM users WHERE email = $1';
+    'SELECT id, username, hashed_password as "hashedPassword", firstname, lastname, date_of_birth as "dateOfBirth", gender, sexual_orientation as "sexualOrientation", bio, num_pics as "numPics", url_pp as "urlPp", email, last_seen as "lastSeen", location, popularity_score, verified FROM users WHERE email = $1';
   const values = [email];
   const { rows: results, rowCount: resultsCount } = await pool.query(
     text,
@@ -93,16 +93,21 @@ async function isUserVerified(username) {
 
 async function getProfileInfo(id) {
   let text =
-    'SELECT id, username, hashed_password as "hashedPassword", firstname, lastname, date_of_birth as "dateOfBirth", gender, sexual_orientation as "sexualOrientation", bio, num_pics as "numPics", url_pp as "urlPp", email, last_seen as "lastSeen", position, popularity_score, verified FROM users WHERE id = $1';
+    'SELECT id, username, hashed_password as "hashedPassword", firstname, lastname, date_of_birth as "dateOfBirth", gender, sexual_orientation as "sexualOrientation", bio, num_pics as "numPics", url_pp as "urlPp", email, last_seen as "lastSeen", location, popularity_score, verified FROM users WHERE id = $1';
   let values = [id];
   let res = await pool.query(text, values);
   if (res.rowCount) {
-    if (res.rows[0].dateOfBirth !== null) {
-      res.rows[0].dateOfBirth = moment(res.rows[0].dateOfBirth).format(
+    let ret = res.rows[0];
+    if (ret.dateOfBirth !== null) {
+      ret.dateOfBirth = moment(ret.dateOfBirth).format(
         "YYYY-MM-DD"
       );
     }
-    return res.rows[0];
+    ret.location = {lng: ret.location.x,
+                    lat: ret.location.y};
+    console.log("res query:", ret);
+
+    return ret;
   } else {
     return null;
   }
