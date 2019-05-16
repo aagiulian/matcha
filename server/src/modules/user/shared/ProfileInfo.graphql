@@ -1,0 +1,27 @@
+enum SexualOrientation {
+  heterosexual
+  homosexual
+  bisexual
+}
+
+enum Gender {
+  male
+  female
+  ftm
+  mtf
+}
+
+type ProfileInfo {
+  username: String!
+  firstname: String!
+  lastname: String!
+  gender: Gender
+  dateOfBirth: String
+  bio: String
+  numPics: Int
+  urlPp: String
+  pictures: [Picture]
+  sexualOrientation: SexualOrientation
+  email: String!
+  hashtags: [String]
+}

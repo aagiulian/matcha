@@ -93,7 +93,7 @@ const typeDefs = gql`
     isRead: Boolean!
     datetime: String!
     emitter: User!
-    # conversation: Conversation!
+    conversationId: Conversation!
   }
 
   type SignupResponse {
@@ -148,6 +148,7 @@ const typeDefs = gql`
     updateMe(input: UpdateMeInput!): User
     view(userId: Int!): User
     uploadFile(file: Upload!): Boolean!
+    createMessage(message: String): Boolean!
   }
 
   type Query {

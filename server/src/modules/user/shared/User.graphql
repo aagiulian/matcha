@@ -1,0 +1,10 @@
+type User {
+  id: ID!
+  profileInfo: ProfileInfo
+  position: String!
+  isOnline: Boolean!
+  popularityScore: String!
+  lastSeen: String!
+  verified: Boolean!
+  protected: ProtectedInfo!
+}
