@@ -127,6 +127,11 @@ const typeDefs = gql`
     password: String!
   }
 
+  input inputLocation {
+    lng: Float
+    lat: Float
+  }
+
   input UpdateMeInput {
     username: String!
     firstname: String!
@@ -136,6 +141,7 @@ const typeDefs = gql`
     gender: Gender
     bio: String
     dateOfBirth: Date
+    location: inputLocation
     sexualOrientation: SexualOrientation
     # hashtag: Hashtag
     # images: Picture

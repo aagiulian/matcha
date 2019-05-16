@@ -3,6 +3,8 @@ import { pool } from "../database";
 import bcrypt from "bcrypt";
 import moment from "moment";
 
+const formatLocation = (location) => "(" + location.lng + "," + location.lat + ")";
+
 async function getUserId(username) {
   const text = "SELECT id FROM users WHERE username = $1";
   const values = [username];
@@ -103,8 +105,13 @@ async function getProfileInfo(id) {
         "YYYY-MM-DD"
       );
     }
-    ret.location = {lng: ret.location.x,
+    if (ret.location) {
+      ret.location = {lng: ret.location.x,
                     lat: ret.location.y};
+    } else {
+      ret.location = {lng: null,
+                      lat: null};
+    }
     console.log("res query:", ret);
 
     return ret;
@@ -133,7 +140,7 @@ async function availUsername(username) {
   return true;
 }
 
-async function newUser({ email, password, username, firstname, lastname }) {
+async function newUser({ email, password, username, firstname, lastname, location }) {
   const available = {
     username: (await availUsername(username)) ? undefined : "Already exists",
     email: (await availEmail(email)) ? undefined : "Already exists"
@@ -143,7 +150,7 @@ async function newUser({ email, password, username, firstname, lastname }) {
   }
   const hashedPassword = await bcrypt.hash(password, 10);
   const text =
-    "INSERT INTO users(email, hashed_password, username, firstname, lastname, sexual_orientation, lookingfor, verified) VALUES($1, $2, $3, $4, $5, $6, $7, $8)";
+    "INSERT INTO users(email, hashed_password, username, firstname, lastname, sexual_orientation, lookingfor, location, verified) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9)";
   const values = [
     email,
     hashedPassword,
@@ -152,6 +159,7 @@ async function newUser({ email, password, username, firstname, lastname }) {
     lastname,
     "bisexual",
     "{male, female}",
+    formatLocation(location),
     true
   ]; // TRUE TO FALSE TO ENABLE VERIFICATION
   pool.query(text, values);
@@ -168,7 +176,8 @@ async function updateUser(
     gender,
     bio,
     dateOfBirth,
-    sexualOrientation
+    sexualOrientation,
+    location
   },
   id
 ) {
@@ -200,7 +209,7 @@ async function updateUser(
   }
 
   const text =
-    "UPDATE users SET email = $2, username = $3, firstname = $4, lastname = $5, gender = $6, bio = $7, date_of_birth = $8, sexual_orientation = $9, lookingfor = $10 WHERE id = $1";
+    "UPDATE users SET email = $2, username = $3, firstname = $4, lastname = $5, gender = $6, bio = $7, date_of_birth = $8, sexual_orientation = $9, lookingfor = $10, location = $11 WHERE id = $1";
   const values = [
     id,
     email,
@@ -211,9 +220,12 @@ async function updateUser(
     bio,
     dateOfBirth,
     sexualOrientation,
-    lookingfor
+    lookingfor,
+    formatLocation(location)
   ];
-  pool.query(text, values);
+  pool.query(text, values)
+    .then(res => console.log("updatedMe", res.rows[0]))
+    .catch(err => console.log("error executing query", err.stack));
   return true;
 }
 

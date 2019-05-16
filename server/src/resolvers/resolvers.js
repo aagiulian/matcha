@@ -59,7 +59,7 @@ const resolvers = {
     },
     location: async ({ id }) => {
       const { location } = await getProfileInfo(id);
-      console.log("location resolver:", location);
+      //console.log("location resolver:", location);
       return location;
     }
   },
@@ -102,7 +102,8 @@ const resolvers = {
   Mutation: {
     signup: async (
       _,
-      { input: { email, password, username, firstname, lastname } }
+      { input: { email, password, username, firstname, lastname } },
+      { location }
     ) => {
       email = email.toLowerCase();
       username = username.toLowerCase();
@@ -111,7 +112,8 @@ const resolvers = {
         password,
         username,
         firstname,
-        lastname
+        lastname,
+        location
       });
       if (res !== true) {
         throw new UserInputError("Duplicate", {

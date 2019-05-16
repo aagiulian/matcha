@@ -5,15 +5,29 @@ import { useQuery } from "react-apollo-hooks";
 import { withGoogleMap, withScriptjs, GoogleMap, Marker } from "react-google-maps"
 
 const UserLocationMap = withScriptjs(withGoogleMap((props) => {
-  //console.log("props:", props);
+  const markerRef = React.createRef();
+  console.log("props:", props);
   //const [lng,lat] = props.profile.location.replace('(', '').replace(')', '').split(',');
+
+  const onPositionChanged = () => {
+    const position = markerRef.current.getPosition();
+    const location = {lng: position.lng(),
+                      lat: position.lat()};
+    //console.log("Position changed:", location);
+    props.setProfileLocation(location);
+  }
   
   return (
   <GoogleMap
-    defaultZoom={8}
-    defaultCenter={props.profile.location}
+    defaultZoom={12}
+    defaultCenter={props.profileLocation}
   >
-    <Marker position={props.profile.location}/>
+    <Marker
+      ref={markerRef}
+      position={props.profileLocation}
+      defaultDraggable={true}
+      onPositionChanged={onPositionChanged}
+    />
   </GoogleMap>
   );
 }))
