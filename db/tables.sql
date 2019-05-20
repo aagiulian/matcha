@@ -22,6 +22,14 @@ CREATE TYPE CONNECTION_TYPE AS ENUM
   'connected', 
   'disconnected');
 
+CREATE TYPE NOTIFICATION_TYPE AS ENUM
+(
+  'liked',
+  'visited',
+  'messaged',
+  'match',
+  'unmatch');
+
 CREATE TABLE users
 (
   id SERIAL PRIMARY KEY,
@@ -130,6 +138,16 @@ CREATE TABLE connections
   FOREIGN KEY(user_id) REFERENCES users(id)
 );
 
+CREATE TABLE NOTIFICATIONS
+(
+  id SERIAL PRIMARY KEY,
+  datetime TIMESTAMPTZ,
+  notification_type NOTIFICATION_TYPE,
+  sender_id INTEGER,
+  recv_id INTEGER,
+  FOREIGN KEY(sender_id) REFERENCES users(id)
+  FOREIGN KEY(recv_id) REFERENCES users(id)
+);
 
 
 \COPY users (bio,email,firstname,gender,hashed_password,lastname,lookingfor,num_pics,popularity_score,position,sexual_orientation,url_pp,username,verified,date_of_birth,last_seen) FROM '/docker-entrypoint-initdb.d/fake_profiles.csv' DELIMITER ';' CSV HEADER;
