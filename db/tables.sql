@@ -143,7 +143,7 @@ CREATE TABLE NOTIFICATIONS
   id SERIAL PRIMARY KEY,
   datetime TIMESTAMPTZ,
   notification_type NOTIFICATION_TYPE,
-  sender_id INTEGER,
+  send_id INTEGER,
   recv_id INTEGER,
   FOREIGN KEY(sender_id) REFERENCES users(id)
   FOREIGN KEY(recv_id) REFERENCES users(id)

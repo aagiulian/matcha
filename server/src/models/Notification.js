@@ -8,21 +8,21 @@ export default Class Notification{
   'match',
   'unmatch'];
 
-  static notifyUser(sendId, recvId, datetime, notificationType) {
-    this.prototype.save(sendId, recvId, datetime, notificationType);
+  static notifyUser({sendId, recvId, datetime, notificationType}) {
+    this.prototype.save({sendId, recvId, datetime, notificationType});
     //pubsub(sendId, recvId, datetime, notificationType);
   }
 
-  static save({datetime, notifictationType, senderId, recvId}) {
+  static save({datetime, notifictationType, sendId, recvId}) {
     const query = `
       INSERT INTO
         notifications(datetime,
                       notification_type,
-                      sender_id,
+                      send_id,
                       recv_id)
       VALUES ($1, $2, $3, $4)`;
 
-    const values = [datetime, notificationType, senderId, recvId];
+    const values = [datetime, notificationType, sendId, recvId];
 
 
     const params = [recvId, limit];
@@ -42,7 +42,7 @@ export default Class Notification{
         id,
         datetime,
         notification_type as "notificationType",
-        sender_id as "sendId",
+        send_id as "sendId",
         recv_id as "recvId",
       FROM 
         notifications
