@@ -10,13 +10,16 @@ import { ApolloServer } from "apollo-server";
 import { RedisPubSub } from "graphql-redis-subscriptions";
 import { genSchema } from "./utils/genSchema";
 
+const { PubSub } = require("apollo-server");
+
+const pubsub = new PubSub();
 import { makeExecutableSchema } from "graphql-tools";
 import {
   getUserFromToken,
   attachUserToContext,
   OwnerDirective,
   AuthenticationDirective
-} from "./auth-helpers/directives";
+} from "./modules/auth-helpers/directives";
 
 import { pool } from "./database";
 
@@ -26,7 +29,7 @@ import { sendMailToken } from "./auth-helpers/emailVerification";
 //console.log("fake profile:", fakeProfiles[0]);
 
 const app = express();
-const pubsub = RedisPubSub();
+// const pubsub = RedisPubSub();
 app.get("/verify/:token", async (req, res) => {
   console.log("express verify token");
   jwt.verify(req.params.token, process.env.JWT_PUBLIC, (err, decoded) => {
@@ -93,8 +96,8 @@ const server = new ApolloServer({
     if (connection) {
       //console.log("connection:", util.inspect(connection, {showHidden: false, depth:null}));
       return {
-        ...connection.context
-        //pubsub
+        ...connection.context,
+        pubsub
       };
     } else {
       const token = req.headers["authorization"] || null;

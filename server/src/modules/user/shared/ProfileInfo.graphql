@@ -11,6 +11,13 @@ enum Gender {
   mtf
 }
 
+type Picture {
+  id: ID!
+  # user: User!
+  url: String!
+  # ismain: Boolean!
+}
+
 type ProfileInfo {
   username: String!
   firstname: String!

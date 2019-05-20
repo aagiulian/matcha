@@ -9,5 +9,9 @@ type User {
   popularityScore: String!
   lastSeen: String!
   verified: Boolean!
-  protected: ProtectedInfo!
+  # protected: ProtectedInfo!
+}
+
+type Query {
+  user(id: Int!): User
 }

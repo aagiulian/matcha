@@ -1,5 +1,5 @@
 import { PUBSUB_NEW_MESSAGE } from "../shared/constants";
-import { pool } from "../../../database";
+import { pool } from "../../database";
 import moment from "moment";
 
 function createMessage(message) {

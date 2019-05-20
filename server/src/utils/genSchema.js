@@ -6,7 +6,7 @@ import * as glob from "glob";
 import {
   OwnerDirective,
   AuthenticationDirective
-} from "./auth-helpers/directives";
+} from "../modules/auth-helpers/directives";
 
 export const genSchema = () => {
   const pathToModules = path.join(__dirname, "../modules");

@@ -1,6 +1,7 @@
 import { UserInputError } from "apollo-server";
 import { pool } from "../../postgres";
 import { sendMailToken } from "../../../auth-helpers/emailVerification";
+import bcrypt from "bcrypt";
 
 export const resolvers = {
   Mutation: {

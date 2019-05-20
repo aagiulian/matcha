@@ -1,7 +1,9 @@
 import { pool } from "../../postgres";
 
 export const resolvers = {
-  hashtags: async () => await getHashtagsList()
+  Query: {
+    hashtags: async () => await getHashtagsList()
+  }
 };
 
 async function getHashtagsList() {
