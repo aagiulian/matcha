@@ -21,7 +21,7 @@ import {
   AuthenticationDirective
 } from "./modules/auth-helpers/directives";
 
-import { pool } from "./database";
+import { pool } from "./modules/postgres";
 
 import { getUserByUsername } from "./controllers/userCalls";
 import { sendMailToken } from "./auth-helpers/emailVerification";
