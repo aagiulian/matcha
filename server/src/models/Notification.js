@@ -1,13 +1,6 @@
 import { pool } from "../database";
 
-export default Class Notification{
-  const types = [
-  'liked',
-  'visited',
-  'messaged',
-  'match',
-  'unmatch'];
-
+export default class Notification {
   static notifyUser({sendId, recvId, datetime, notificationType}) {
     this.prototype.save({sendId, recvId, datetime, notificationType});
     //pubsub(sendId, recvId, datetime, notificationType);
@@ -24,14 +17,7 @@ export default Class Notification{
 
     const values = [datetime, notificationType, sendId, recvId];
 
-
-    const params = [recvId, limit];
-    const { rows: results, rowCount: resultsCount } = await pool.query(
-      query,
-      values
-    );
-
-    pool.query(text, values);
+    pool.query(query, values);
     //TODO: use the return value for inserts ?
     return true;
   }
