@@ -9,6 +9,7 @@ import jwt from "jsonwebtoken";
 import express from "express";
 import { ApolloServer, gql } from "apollo-server";
 import { RedisPubSub } from "graphql-redis-subscriptions";
+import { genSchema } from "./utils/genSchema";
 
 import { makeExecutableSchema } from "graphql-tools";
 import {

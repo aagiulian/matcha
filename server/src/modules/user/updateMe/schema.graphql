@@ -1,3 +1,5 @@
+scalar Date
+
 input UpdateMeInput {
   username: String!
   firstname: String!
