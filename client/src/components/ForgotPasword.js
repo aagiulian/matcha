@@ -2,21 +2,21 @@ import React from "react";
 import gql from "graphql-tag";
 import { useMutation } from "react-apollo-hooks";
 
-const RESETPASSWORDREQUEST = gql`
-  mutation ResetPasswordRequest($email: String!) {
-    resetPasswordRequest(email: $email)
+const SENDFORGOTPASSWORDEMAIL = gql`
+  mutation sendForgotPasswordEmail($email: String!) {
+    sendForgotPasswordEmail(email: $email)
   }
 `;
 
-const ResetPasswordRequest = props => {
+const ForgotPassword = props => {
   let email;
-  const resetPasswordRequest = useMutation(RESETPASSWORDREQUEST);
+  const sendForgotPasswordEmail = useMutation(SENDFORGOTPASSWORDEMAIL);
   return (
     <div>
       <form
         onSubmit={e => {
           e.preventDefault();
-          resetPasswordRequest({
+          sendForgotPasswordEmail({
             variables: { email: email.value }
           });
           email.value = "";
@@ -36,4 +36,4 @@ const ResetPasswordRequest = props => {
   );
 };
 
-export default ResetPasswordRequest;
+export default ForgotPassword;

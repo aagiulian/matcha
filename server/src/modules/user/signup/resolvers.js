@@ -1,5 +1,5 @@
 import { UserInputError } from "apollo-server";
-import { pool } from "../database";
+import { pool } from "../../postgres";
 import { sendMailToken } from "../../../auth-helpers/emailVerification";
 
 export const resolvers = {

@@ -2,28 +2,26 @@ import React from "react";
 import gql from "graphql-tag";
 import { useMutation } from "react-apollo-hooks";
 
-const RESETPASSWORD = gql`
-  mutation resetPassword($input: ResetPasswordInput!) {
-    resetPassword(input: $input)
+const FORGOTPASSWORDCHANGE = gql`
+  mutation ForgotPasswordChange(newPassword: String!, token: String!) {
+    forgotPasswordChange(newPassword: $newPassword, token: $token)
   }
 `;
 
-export default function ResetPassword(props) {
+export default function ChangePassword(props) {
   let password, passwordConfirm;
   const token = props.match.params.token;
-  const ResetPassword = useMutation(RESETPASSWORD);
+  const forgotPasswordChange = useMutation(FORGOTPASSWORDCHANGE);
   return (
     <div>
       <form
         onSubmit={e => {
           e.preventDefault();
           if (password.value === passwordConfirm.value) {
-            ResetPassword({
+            forgotPasswordChange({
               variables: {
-                input: {
-                  password: password.value,
-                  token: token
-                }
+                newPassword: password.value,
+                token: token
               }
             })
               .then(res => {

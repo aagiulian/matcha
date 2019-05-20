@@ -5,7 +5,7 @@ import Login from "./components/Login";
 import Maine from "./components/Maine";
 import Verify from "./components/Verify";
 import Profile from "./components/Profile";
-import ResetPassword from "./components/ResetPassword";
+import ForgotPassword from "./components/ForgotPassword";
 import Upload from "./components/Upload";
 import Chat from "./components/Chat";
 
@@ -13,7 +13,7 @@ import Header from "./components/Header";
 import { Switch, Route } from "react-router-dom";
 import "./index.css";
 import "./App.css";
-import ResetPasswordRequest from "./components/ResetPasswordRequest";
+import ChangePassword from "./components/ChangePassword";
 
 const App = () => {
   const token = sessionStorage.getItem("token");
@@ -37,15 +37,11 @@ const App = () => {
             <Route exact path="/verify/:emailToken" component={Verify} />
             <Route exact path="/upload" component={Upload} />
             <Route exact path="/chat" component={Chat} />
+            <Route exact path="/forgotPassword" component={ForgotPassword} />
             <Route
               exact
-              path="/resetPassword"
-              component={ResetPasswordRequest}
-            />
-            <Route
-              exact
-              path="/resetPassword/:token"
-              component={ResetPassword}
+              path="/changePassword/:token"
+              component={ChangePassword}
             />
           </Switch>
         </div>

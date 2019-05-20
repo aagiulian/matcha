@@ -1,4 +1,4 @@
-import { pool } from "../database";
+import { pool } from "../../postgres";
 
 export const resolvers = {
   async findUsers() {

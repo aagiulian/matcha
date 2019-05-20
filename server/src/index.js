@@ -4,10 +4,9 @@
 
 require("dotenv").config();
 import geoip from "geoip-lite";
-import util from "util";
 import jwt from "jsonwebtoken";
 import express from "express";
-import { ApolloServer, gql } from "apollo-server";
+import { ApolloServer } from "apollo-server";
 import { RedisPubSub } from "graphql-redis-subscriptions";
 import { genSchema } from "./utils/genSchema";
 
@@ -18,10 +17,7 @@ import {
   OwnerDirective,
   AuthenticationDirective
 } from "./auth-helpers/directives";
-import { typeDefs } from "./schema/schema";
-import { resolvers } from "./resolvers/resolvers";
 
-import fakeProfiles from "./fake_profiles.json";
 import { pool } from "./database";
 
 import { getUserByUsername } from "./controllers/userCalls";
@@ -70,14 +66,7 @@ app.get("/sendVerification/:username", async (req, res) => {
   // }
 });
 
-const schema = makeExecutableSchema({
-  typeDefs,
-  resolvers,
-  schemaDirectives: {
-    isOwner: OwnerDirective,
-    isAuthenticated: AuthenticationDirective
-  }
-});
+const schema = genSchema();
 
 const attachToContext = funs => req =>
   funs.reduce((toAttach, fun) => Object.assign(toAttach, fun(req)), {});

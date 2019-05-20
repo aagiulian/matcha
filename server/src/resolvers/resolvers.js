@@ -4,7 +4,7 @@ const bcrypt = require("bcrypt");
 const { generateToken } = require("../auth-helpers/generateToken");
 import { pool } from "../database";
 import { getProfileInfo } from "../controllers/userCalls";
-import { resetPasswordMail } from "../auth-helpers/passwordReset";
+import { resetPasswordEmail } from "../auth-helpers/passwordReset";
 import { sendMailToken } from "../auth-helpers/emailVerification";
 import {
   getUserByEmail,
@@ -165,7 +165,7 @@ const resolvers = {
       try {
         const { username, id } = await getUserByEmail(email);
         const token = generateToken({ username, id });
-        resetPasswordMail({ token, email });
+        resetPasswordEmail({ token, email });
         return true;
       } catch (e) {
         console.log(e);
