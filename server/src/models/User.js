@@ -63,6 +63,7 @@ export const User = {
     pool.query(text, values);
     return true;
   },
+  
   findById: async id => {
     const text = `
     SELECT 
@@ -97,6 +98,7 @@ export const User = {
       return emptyUser;
     }
   },
+
   findByEmail: async email => {
     const text = `
     SELECT 
@@ -131,6 +133,7 @@ export const User = {
       return emptyUser;
     }
   },
+
   getProfileInfo: async id => {
     let text = `
       SELECT 
@@ -172,6 +175,7 @@ export const User = {
       return emptyUser;
     }
   },
+
   getHashtags: async id => {
     const text = `
     SELECT 
@@ -188,12 +192,14 @@ export const User = {
       return { hashtags: null };
     }
   },
+
   updatePassword: async (id, newPassword) => {
     const hashedPassword = await bcrypt.hash(newPassword, 10);
     const text = "UPDATE users SET hashed_password = $1 WHERE id = $2";
     const values = [hashedPassword, decoded.id];
     pool.query(text, values);
   },
+  
   update: async (
     {
       username,

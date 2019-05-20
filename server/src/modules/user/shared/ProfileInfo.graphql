@@ -17,7 +17,6 @@ type Picture {
   url: String!
   # ismain: Boolean!
 }
-
 type ProfileInfo {
   username: String!
   firstname: String!

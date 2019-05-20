@@ -138,14 +138,14 @@ CREATE TABLE connections
   FOREIGN KEY(user_id) REFERENCES users(id)
 );
 
-CREATE TABLE NOTIFICATIONS
+CREATE TABLE notifications
 (
   id SERIAL PRIMARY KEY,
   datetime TIMESTAMPTZ,
   notification_type NOTIFICATION_TYPE,
   send_id INTEGER,
   recv_id INTEGER,
-  FOREIGN KEY(sender_id) REFERENCES users(id)
+  FOREIGN KEY(sender_id) REFERENCES users(id),
   FOREIGN KEY(recv_id) REFERENCES users(id)
 );
 
