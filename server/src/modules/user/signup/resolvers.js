@@ -9,7 +9,6 @@ export const resolvers = {
       { input: { email, password, username, firstname, lastname } },
       { location }
     ) => {
-      console.log(User);
       email = email.toLowerCase();
       username = username.toLowerCase();
       const res = await User.new({
@@ -20,6 +19,7 @@ export const resolvers = {
         lastname,
         location
       });
+      console.log("NEW response: ", res);
       if (res !== true) {
         throw new UserInputError("Duplicate", {
           invalidArgs: res

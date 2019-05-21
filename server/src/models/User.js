@@ -66,10 +66,9 @@ export const User = {
 	      lastname, 
 	      sexual_orientation, 
 	      lookingfor, 
-	      location,
 	      verified) 
       VALUES
-	($1, $2, $3, $4, $5, $6, $7, $8, $9)`;
+	($1, $2, $3, $4, $5, $6, $7, $8)`;
     const values = [
       email,
       hashedPassword,
@@ -78,13 +77,13 @@ export const User = {
       lastname,
       "bisexual",
       "{male, female}",
-      setLocationValue(location),
       true
     ]; // TRUE TO FALSE TO ENABLE VERIFICATION
+    console.log(values);
     try {
       pool.query(text, values);
     } catch (e) {
-      console.log(e);
+      console.log("NEW USER Error :", e, "--- END NEW USER Error");
       return false;
     }
     return true;
