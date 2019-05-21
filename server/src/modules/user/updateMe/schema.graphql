@@ -1,5 +1,10 @@
 scalar Date
 
+input inputLocation {
+  lng: Float
+  lat: Float
+}
+
 input UpdateMeInput {
   username: String!
   firstname: String!
@@ -11,6 +16,7 @@ input UpdateMeInput {
   dateOfBirth: Date
   sexualOrientation: SexualOrientation
   hashtags: [String]
+  location: inputLocation
   # hashtag: Hashtag
   # images: Picture
 }

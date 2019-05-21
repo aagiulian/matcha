@@ -2,8 +2,9 @@ import React from "react";
 import gql from "graphql-tag";
 import { useMutation } from "react-apollo-hooks";
 
+
 const FORGOTPASSWORDCHANGE = gql`
-  mutation ForgotPasswordChange(newPassword: String!, token: String!) {
+  mutation ForgotPasswordChange($newPassword: String!, $token: String!) {
     forgotPasswordChange(newPassword: $newPassword, token: $token)
   }
 `;

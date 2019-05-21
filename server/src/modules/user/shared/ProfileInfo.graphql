@@ -17,6 +17,12 @@ type Picture {
   url: String!
   # ismain: Boolean!
 }
+
+type Location {
+  lng: Float
+  lat: Float
+}
+
 type ProfileInfo {
   username: String!
   firstname: String!
@@ -29,5 +35,6 @@ type ProfileInfo {
   pictures: [Picture]
   sexualOrientation: SexualOrientation
   email: String!
+  location: Location
   hashtags: [String]
 }

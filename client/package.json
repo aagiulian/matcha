@@ -22,6 +22,7 @@
     "react-apollo-hooks": "^0.4.4",
     "react-dom": "^16.8.5",
     "react-dropzone": "^10.1.4",
+    "react-google-maps": "^9.4.5",
     "react-router": "^5.0.0",
     "react-router-dom": "^5.0.0",
     "react-scripts": "2.1.8",

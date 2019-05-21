@@ -25,16 +25,25 @@ export default class Notification {
   static async getLatest(recvId, limit = 10) {
     const query = `
       SELECT 
-        id,
-        datetime,
-        notification_type as "notificationType",
-        send_id as "sendId",
-        recv_id as "recvId",
+        notifications.id,
+        notifications.datetime,
+        notifications.notification_type as "notificationType",
+        notifications.send_id as "sendId",
+        send.username as "sendUsername",
+        send.url_pp as "sendUrlPp",
+        notifications.recv_id as "recvId",
+        recv.username as "recvUsername",
       FROM 
         notifications
       WHERE 
         recv_id = $1
-      LIMIT $2`;
+      ORDER BY
+        datetime DESC
+      LIMIT $2
+      LEFT JOIN
+        users recv ON notifications.recv_id = recv.id
+      LEFT JOIN
+        users send ON notifications.send_id = send.id`;
 
     const values = [recvId, limit];
     const { rows: results, rowCount: resultsCount } = await pool.query(

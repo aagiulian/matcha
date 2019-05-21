@@ -7,7 +7,8 @@ export const resolvers = {
   Mutation: {
     signup: async (
       _,
-      { input: { email, password, username, firstname, lastname } }
+      { input: { email, password, username, firstname, lastname } },
+      { location }
     ) => {
       email = email.toLowerCase();
       username = username.toLowerCase();
@@ -16,7 +17,8 @@ export const resolvers = {
         password,
         username,
         firstname,
-        lastname
+        lastname,
+        location
       });
       if (res !== true) {
         throw new UserInputError("Duplicate", {

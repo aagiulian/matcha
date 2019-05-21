@@ -3,10 +3,10 @@ import React from "react";
 import gql from "graphql-tag";
 import { useSubscription } from "react-apollo-hooks";
 
-const NEWMESSAGES = gql``;
+//const NEWMESSAGES = gql``;
 
 const Chat = () => {
-  const { data, error, loading } = useSubscription(NEWMESSAGES);
+  //const { data, error, loading } = useSubscription(NEWMESSAGES);
   return <div />;
 };
 
