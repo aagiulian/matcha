@@ -5,27 +5,24 @@ import { generateToken } from "../modules/auth-helpers/generateToken";
 import { empty } from "apollo-link";
 import { Hashtags } from "./Hashtags";
 
-const setLocationValue = (location) => "(" + location.lng + "," + location.lat + ")";
+const setLocationValue = location =>
+  "(" + location.lng + "," + location.lat + ")";
 
-const getLocation = (ret) => {
+const getLocation = ret => {
   if (ret.location) {
-    ret.location = {lng: ret.location.x,
-		    lat: ret.location.y};
+    ret.location = { lng: ret.location.x, lat: ret.location.y };
   } else {
-    ret.location = {lng: null,
-		    lat: null};
+    ret.location = { lng: null, lat: null };
   }
   return ret;
-}
+};
 
-const getDateOfBirth = (ret) => {
+const getDateOfBirth = ret => {
   if (ret.dateOfBirth !== null) {
-    ret.dateOfBirth = moment(ret.dateOfBirth).format(
-      "YYYY-MM-DD"
-    );
+    ret.dateOfBirth = moment(ret.dateOfBirth).format("YYYY-MM-DD");
   }
   return ret;
-}
+};
 
 const emptyUser = {
   id: null,
@@ -84,10 +81,15 @@ export const User = {
       setLocationValue(location),
       true
     ]; // TRUE TO FALSE TO ENABLE VERIFICATION
-    pool.query(text, values);
+    try {
+      pool.query(text, values);
+    } catch (e) {
+      console.log(e);
+      return false;
+    }
     return true;
   },
-  
+
   findById: async id => {
     const text = `
     SELECT 
@@ -242,7 +244,7 @@ export const User = {
     const values = [hashedPassword, decoded.id];
     pool.query(text, values);
   },
-  
+
   update: async (
     {
       username,
@@ -260,30 +262,30 @@ export const User = {
   ) => {
     let dict = {
       male: {
-	heterosexual: "{female}",
-	homosexual: "{male}",
-	bisexual: "{male,female}"
+        heterosexual: "{female}",
+        homosexual: "{male}",
+        bisexual: "{male,female}"
       },
       female: {
-	heterosexual: "{male}",
-	homosexual: "{female}",
-	bisexual: "{male,female}"
+        heterosexual: "{male}",
+        homosexual: "{female}",
+        bisexual: "{male,female}"
       }
     };
     const lookingfor = gender
-	  ? dict[gender][sexualOrientation]
-	  : "{male,female}";
+      ? dict[gender][sexualOrientation]
+      : "{male,female}";
     let available = {};
     const user = await getUserById(id);
     if (user.username !== username) {
       available.username = (await availUsername(username))
-	? undefined
-	: "Already exists";
+        ? undefined
+        : "Already exists";
     }
     if (user.email !== email) {
       available.email = (await availEmail(email))
-	? undefined
-	: "Already exists";
+        ? undefined
+        : "Already exists";
     }
     if (available.username !== undefined || available.email !== undefined) {
       return available;

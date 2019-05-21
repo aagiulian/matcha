@@ -1,7 +1,7 @@
 import { PUBSUB_NEW_MESSAGE, MESSAGE_NOTIFICATION } from "../shared/constants";
 // import { PUBSUB_NEW_NOTIFICATION } from "../../notification/shared/constants";
-import Message from "../../../models/Message";
-import Notification from "../../../models/Notification";
+import { Message } from "../../../models/Message";
+import { Notification } from "../../../models/Notification";
 import moment from "moment";
 
 export const resolvers = {

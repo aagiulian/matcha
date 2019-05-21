@@ -1,5 +1,5 @@
-import Message from "../../../models/Message";
-import Conversation from "../../../models/Conversation";
+import { Message } from "../../../models/Message";
+import { Conversation } from "../../../models/Conversation";
 import { ForbiddenError } from "apollo-server";
 
 //   Message: {

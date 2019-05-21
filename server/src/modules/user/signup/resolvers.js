@@ -1,6 +1,6 @@
 import { UserInputError } from "apollo-server";
 import { sendMailToken } from "../../auth-helpers/emailVerification";
-import User from "../../../models/User";
+import { User } from "../../../models/User";
 
 export const resolvers = {
   Mutation: {
@@ -9,6 +9,7 @@ export const resolvers = {
       { input: { email, password, username, firstname, lastname } },
       { location }
     ) => {
+      console.log(User);
       email = email.toLowerCase();
       username = username.toLowerCase();
       const res = await User.new({

@@ -1,4 +1,4 @@
-import Hashtags from "../../../models/Hashtags";
+import { Hashtags } from "../../../models/Hashtags";
 
 export const resolvers = {
   Query: {
