@@ -20,14 +20,13 @@ export default class Message {
     INSERT INTO
       messages(
         text,
-        emitter,
-        recipient,
+        send_id,
+        recv_id,
         conversation_id,
         created_at,
-        is_read,
-      )
-    VALUES($1, $2, $3, $4, $5, $6);
-    SELECT SCOPE_IDENTITY()`;
+        is_read)
+    VALUES($1, $2, $3, $4, $5, $6)
+    RETURNING id`;
     let values = [text, sendId, recvId, convId, datetime, false];
     let id = await pool.query(query, values);
     return {

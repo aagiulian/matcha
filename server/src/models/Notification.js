@@ -13,8 +13,9 @@ export default class Notification {
                       notification_type,
                       send_id,
                       recv_id)
-      VALUES ($1, $2, $3, $4);
-      SELECT SCOPE_IDENTITY()`;
+      VALUES ($1, $2, $3, $4)
+      RETURNING id
+      `;
 
     const values = [datetime, notificationType, sendId, recvId];
 

@@ -8,11 +8,11 @@ export const resolvers = {
   Mutation: {
     createMessage: async (_, { message }, { user, pubsub }) => {
       message.sendId = user.id;
-      message.datetime = moment.now();
+      message.datetime = moment().format("YYYY-MM-DD hh:mm:ss Z");
       const PUBSUB_NEW_NOTIFICATION = "PUBSUB_NEW_NOTIFICATION ";
 
-      gqlMsg = await Message.save(message);
-      gqlNotif = await Notification.save(message, MESSAGE_NOTIFICATION);
+      const gqlMsg = await Message.save(message);
+      const gqlNotif = await Notification.save(message, MESSAGE_NOTIFICATION);
 
       pubsub.publish(PUBSUB_NEW_MESSAGE, {
         newMessage: gqlMsg

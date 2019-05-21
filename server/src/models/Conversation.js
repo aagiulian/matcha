@@ -33,17 +33,19 @@ export default class Conversation {
         conversations(
             user_a,
             user_b)
-      VALUES($1, $2);
-      SELECT SCOPE_IDENTITY()`;
+      VALUES($1, $2)
+      RETURNING id;
+     `;
     res = await pool.query(text, values);
     return res;
   }
 
   static async list(userId) {
+    console.log("toto");
     let text = `
       SELECT
         id,
-        user_a as "friend",
+        user_a as "friend"
       FROM
         conversations
       WHERE
@@ -51,7 +53,7 @@ export default class Conversation {
       UNION
       SELECT
         id,
-        user_b as "friend",
+        user_b as "friend"
       FROM
         conversations
       WHERE

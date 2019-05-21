@@ -319,7 +319,8 @@ async function addVisit(userId, userVisitedId) {
       visited 
     WHERE 
       user_id = $1 AND user_visited = $2`;
-  let values = [userId, userVisitedId, moment.now()];
+      2000-01-01 00:00:00 +05:00
+  let values = [userId, userVisitedId, moment().format("YYYY-MM-DD hh:mm:ss Z")];
   let res = await pool.query(text, values);
   if (res.rowCount) {
     text = `
