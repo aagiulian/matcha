@@ -4,10 +4,6 @@ type Message {
   isRead: Boolean!
   createdAt: String!
   emitter: User!
-  receiver: User!
+  recipient: User!
   conversationId: String!
-}
-
-type Query {
-  messages(conversationId: String!): [Messages]
 }

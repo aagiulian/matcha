@@ -1,24 +1,26 @@
 import { pool } from "../database";
 
 export default class Notification {
-  static notifyUser({sendId, recvId, datetime, notificationType}) {
-    this.prototype.save({sendId, recvId, datetime, notificationType});
-    //pubsub(sendId, recvId, datetime, notificationType);
-  }
+  // static notifyUser({sendId, recvId, datetime}, notificationType) {
+  //   this.prototype.save({sendId, recvId, datetime, notificationType});
+  //   //pubsub(sendId, recvId, datetime, notificationType);
+  // }
 
-  static save({datetime, notifictationType, sendId, recvId}) {
+  static async save({ sendId, recvId, datetime }, notificationType) {
     const query = `
       INSERT INTO
         notifications(datetime,
                       notification_type,
                       send_id,
                       recv_id)
-      VALUES ($1, $2, $3, $4)`;
+      VALUES ($1, $2, $3, $4);
+      SELECT SCOPE_IDENTITY()`;
 
     const values = [datetime, notificationType, sendId, recvId];
 
-    pool.query(query, values);
+    let id = await pool.query(query, values);
     //TODO: use the return value for inserts ?
+    // ----> return Gql Notification Object
     return true;
   }
 
