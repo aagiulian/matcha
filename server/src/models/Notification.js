@@ -1,4 +1,4 @@
-import { pool } from "../database";
+import { pool } from "../modules/postgres";
 
 export default class Notification {
   // static notifyUser({sendId, recvId, datetime}, notificationType) {

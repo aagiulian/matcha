@@ -1,4 +1,4 @@
-import { pool } from "../database";
+import { pool } from "../modules/postgres";
 
 const emptyMessage = {
   id: null,
@@ -16,7 +16,7 @@ export default class Message {
   // }
 
   static async save({ text, sendId, recvId, convId, datetime }) {
-    let text = `
+    let query = `
     INSERT INTO
       messages(
         text,
@@ -29,7 +29,7 @@ export default class Message {
     VALUES($1, $2, $3, $4, $5, $6);
     SELECT SCOPE_IDENTITY()`;
     let values = [text, sendId, recvId, convId, datetime, false];
-    let id = await pool.query(text, values);
+    let id = await pool.query(query, values);
     return {
       id,
       text,
@@ -55,9 +55,9 @@ export default class Message {
           conversations conv ON messages.conversation_id = conv.id
         )
       WHERE
-        is_read = $2 AND recv_id = $3`;
+        is_read = $2 AND recv_id = $3 AND conversation_id = $4`;
 
-    const values = [true, false, recvId];
+    const values = [true, false, recvId, convId];
     pool.query(text, values);
   }
 

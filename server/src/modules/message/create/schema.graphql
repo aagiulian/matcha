@@ -1,4 +1,4 @@
-type MessageInput {
+input MessageInput {
   text: String!
   recvId: String!
   convId: ID!

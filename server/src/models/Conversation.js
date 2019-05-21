@@ -1,4 +1,4 @@
-import { pool } from "../database";
+import { pool } from "../modules/postgres";
 
 const emptyMessage = {
   id: null,
@@ -28,14 +28,14 @@ export default class Conversation {
     if (res.rowCount) {
       return res.rows[0].id;
     }
-    let text = `
+    text = `
       INSERT INTO
         conversations(
             user_a,
             user_b)
       VALUES($1, $2);
       SELECT SCOPE_IDENTITY()`;
-    let res = await pool.query(text, values);
+    res = await pool.query(text, values);
     return res;
   }
 

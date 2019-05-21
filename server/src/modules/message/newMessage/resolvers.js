@@ -1,7 +1,7 @@
 import { PUBSUB_NEW_MESSAGE } from "../shared/constants";
 import { withFilter } from "apollo-server";
 
-export const resolver = {
+export const resolvers = {
   Subscription: {
     newMessage: {
       suscribe: withFilter(

@@ -119,14 +119,14 @@ CREATE TABLE messages
 (
   id SERIAL PRIMARY KEY,
   text TEXT,
-  emitter INTEGER,
-  recipient INTEGER,
+  send_id INTEGER,
+  recv_id INTEGER,
   conversation_id INTEGER,
   created_at TIMESTAMPTZ,
   is_read BOOLEAN,
   FOREIGN KEY(conversation_id) REFERENCES conversations(id),
-  FOREIGN KEY(emitter) REFERENCES users(id),
-  FOREIGN KEY(recipient) REFERENCES users(id)
+  FOREIGN KEY(send_id) REFERENCES users(id),
+  FOREIGN KEY(recv_id) REFERENCES users(id)
 );
 
 CREATE TABLE connections
