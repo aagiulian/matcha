@@ -9,7 +9,7 @@ import "formol/lib/default.css";
 const UPDATEME = gql`
   mutation UpdateMe($input: UpdateMeInput!) {
     updateMe(input: $input) {
-      profileInfo {
+      profile {
 	username
 	firstname
 	lastname
@@ -29,7 +29,7 @@ const UPDATEME = gql`
 const ME = gql`
   query Me {
     me {
-      profileInfo {
+      profile {
 	username
 	firstname
 	lastname
@@ -74,7 +74,7 @@ export default function Profile(props) {
   if (loading || load) {
     return <div>Loading</div>;
   } else if (!error && !err) {
-    me = data.me.profileInfo;
+    me = data.me.profile;
     if (me.__typename) {
       delete me.__typename;
     }

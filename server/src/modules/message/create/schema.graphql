@@ -1,6 +1,6 @@
 input MessageInput {
   text: String!
-  recvId: String!
+  recvId: Int!
   convId: Int!
 }
 
