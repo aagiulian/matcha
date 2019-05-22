@@ -145,6 +145,7 @@ CREATE TABLE notifications
   notification_type NOTIFICATION_TYPE,
   send_id INTEGER,
   recv_id INTEGER,
+  seen BOOLEAN,
   FOREIGN KEY(send_id) REFERENCES users(id),
   FOREIGN KEY(recv_id) REFERENCES users(id)
 );

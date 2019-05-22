@@ -4,7 +4,7 @@ import geoip from "geoip-lite";
 
 export default class Geolocation {
 
-  static geolocationFromApi = async (ip) => {
+  static async geolocationFromApi(ip) {
     const truc = process.env.IPGEOLOCATION_IO_API_KEY;
     //console.log("truc:", truc);
     const url = `https://api.ipgeolocation.io/ipgeo?apiKey=${truc}&ip=${ip}`;
@@ -26,7 +26,7 @@ export default class Geolocation {
   }
 
 
-  static geolocFromipapi = async (ip) => {
+  static async geolocFromipapi(ip) {
     const url = `http://ip-api.com/json/${ip}`;
     let response = null;
     try {
@@ -43,7 +43,7 @@ export default class Geolocation {
     return null;
   }
 
-  static geolocFromipstack = async (ip) => {
+  static async geolocFromipstack(ip){
     const IPSTACK_API_KEY = process.env.IPSTACK_API_KEY;
     const url = `http://api.ipstack.com/${ip}?access_key=${IPSTACK_API_KEY}`;
     let response = null;
@@ -61,7 +61,7 @@ export default class Geolocation {
     return null;
   }
 
-  static geolocFromipdata = async (ip) => {
+  static async geolocFromipdata(ip){
     const IPDATA_API_KEY = process.env.IPDATA_API_KEY;
 
     const url = `https://api.ipdata.co/${ip}?api-key=${IPDATA_API_KEY}`; let response = null;
@@ -79,7 +79,7 @@ export default class Geolocation {
     return null;
   }
 
-  static geolocationFromGeoIpLite = (ip) => {
+  static async geolocationFromGeoIpLite(ip){
     const locationIp = geoip.lookup(ip);
     //console.log("geoloc ip:", locationIp);
     const {ll:[latitude, longitude]} = locationIp;
@@ -87,7 +87,7 @@ export default class Geolocation {
     return { longitude, latitude }
   }
 
-  static clientIpAddress = headers => {
+  static clientIpAddress(headers){
     if (headers) {
       const ipAddress = headers["x-forwarded-for"];
       if (ipAddress) return ipAddress;
@@ -95,8 +95,8 @@ export default class Geolocation {
     return null;
   }
 
-  static getUserLocation = async (headers) => {
-    const clientIp = this.constructor.clientIpAddress(headers);
+  static async getUserLocation(headers){
+    const clientIp = Geolocation.clientIpAddress(headers);
 
     /*
       console.log("looking up geoloc for ip:", clientIp);
@@ -133,7 +133,7 @@ export default class Geolocation {
       }
 
     */
-    const locationIp = this.constructor.geolocationFromGeoIpLite(clientIp);
+    const locationIp = Geolocation.geolocationFromGeoIpLite(clientIp);
     console.log("geoloc ip:", locationIp);
     return locationIp;
   }

@@ -13,7 +13,6 @@ function Header() {
   return (
     <div className="flex pa1 justify-between nowrap orange">
       <div className="flex flex-fixed black">
-        <UserLogged />
         <div className="fw7 mr1">Header</div>
         {isLogged ? (
           <div>

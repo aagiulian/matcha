@@ -8,5 +8,5 @@ kubectl delete deployment --all
 kubectl delete svc --all
 kubectl delete pvc --all
 kubectl delete pv --all
-docker image rm graphql-api
-docker image rm react-app-matcha
+docker image rm --force graphql-api
+docker image rm --force react-app-matcha

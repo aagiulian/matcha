@@ -4,6 +4,7 @@
 
 require("dotenv").config();
 import geoip from "geoip-lite";
+import Geolocation from "./models/Geolocation";
 import jwt from "jsonwebtoken";
 import express from "express";
 import { ApolloServer } from "apollo-server";
@@ -80,16 +81,18 @@ const attachToContext = funs => req =>
 //console.log("pubsub async:", pubsub.asyncIterator);
 
 const clientIpAddress = headers => {
+  let ip = null;
   if (headers) {
     const ipAddress = headers["x-forwarded-for"];
-    if (ipAddress) return ipAddress;
+    if (ipAddress) return ip = ipAddress;
   }
-  return null;
+  console.log("ip:", ip);
+  return ip;
 };
 
 const server = new ApolloServer({
   schema,
-  context: ({ req, connection }) => {
+  context: async ({ req, connection }) => {
     //console.log("server req:", util.inspect(req, {showHidden: false, depth:1}));
     //console.log("server req:", Object.keys(req));
 
@@ -104,7 +107,7 @@ const server = new ApolloServer({
       const token = req.headers["authorization"] || null;
       return {
         user: getUserFromToken(token),
-        location: geoip.lookup(clientIpAddress(req.headers)),
+        location: await Geolocation.getUserLocation(req.headers),
         pubsub
       };
     }
