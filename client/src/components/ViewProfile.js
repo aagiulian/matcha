@@ -12,7 +12,7 @@ view(userId: $userId) {
     # isOnline
     # popularityScore
     # lastSeen
-    profileInfo {
+    profile {
         username
         firstname
         lastname
@@ -37,13 +37,13 @@ export default function ViewProfile({ userId }) {
 
   return (
     <div>
-      <h1>{userProfile.profileInfo.username}</h1>
-      <h1>{userProfile.profileInfo.firstname}</h1>
-      <h1>{userProfile.profileInfo.lastname}</h1>
-      <h1>{userProfile.profileInfo.gender}</h1>
-      <h1>{userProfile.profileInfo.sexualOrientation}</h1>
-      <h1>{userProfile.profileInfo.dateOfBirth}</h1>
-      <h1>{userProfile.profileInfo.bio}</h1>
+      <h1>{userProfile.profile.username}</h1>
+      <h1>{userProfile.profile.firstname}</h1>
+      <h1>{userProfile.profile.lastname}</h1>
+      <h1>{userProfile.profile.gender}</h1>
+      <h1>{userProfile.profile.sexualOrientation}</h1>
+      <h1>{userProfile.profile.dateOfBirth}</h1>
+      <h1>{userProfile.profile.bio}</h1>
     </div>
   );
 }
