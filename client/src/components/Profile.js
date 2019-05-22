@@ -69,6 +69,8 @@ export default function Profile(props) {
   const { data, error, loading } = useQuery(ME);
   const { data: dat, error: err, loading: load } = useQuery(HASHTAGS);
   const [location, setLocation] = useState(null);
+  console.log("api key:",  process.env.REACT_APP_GOOGLE_MAPS_API_KEY);
+
   let me;
   let tags;
   if (loading || load) {
@@ -84,7 +86,11 @@ export default function Profile(props) {
       })
       .reduce((acc, cur) => Object.assign(acc, cur), {});
     console.log("me:", me);
+  } else {
+    console.log("error:", error);
+    console.log("err:", err);
   }
+
 
   const setProfileLocation = ({ lng, lat }) => {
     setLocation({ lng, lat });

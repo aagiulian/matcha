@@ -1,4 +1,5 @@
 import bcrypt from "bcrypt";
+import moment from "moment";
 import { pool } from "../modules/postgres";
 import { AuthenticationError, UserInputError } from "apollo-server";
 import { generateToken } from "../modules/auth-helpers/generateToken";
@@ -40,7 +41,7 @@ const emptyUser = {
     email: null,
     hashtags: null
   },
-  position: null,
+  location: null,
   isOnline: null,
   popularityScore: null,
   lastSeen: null,
@@ -105,7 +106,7 @@ export const User = {
       url_pp as "urlPp", 
       email, 
       last_seen as "lastSeen", 
-      position, 
+      location, 
       popularity_score, 
       location,
       verified 
@@ -120,10 +121,13 @@ export const User = {
     );
     if (resultsCount) {
       console.log("find by id:", results[0]);
+      /*
       const ret = pipe(
         getDateOfBirth,
         getLocation
       )(results[0]);
+      */
+      const ret = getDateOfBirth(getLocation(results[0]));
       console.log("ret", ret);
       return ret;
     } else {
@@ -147,7 +151,7 @@ export const User = {
 	url_pp as "urlPp", 
 	email, 
 	last_seen as "lastSeen", 
-	position, 
+	location, 
 	popularity_score, 
 	location,
 	verified 
@@ -162,10 +166,7 @@ export const User = {
     );
     if (resultsCount) {
       console.log("find by id:", results[0]);
-      const ret = pipe(
-        getDateOfBirth,
-        getLocation
-      )(results[0]);
+      const ret = getDateOfBirth(getLocation(results[0]));
       console.log("ret", ret);
       return ret;
       /*
@@ -211,10 +212,7 @@ export const User = {
     let res = await pool.query(text, values);
     if (res.rowCount) {
       console.log("profile info:", res.rows[0]);
-      return pipe(
-        getDateOfBirth,
-        getLocation
-      )(res.rows[0]);
+      return getDateOfBirth(getLocation(res.rows[0]));
     } else {
       return emptyUser;
     }
@@ -275,7 +273,7 @@ export const User = {
       ? dict[gender][sexualOrientation]
       : "{male,female}";
     let available = {};
-    const user = await getUserById(id);
+    const user = await User.findById(id);
     if (user.username !== username) {
       available.username = (await availUsername(username))
         ? undefined

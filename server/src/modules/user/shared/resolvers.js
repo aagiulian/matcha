@@ -45,6 +45,10 @@ export const resolvers = {
     hashtags: async ({ id }) => {
       const { hashtags } = await User.getHashtags(id);
       return hashtags;
+    },
+    location: async ({ id }) => {
+      const { location } = await User.getProfile(id);
+      return location;
     }
   },
   Query: {

@@ -82,6 +82,7 @@ spec:
     - port: 5432
       protocol: TCP
       targetPort: 5432
+      nodePort: 30099
   selector:
     app: user-db
 
@@ -113,19 +114,9 @@ spec:
               value: "matcha"
             - name: POSTGRES_USER
               value: "admin"
-          #volumeMounts:
-          #- name: pgdata
-          #mountPath: /var/lib/postgresql/data/
-
           volumeMounts:
             - name: postgres-storage
               mountPath: /var/lib/postgresql/db-data
-      #volumes:
-      #- name: pgdata
-      #hostPath:
-      #path: /Users/agiulian/matcha/pgdata/
-      #type: Directory
-
       volumes:
         - name: postgres-storage
           persistentVolumeClaim:
@@ -161,6 +152,9 @@ spec:
       containers:
         - name: graphql-api
           image: graphql-api
+          resources:
+            requests:
+              cpu: "1"
           imagePullPolicy: Never
           ports:
             - containerPort: 4000
@@ -173,7 +167,7 @@ spec:
       volumes:
         - name: source-code
           hostPath:
-            path: /Users/agiulian/dev/matcha/server
+            path: /Users/vfour/dev/matcha/server
             type: Directory
 
 ---
@@ -241,6 +235,9 @@ spec:
       containers:
         - name: react-app-matcha
           image: react-app-matcha
+          resources:
+            requests:
+              cpu: "1"
           imagePullPolicy: Never
           ports:
             - containerPort: 3000
@@ -253,7 +250,7 @@ spec:
       volumes:
         - name: source-code
           hostPath:
-            path: /Users/agiulian/dev/matcha/client
+            path: /Users/vfour/dev/matcha/client
             type: Directory
 
 ---

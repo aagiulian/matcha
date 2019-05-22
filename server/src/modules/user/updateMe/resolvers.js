@@ -15,7 +15,7 @@ export const resolvers = {
           invalidArgs: res
         });
       }
-      return await User.getById(id);
+      return await User.findById(id);
     }
   }
 };
