@@ -78,6 +78,7 @@ metadata:
   labels:
     app: user-db-service
 spec:
+  type: NodePort
   ports:
     - port: 5432
       protocol: TCP
