@@ -64,4 +64,23 @@ export default class Conversation {
     console.log("LIST CONVERSATIONS result ---> ", res.rows);
     return res.rows;
   }
+
+  static async isParty(userId, convId) {
+    let text = `
+      SELECT
+        1
+      FROM
+        conversations
+      WHERE
+        id = $2 
+        AND 
+        (user_a = $1 OR user_b = $1)
+      `;
+    let values = [userId, convId];
+    let res = await pool.query(text, values);
+    if (res.rowCount) {
+      return true;
+    }
+    return false;
+  }
 }

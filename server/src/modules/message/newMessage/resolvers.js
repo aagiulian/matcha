@@ -6,10 +6,17 @@ export const resolvers = {
     newMessage: {
       subscribe: withFilter(
         (_, __, { pubsub }) => pubsub.asyncIterator(PUBSUB_NEW_MESSAGE),
-        (payload, variables) => {
-          return payload.newMessage.conversationId === variables.conversationId;
+        (payload, variables, { user }) => {
+          // ici on check si l'user est soit l'emetteur soit le recepteur peut etre que recepteur ??
+          if (
+            user.id == payload.newMessage.recipient ||
+            user.id == payload.newMessage.emitter
+          ) {
+            return (
+              payload.newMessage.conversationId === variables.conversationId
+            );
+          }
         }
-        // peut etre qu'il faut ici verifier que la conversation appartient bien au user
       )
     }
   }

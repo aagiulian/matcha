@@ -23,7 +23,13 @@ export default class Notification {
     let id = res.rows[0].id;
     //TODO: use the return value for inserts ?
     // ----> return Gql Notification Object
-    return true;
+    return {
+      id,
+      emitter: sendId,
+      recipient: recvId,
+      datetime: datetime,
+      type: notificationType
+    };
   }
 
   static async getLatest(recvId, limit = 10) {

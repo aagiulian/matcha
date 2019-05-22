@@ -95,6 +95,8 @@ const server = new ApolloServer({
     //console.log("server req headers:", util.inspect(req.headers,{showHidden: false, depth:null}));
     if (connection) {
       //console.log("connection:", util.inspect(connection, {showHidden: false, depth:null}));
+      // console.log("connection context", connection.context);
+      // console.log("req", req);
       return {
         ...connection.context,
         pubsub
@@ -114,6 +116,20 @@ const server = new ApolloServer({
         `Subscription client connected using Apollo server's built-in SubscriptionServer.`
       );
       console.log("connectio params:", connectionParams);
+
+      if (connectionParams.Authorization) {
+        // ici faire un try catch au cas ou le user soit mauvais mais du coup on check
+        // au moment d'une subscription si l'user est auth et on peut throw une error
+        // si ce n'est pas le cas
+        try {
+          const user = getUserFromToken(
+            connectionParams.Authorization.replace("Bearer ", "")
+          );
+          return { user };
+        } catch (e) {
+          return;
+        }
+      }
       if (connectionParams.authToken) {
         const user = getUserFromToken(connectionParams.authToken);
         //console.log("user:", user);

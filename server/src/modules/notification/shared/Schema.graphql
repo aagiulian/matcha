@@ -25,3 +25,11 @@ type Visit {
   datetime: String!
   # back: Boolean!
 }
+
+type Notification {
+  id: ID!
+  emitter: User!
+  recipient: User!
+  datetime: String!
+  type: String!
+}

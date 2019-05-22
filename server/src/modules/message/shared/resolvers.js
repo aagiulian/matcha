@@ -1,6 +1,6 @@
 export const resolvers = {
   Message: {
-    emitter: ({ id }) => ({ id }),
-    recipient: ({ id }) => ({ id })
+    emitter: ({ emitter }) => ({ id: emitter }),
+    recipient: ({ recipient }) => ({ id: recipient })
   }
 };

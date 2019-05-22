@@ -8,7 +8,7 @@ import { ForbiddenError } from "apollo-server";
 export const resolvers = {
   Query: {
     messages: async (_, { conversationId }, { user }) => {
-      if (Conversation.isPart(user.id) === false) {
+      if (Conversation.isParty(user.id, conversationId) === false) {
         throw new ForbiddenError(
           "Not your conversation, get the fuck outta here !"
         );
