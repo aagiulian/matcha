@@ -14,6 +14,7 @@ export const resolvers = {
       const gqlMsg = await Message.save(message);
       const gqlNotif = await Notification.save(message, MESSAGE_NOTIFICATION);
 
+      console.log("gqlMsg: ", gqlMsg);
       pubsub.publish(PUBSUB_NEW_MESSAGE, {
         newMessage: gqlMsg
       });

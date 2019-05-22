@@ -35,6 +35,7 @@ export default class Message {
       isRead: false,
       datetime,
       emitter: sendId,
+      recipient: recvId,
       conversationId: convId
     };
   }

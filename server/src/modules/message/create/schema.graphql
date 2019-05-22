@@ -1,7 +1,7 @@
 input MessageInput {
   text: String!
-  recvId: Int!
-  convId: Int!
+  recvId: ID!
+  convId: ID!
 }
 
 type Mutation {

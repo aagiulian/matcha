@@ -1,4 +1,4 @@
 type Conversation {
-  id: Int!
+  id: ID!
   friend: User!
 }
