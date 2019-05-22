@@ -7,7 +7,6 @@ export const resolvers = {
       subscribe: withFilter(
         (_, __, { pubsub }) => pubsub.asyncIterator(PUBSUB_NEW_NOTIFICATION),
         (payload, variables) => {
-          console.log(...payload);
           return (
             payload.newNotification.conversationId === variables.conversationId
           );

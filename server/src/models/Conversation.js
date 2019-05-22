@@ -72,12 +72,13 @@ export default class Conversation {
       FROM
         conversations
       WHERE
-        id = $2 
-        AND 
-        (user_a = $1 OR user_b = $1)
+        (id = $2 AND user_a = $1) 
+        OR 
+        (id = $2 AND user_b = $1)
       `;
     let values = [userId, convId];
     let res = await pool.query(text, values);
+    console.log(res);
     if (res.rowCount) {
       return true;
     }
