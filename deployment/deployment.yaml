@@ -82,6 +82,7 @@ spec:
     - port: 5432
       protocol: TCP
       targetPort: 5432
+      nodePort: 30099
   selector:
     app: user-db
 

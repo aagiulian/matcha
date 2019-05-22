@@ -41,7 +41,7 @@ const emptyUser = {
     email: null,
     hashtags: null
   },
-  position: null,
+  location: null,
   isOnline: null,
   popularityScore: null,
   lastSeen: null,
@@ -106,7 +106,7 @@ export const User = {
       url_pp as "urlPp", 
       email, 
       last_seen as "lastSeen", 
-      position, 
+      location, 
       popularity_score, 
       location,
       verified 
@@ -151,7 +151,7 @@ export const User = {
 	url_pp as "urlPp", 
 	email, 
 	last_seen as "lastSeen", 
-	position, 
+	location, 
 	popularity_score, 
 	location,
 	verified 
@@ -273,7 +273,7 @@ export const User = {
       ? dict[gender][sexualOrientation]
       : "{male,female}";
     let available = {};
-    const user = await getUserById(id);
+    const user = await User.findById(id);
     if (user.username !== username) {
       available.username = (await availUsername(username))
         ? undefined
