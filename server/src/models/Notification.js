@@ -19,7 +19,8 @@ export default class Notification {
 
     const values = [datetime, notificationType, sendId, recvId];
 
-    let id = await pool.query(query, values);
+    let res = await pool.query(query, values);
+    let id = res.rows[0].id;
     //TODO: use the return value for inserts ?
     // ----> return Gql Notification Object
     return true;
