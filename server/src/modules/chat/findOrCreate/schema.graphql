@@ -1,3 +1,3 @@
 type Mutation {
-  findOrCreateConv(userId: Int!): String!
+  findOrCreateConv(userId: ID!): String!
 }

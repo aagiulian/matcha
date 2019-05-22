@@ -14,7 +14,6 @@ import { genSchema } from "./utils/genSchema";
 const { PubSub } = require("apollo-server");
 
 const pubsub = new PubSub();
-console.log(pubsub);
 import { makeExecutableSchema } from "graphql-tools";
 import {
   getUserFromToken,

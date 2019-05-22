@@ -28,13 +28,15 @@ export default class Message {
     VALUES($1, $2, $3, $4, $5, $6)
     RETURNING id`;
     let values = [text, sendId, recvId, convId, datetime, false];
-    let id = await pool.query(query, values);
+    let res = await pool.query(query, values);
+    let id = res.rows[0].id;
     return {
       id,
       text,
       isRead: false,
       datetime,
       emitter: sendId,
+      recipient: recvId,
       conversationId: convId
     };
   }

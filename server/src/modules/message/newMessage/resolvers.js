@@ -7,8 +7,6 @@ export const resolvers = {
       subscribe: withFilter(
         (_, __, { pubsub }) => pubsub.asyncIterator(PUBSUB_NEW_MESSAGE),
         (payload, variables) => {
-          console.log("NEWMESSAGE payload", payload);
-          console.log("NEWMESSAGE variables", variables);
           return payload.newMessage.conversationId === variables.conversationId;
         }
         // peut etre qu'il faut ici verifier que la conversation appartient bien au user

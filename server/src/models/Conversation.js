@@ -38,7 +38,7 @@ export default class Conversation {
       RETURNING id;
      `;
     res = await pool.query(text, values);
-    return res;
+    return res.rows[0].id;
   }
 
   static async list(userId) {

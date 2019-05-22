@@ -24,13 +24,13 @@ const typeDefs = gql`
   }
 
   type Node {
-    id: ID!
+    id: Int!
     createdAt: Date!
     updatedAt: Date!
   }
 
   type User {
-    id: ID!
+    id: Int!
     profile: Profile
     position: String!
     isOnline: Boolean!
@@ -68,27 +68,27 @@ const typeDefs = gql`
   }
 
   type Hashtag {
-    id: ID!
+    id: Int!
     name: String!
     users: [User]
   }
 
   type Picture {
-    id: ID!
+    id: Int!
     # user: User!
     url: String!
     # ismain: Boolean!
   }
 
   type Conversation {
-    id: ID!
+    id: Int!
     messages: [Message]
     # userA: User
     # userB: User
   }
 
   type Message {
-    id: ID!
+    id: Int!
     text: String!
     isRead: Boolean!
     datetime: String!
@@ -97,7 +97,7 @@ const typeDefs = gql`
   }
 
   type SignupResponse {
-    #id: ID!
+    #id: Int!
     email: String!
   }
 
@@ -162,9 +162,9 @@ const typeDefs = gql`
     hashtags: [String]
     node(
       """
-      The ID of the object
+      The Int of the object
       """
-      id: ID!
+      id: Int!
     ): Node
   }
 
