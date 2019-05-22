@@ -23,7 +23,7 @@ type Location {
   lat: Float
 }
 
-type ProfileInfo {
+type Profile {
   username: String!
   firstname: String!
   lastname: String!

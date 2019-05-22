@@ -26,7 +26,7 @@ const getDateOfBirth = ret => {
 
 const emptyUser = {
   id: null,
-  profileInfo: {
+  profile: {
     username: null,
     firstname: null,
     lastname: null,
@@ -179,7 +179,7 @@ export const User = {
     }
   },
 
-  getProfileInfo: async id => {
+  getProfile: async id => {
     let text = `
       SELECT 
 	users.id, 

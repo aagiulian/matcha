@@ -19,7 +19,6 @@ export const resolvers = {
         lastname,
         location
       });
-      console.log("NEW response: ", res);
       if (res !== true) {
         throw new UserInputError("Duplicate", {
           invalidArgs: res

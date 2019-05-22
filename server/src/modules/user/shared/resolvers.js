@@ -2,39 +2,44 @@ import { User } from "../../../models/User";
 
 export const resolvers = {
   User: {
-    profileInfo: async ({ id }) => ({ id })
+    profile: ({ id }) => ({ id }),
+    conversations: ({ id }) => ({ id })
+    // likes: ({ id }) => ({ id }),
+    // matchs: ({ id }) => ({ id }),
+    // visits: ({ id }) => ({ id }),
+    // blocked: ({ id }) => ({ id })
   },
-  ProfileInfo: {
+  Profile: {
     username: async ({ id }) => {
-      const { username } = await User.getProfileInfo(id);
+      const { username } = await User.getProfile(id);
       return username;
     },
     firstname: async ({ id }) => {
-      const { firstname } = await User.getProfileInfo(id);
+      const { firstname } = await User.getProfile(id);
       return firstname;
     },
     lastname: async ({ id }) => {
-      const { lastname } = await User.getProfileInfo(id);
+      const { lastname } = await User.getProfile(id);
       return lastname;
     },
     gender: async ({ id }) => {
-      const { gender } = await User.getProfileInfo(id);
+      const { gender } = await User.getProfile(id);
       return gender;
     },
     dateOfBirth: async ({ id }) => {
-      const { dateOfBirth } = await User.getProfileInfo(id);
+      const { dateOfBirth } = await User.getProfile(id);
       return dateOfBirth;
     },
     bio: async ({ id }) => {
-      const { bio } = await User.getProfileInfo(id);
+      const { bio } = await User.getProfile(id);
       return bio;
     },
     sexualOrientation: async ({ id }) => {
-      const { sexualOrientation } = await User.getProfileInfo(id);
+      const { sexualOrientation } = await User.getProfile(id);
       return sexualOrientation;
     },
     email: async ({ id }) => {
-      const { email } = await User.getProfileInfo(id);
+      const { email } = await User.getProfile(id);
       return email;
     },
     hashtags: async ({ id }) => {

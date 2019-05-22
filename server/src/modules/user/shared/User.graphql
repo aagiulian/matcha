@@ -1,14 +1,20 @@
 directive @isAuthenticated on FIELD_DEFINITION
 directive @isOwner on FIELD_DEFINITION
 
+## Il faut qu'on protege via les directives tous les fields ou c'est necessaire
 type User {
   id: ID!
-  profileInfo: ProfileInfo
+  profile: Profile
   position: String!
   isOnline: Boolean!
   popularityScore: String!
   lastSeen: String!
   verified: Boolean!
+  conversations: [Conversation]! #@isOwner
+  # likes: [Like]! #@isOwner
+  # matchs: [Match]! #@isOwner
+  # visits: [Visit]! #@isOwner
+  # blocked: [Blocked]! #@isOwner
   # protected: ProtectedInfo!
 }
 

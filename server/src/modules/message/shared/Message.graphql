@@ -5,5 +5,5 @@ type Message {
   createdAt: String!
   emitter: User!
   recipient: User!
-  conversationId: ID!
+  conversationId: Int!
 }

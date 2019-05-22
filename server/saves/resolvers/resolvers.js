@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 const bcrypt = require("bcrypt");
 const { generateToken } = require("../auth-helpers/generateToken");
 import { pool } from "../database";
-import { getProfileInfo } from "../controllers/userCalls";
+import { getProfile } from "../controllers/userCalls";
 import { resetPasswordEmail } from "../auth-helpers/passwordReset";
 import { sendMailToken } from "../auth-helpers/emailVerification";
 import {
@@ -24,39 +24,39 @@ const USER_LOGGED = "USER_LOGGED";
 
 const resolvers = {
   User: {
-    profileInfo: async ({ id }) => ({ id })
+    profile: async ({ id }) => ({ id })
   },
-  ProfileInfo: {
+  Profile: {
     username: async ({ id }) => {
-      const { username } = await getProfileInfo(id);
+      const { username } = await getProfile(id);
       return username;
     },
     firstname: async ({ id }) => {
-      const { firstname } = await getProfileInfo(id);
+      const { firstname } = await getProfile(id);
       return firstname;
     },
     lastname: async ({ id }) => {
-      const { lastname } = await getProfileInfo(id);
+      const { lastname } = await getProfile(id);
       return lastname;
     },
     gender: async ({ id }) => {
-      const { gender } = await getProfileInfo(id);
+      const { gender } = await getProfile(id);
       return gender;
     },
     dateOfBirth: async ({ id }) => {
-      const { dateOfBirth } = await getProfileInfo(id);
+      const { dateOfBirth } = await getProfile(id);
       return dateOfBirth;
     },
     bio: async ({ id }) => {
-      const { bio } = await getProfileInfo(id);
+      const { bio } = await getProfile(id);
       return bio;
     },
     sexualOrientation: async ({ id }) => {
-      const { sexualOrientation } = await getProfileInfo(id);
+      const { sexualOrientation } = await getProfile(id);
       return sexualOrientation;
     },
     email: async ({ id }) => {
-      const { email } = await getProfileInfo(id);
+      const { email } = await getProfile(id);
       return email;
     },
     hashtags: async ({ id }) => {

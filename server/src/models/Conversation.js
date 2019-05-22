@@ -16,6 +16,7 @@ export default class Conversation {
   // }
 
   static async findOrCreate(userA, userB) {
+    // ICI il faut verifier que les users peuvent se parler que le second existe
     let text = `
       SELECT 
         id
@@ -41,7 +42,6 @@ export default class Conversation {
   }
 
   static async list(userId) {
-    console.log("toto");
     let text = `
       SELECT
         id,
@@ -61,8 +61,7 @@ export default class Conversation {
       `;
     let values = [userId];
     let res = await pool.query(text, values);
-    console.log("LIST CONVERSATIONS result ---> ", res);
-    return res;
-    //WHAT IF NO CONVERSATION
+    console.log("LIST CONVERSATIONS result ---> ", res.rows);
+    return res.rows;
   }
 }

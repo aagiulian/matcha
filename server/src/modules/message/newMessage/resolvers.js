@@ -4,7 +4,7 @@ import { withFilter } from "apollo-server";
 export const resolvers = {
   Subscription: {
     newMessage: {
-      suscribe: withFilter(
+      subscribe: withFilter(
         (_, __, { pubsub }) => pubsub.asyncIterator(PUBSUB_NEW_MESSAGE),
         (payload, variables) => {
           console.log("NEWMESSAGE payload", payload);

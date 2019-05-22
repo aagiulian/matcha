@@ -1,9 +1,12 @@
 import Conversation from "../../../models/Conversation";
+import { UserInputError } from "apollo-server";
 
 export const resolvers = {
   Mutation: {
     findOrCreateConv: (_, { userId }, { user }) => {
-      // ici il faut donc check que l'user existe et que l'autre a le droit de lui parler
+      if (userId === user.id) {
+        throw new UserInputError("Can't start a conversation with yourself");
+      }
       return Conversation.findOrCreate(userId, user.id);
     }
   }

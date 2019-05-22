@@ -31,7 +31,7 @@ const typeDefs = gql`
 
   type User {
     id: ID!
-    profileInfo: ProfileInfo
+    profile: Profile
     position: String!
     isOnline: Boolean!
     popularityScore: String!
@@ -44,7 +44,7 @@ const typeDefs = gql`
     hashedPassword: String! @isAuthenticated
   }
 
-  type ProfileInfo {
+  type Profile {
     username: String!
     firstname: String!
     lastname: String!

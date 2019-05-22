@@ -1,3 +1,3 @@
 type Query {
-  messages(conversationId: ID!): [Message]
+  messages(conversationId: Int!): [Message]
 }
