@@ -153,23 +153,5 @@ CREATE TABLE notifications
   FOREIGN KEY(recv_id) REFERENCES users(id)
 );
 
-select id,username,location,round((location <@> point(2.45,48))::numeric,3) as dist from users limit 3;
-
-/*user to suggest to*/
-select
-users.id,
-users.username,
-users.location,
-users.lookingfor,
-users_hashtags.hashtag_name
-from users
-left join users_hashtags on users.id = users_hashtags.user_id
-
-select
-user_id,
-hashtag_name
-from
-users_hashtags;
-
 
 \COPY users (bio,email,firstname,gender,hashed_password,lastname,location,lookingfor,num_pics,popularity_score,sexual_orientation,url_pp,username,verified,date_of_birth,last_seen) FROM '/docker-entrypoint-initdb.d/fake_profiles.csv' DELIMITER ';' CSV HEADER;
