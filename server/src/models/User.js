@@ -50,6 +50,21 @@ const emptyUser = {
 };
 
 export const User = {
+  hasExtendedProfile: async (id) => {
+    const query = `
+      SELECT
+        gender
+      FROM
+        users
+      WHERE
+        id = $1`;
+    const values = [userA, userB];
+    const { rows: results, rowCount: resultsCount } = await pool.query(query, values);
+    if (resultsCount && results[0].gender) {
+      return true;
+    }
+    return false;
+  },
   blocked: async (userA, userB) => {
     const query = `
       SELECT
