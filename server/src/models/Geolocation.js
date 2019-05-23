@@ -133,8 +133,13 @@ export default class Geolocation {
       }
 
     */
-    const locationIp = Geolocation.geolocationFromGeoIpLite(clientIp);
-    console.log("geoloc ip:", locationIp);
-    return locationIp;
+    if(clientIp) {
+      const locationIp = Geolocation.geolocationFromGeoIpLite(clientIp);
+      return locationIp;
+    }
+    else {
+      return {lng: null,
+              lat: null};
+    }
   }
 }
