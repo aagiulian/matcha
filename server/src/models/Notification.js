@@ -90,9 +90,7 @@ export default class Notification {
       FROM 
         notifications
       WHERE 
-        (recv_id = $1)
-        AND
-        (seen = false)`;
+        (recv_id = $1 AND seen = false)`;
     const values = [id];
     const { rows: results, rowCount: resultsCount } = await pool.query(
       query,
