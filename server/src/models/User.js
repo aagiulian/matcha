@@ -50,6 +50,24 @@ const emptyUser = {
 };
 
 export const User = {
+  blocked: async (userA, userB) => {
+    const query = `
+      SELECT
+        id
+      FROM
+        blocked
+      WHERE
+        (user_a = $1 AND user_b = $2)
+      OR
+        (user_a = $2 AND user_b = $1)`;
+    const values = [userA, userB];
+    const { rowCount: resultsCount } = await pool.query(query, values);
+    if (resultsCount) {
+      return true;
+    }
+    return false;
+  },
+  
   new: async ({ email, password, username, firstname, lastname, location }) => {
     const available = {
       username: (await availUsername(username)) ? undefined : "Already exists",
