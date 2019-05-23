@@ -7,7 +7,7 @@ export const resolvers = {
       subscribe: withFilter(
         (_, __, { pubsub }) => pubsub.asyncIterator(PUBSUB_NEW_NOTIFICATION),
         (payload, _, { user }) => {
-          return user.id === payload.newNotification.recipient;
+          return user.id == payload.newNotification.recipient;
         }
         // peut etre qu'il faut ici verifier que la conversation appartient bien au user
       )
