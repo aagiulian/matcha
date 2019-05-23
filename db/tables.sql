@@ -78,10 +78,10 @@ CREATE TABLE pics
 
 CREATE TABLE likes
 (
-  id SERIAL PRIMARY KEY,
-  user_a INTEGER,
-  user_b INTEGER,
+  user_a INTEGER NOT NULL,
+  user_b INTEGER NOT NULL,
   status LIKEENUM,
+  primary key (user_a, user_b),
   FOREIGN KEY(user_a) REFERENCES users(id),
   FOREIGN KEY(user_b) REFERENCES users(id)
 );
@@ -111,6 +111,7 @@ CREATE TABLE conversations
   id SERIAL PRIMARY KEY,
   user_a INTEGER,
   user_b INTEGER,
+  constraint not_equal check (user_a <> user_b),
   FOREIGN KEY(user_a) REFERENCES users(id),
   FOREIGN KEY(user_b) REFERENCES users(id)
 );

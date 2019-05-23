@@ -15,23 +15,26 @@ export default class Message {
   //   //pubsub(sendId, recvId, datetime, notificationType);
   // }
 
-  static async save({ text, sendId, recvId, convId, datetime }) {
+  static async save({ text, sendId, convId, datetime }) {
     let query = `
     INSERT INTO
       messages(
         text,
         send_id,
-        recv_id,
         conversation_id,
         created_at,
-        is_read)
-    VALUES($1, $2, $3, $4, $5, $6)
-    RETURNING id`;
-    let values = [text, sendId, recvId, convId, datetime, false];
+        is_read,
+        recv_id)
+    SELECT $1, $2, $3, $4::TIMESTAMPTZ, $5::BOOLEAN, user_b FROM conversations WHERE user_a = $2 AND id = $3 
+    UNION 
+    SELECT $1, $2, $3, $4::TIMESTAMPTZ, $5::BOOLEAN, user_a FROM conversations WHERE user_b = $2 AND id = $3 
+    RETURNING id, recv_id`;
+    let values = [text, sendId, convId, datetime, false];
     let res = await pool.query(query, values);
-    let id = res.rows[0].id;
+    let msgId = res.rows[0].id;
+    let recvId = res.rows[0].recv_id;
     return {
-      id,
+      id: msgId,
       text,
       isRead: false,
       datetime,

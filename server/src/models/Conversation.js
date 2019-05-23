@@ -37,8 +37,12 @@ export default class Conversation {
       VALUES($1, $2)
       RETURNING id;
      `;
-    res = await pool.query(text, values);
-    return res.rows[0].id;
+    try {
+      res = await pool.query(text, values);
+      return res.rows[0].id;
+    } catch {
+      return null;
+    }
   }
 
   static async list(userId) {
