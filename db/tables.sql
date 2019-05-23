@@ -7,11 +7,6 @@ CREATE TYPE SEXUAL_ORIENTATION AS ENUM
   'homosexual', 
   'bisexual');
 
-CREATE TYPE LIKEENUM AS ENUM
-(
-  'A->B', 
-  'B->A', 
-  'matched');
 
 CREATE TYPE GENDER AS ENUM
 (
@@ -63,7 +58,7 @@ CREATE TABLE hashtags
 CREATE TABLE users_hashtags
 (
   id SERIAL PRIMARY KEY,
-  user_id INTEGER,
+  user_id INTEGER NOT NULL,
   hashtag_name TEXT,
 
   FOREIGN KEY(user_id) REFERENCES users(id),
@@ -81,9 +76,17 @@ CREATE TABLE pics
 
 CREATE TABLE likes
 (
+  user_id INTEGER NOT NULL,
+  user_liked INTEGER NOT NULL,
+  primary key (user_id, user_liked),
+  FOREIGN KEY(user_id) REFERENCES users(id),
+  FOREIGN KEY(user_liked) REFERENCES users(id)
+);
+
+CREATE TABLE matchs
+(
   user_a INTEGER NOT NULL,
   user_b INTEGER NOT NULL,
-  status LIKEENUM,
   primary key (user_a, user_b),
   FOREIGN KEY(user_a) REFERENCES users(id),
   FOREIGN KEY(user_b) REFERENCES users(id)
@@ -91,9 +94,9 @@ CREATE TABLE likes
 
 CREATE TABLE blocked
 (
-  id SERIAL PRIMARY KEY,
-  user_id INTEGER,
-  user_blocked INTEGER,
+  user_id INTEGER NOT NULL,
+  user_blocked INTEGER NOT NULL,
+  primary key (user_id, user_blocked),
   FOREIGN KEY(user_id) REFERENCES users(id),
   FOREIGN KEY(user_blocked) REFERENCES users(id)
 );
@@ -101,10 +104,10 @@ CREATE TABLE blocked
 
 CREATE TABLE visited
 (
-  id SERIAL PRIMARY KEY,
+  user_id INTEGER NOT NULL,
+  user_visited INTEGER NOT NULL,
   datetime TIMESTAMPTZ,
-  user_id INTEGER,
-  user_visited INTEGER,
+  primary key (user_id, user_visited),
   FOREIGN KEY(user_id) REFERENCES users(id),
   FOREIGN KEY(user_visited) REFERENCES users(id)
 );
@@ -112,8 +115,8 @@ CREATE TABLE visited
 CREATE TABLE conversations
 (
   id SERIAL PRIMARY KEY,
-  user_a INTEGER,
-  user_b INTEGER,
+  user_a INTEGER NOT NULL,
+  user_b INTEGER NOT NULL,
   constraint not_equal check (user_a <> user_b),
   FOREIGN KEY(user_a) REFERENCES users(id),
   FOREIGN KEY(user_b) REFERENCES users(id)
@@ -123,9 +126,9 @@ CREATE TABLE messages
 (
   id SERIAL PRIMARY KEY,
   text TEXT,
-  send_id INTEGER,
-  recv_id INTEGER,
-  conversation_id INTEGER,
+  send_id INTEGER NOT NULL,
+  recv_id INTEGER NOT NULL,
+  conversation_id INTEGER NOT NULL,
   created_at TIMESTAMPTZ,
   is_read BOOLEAN,
   FOREIGN KEY(conversation_id) REFERENCES conversations(id),
@@ -138,7 +141,7 @@ CREATE TABLE connections
   id SERIAL PRIMARY KEY,
   datetime TIMESTAMPTZ,
   event_type CONNECTION_TYPE,
-  user_id INTEGER,
+  user_id INTEGER NOT NULL,
   FOREIGN KEY(user_id) REFERENCES users(id)
 );
 
@@ -147,8 +150,8 @@ CREATE TABLE notifications
   id SERIAL PRIMARY KEY,
   datetime TIMESTAMPTZ,
   notification_type NOTIFICATION_TYPE,
-  send_id INTEGER,
-  recv_id INTEGER,
+  send_id INTEGER NOT NULL,
+  recv_id INTEGER NOT NULL,
   seen BOOLEAN,
   FOREIGN KEY(send_id) REFERENCES users(id),
   FOREIGN KEY(recv_id) REFERENCES users(id)

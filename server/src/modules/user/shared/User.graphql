@@ -11,10 +11,10 @@ type User {
   lastSeen: String!
   verified: Boolean!
   conversations: [Conversation]! #@isOwner
-  # likes: [Like]! #@isOwner
-  # matchs: [Match]! #@isOwner
-  # visits: [Visit]! #@isOwner
-  # blocked: [Blocked]! #@isOwner
+  likes: [User]! #@isOwner
+  matchs: [User]! #@isOwner
+  visits: [User]! #@isOwner
+  blocked: [User]! #@isOwner
   # protected: ProtectedInfo!
 }
 

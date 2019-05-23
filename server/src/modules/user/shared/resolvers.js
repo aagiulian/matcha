@@ -1,13 +1,16 @@
 import { User } from "../../../models/User";
+import Like from "../../../models/Like";
+import Block from "../../../models/Block";
+import Visit from "../../../models/Visit";
 
 export const resolvers = {
   User: {
     profile: ({ id }) => ({ id }),
-    conversations: ({ id }) => ({ id })
-    // likes: ({ id }) => ({ id }),
-    // matchs: ({ id }) => ({ id }),
-    // visits: ({ id }) => ({ id }),
-    // blocked: ({ id }) => ({ id })
+    conversations: ({ id }) => ({ id }),
+    likes: async ({ id }) => await Like.list(id),
+    matchs: async ({ id }) => await Like.matchList(id),
+    visits: async ({ id }) => await Visit.list(id),
+    blocked: async ({ id }) => await Block.list(id)
   },
   Profile: {
     username: async ({ id }) => {
