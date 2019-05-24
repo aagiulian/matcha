@@ -50,7 +50,7 @@ const emptyUser = {
 };
 
 export const User = {
-  hasExtendedProfile: async (id) => {
+  hasExtendedProfile: async id => {
     const query = `
       SELECT
         gender
@@ -59,7 +59,10 @@ export const User = {
       WHERE
         id = $1`;
     const values = [userA, userB];
-    const { rows: results, rowCount: resultsCount } = await pool.query(query, values);
+    const { rows: results, rowCount: resultsCount } = await pool.query(
+      query,
+      values
+    );
     if (resultsCount && results[0].gender) {
       return true;
     }
@@ -82,7 +85,7 @@ export const User = {
     }
     return false;
   },
-  
+
   new: async ({ email, password, username, firstname, lastname, location }) => {
     const available = {
       username: (await availUsername(username)) ? undefined : "Already exists",
@@ -125,28 +128,28 @@ export const User = {
 
   findById: async id => {
     const text = `
-    SELECT 
-      id, 
-      username, 
-      hashed_password as "hashedPassword", 
-      firstname, 
-      lastname, 
-      date_of_birth as "dateOfBirth", 
-      gender, 
-      sexual_orientation as "sexualOrientation", 
-      bio, 
-      num_pics as "numPics", 
-      url_pp as "urlPp", 
-      email, 
-      last_seen as "lastSeen", 
-      location, 
-      popularity_score, 
-      location,
-      verified 
-    FROM 
-      users 
-    WHERE 
-      id = $1`;
+      SELECT 
+        id, 
+        username, 
+        hashed_password as "hashedPassword", 
+        firstname, 
+        lastname, 
+        date_of_birth as "dateOfBirth", 
+        gender, 
+        sexual_orientation as "sexualOrientation", 
+        bio, 
+        num_pics as "numPics", 
+        url_pp as "urlPp", 
+        email, 
+        last_seen as "lastSeen", 
+        location, 
+        popularity_score, 
+        location,
+        verified 
+      FROM 
+        users 
+      WHERE 
+        id = $1`;
     const values = [id];
     const { rows: results, rowCount: resultsCount } = await pool.query(
       text,
@@ -171,27 +174,27 @@ export const User = {
   findByEmail: async email => {
     const text = `
     SELECT 
-	id, 
-	username, 
-	hashed_password as "hashedPassword", 
-	firstname, 
-	lastname, 
-	date_of_birth as "dateOfBirth", 
-	gender, 
-	sexual_orientation as "sexualOrientation", 
-	bio, 
-	num_pics as "numPics", 
-	url_pp as "urlPp", 
-	email, 
-	last_seen as "lastSeen", 
-	location, 
-	popularity_score, 
-	location,
-	verified 
+      id, 
+      username, 
+      hashed_password as "hashedPassword", 
+      firstname, 
+      lastname, 
+      date_of_birth as "dateOfBirth", 
+      gender, 
+      sexual_orientation as "sexualOrientation", 
+      bio, 
+      num_pics as "numPics", 
+      url_pp as "urlPp", 
+      email, 
+      last_seen as "lastSeen", 
+      location, 
+      popularity_score, 
+      location,
+      verified 
     FROM 
-	users 
+      users 
     WHERE 
-	email = $1`;
+      email = $1`;
     const values = [email];
     const { rows: results, rowCount: resultsCount } = await pool.query(
       text,
@@ -213,34 +216,34 @@ export const User = {
     }
   },
 
-  getProfile: async id => {
+  getProfileById: async id => {
     let text = `
       SELECT 
-	users.id, 
-	users.username, 
-	users.hashed_password as "hashedPassword", 
-	users.firstname, 
-	users.lastname, 
-	users.date_of_birth as "dateOfBirth", 
-	users.gender, 
-	users.sexual_orientation as "sexualOrientation", 
-	users.bio, 
-	users.num_pics as "numPics", 
-	users.url_pp as "urlPp", 
-	users.email, 
-	users.last_seen as "lastSeen", 
-	users.location, 
-	users.popularity_score, 
-	users.verified,
-	pics.url
+        users.id, 
+        users.username, 
+        users.hashed_password as "hashedPassword", 
+        users.firstname, 
+        users.lastname, 
+        users.date_of_birth as "dateOfBirth", 
+        users.gender, 
+        users.sexual_orientation as "sexualOrientation", 
+        users.bio, 
+        users.num_pics as "numPics", 
+        users.url_pp as "urlPp", 
+        users.email, 
+        users.last_seen as "lastSeen", 
+        users.location, 
+        users.popularity_score, 
+        users.verified,
+        pics.url
       FROM 
-	users 
+        users 
       LEFT JOIN 
-	pics 
+        pics 
       ON 
-	pics.user_id = users.id 
+        pics.user_id = users.id 
       WHERE 
-	users.id = $1`;
+        users.id = $1`;
     let values = [id];
     let res = await pool.query(text, values);
     if (res.rowCount) {
@@ -248,6 +251,43 @@ export const User = {
       return getDateOfBirth(getLocation(res.rows[0]));
     } else {
       return emptyUser;
+    }
+  },
+
+  getProfileByIds: async ids => {
+    let text = `
+      SELECT 
+        users.id, 
+        users.username, 
+        users.hashed_password as "hashedPassword", 
+        users.firstname, 
+        users.lastname, 
+        users.date_of_birth as "dateOfBirth", 
+        users.gender, 
+        users.sexual_orientation as "sexualOrientation", 
+        users.bio, 
+        users.num_pics as "numPics", 
+        users.url_pp as "urlPp", 
+        users.email, 
+        users.last_seen as "lastSeen", 
+        users.location, 
+        users.popularity_score, 
+        users.verified,
+        pics.url
+      FROM 
+        users 
+      LEFT JOIN 
+        pics 
+      ON 
+        pics.user_id = users.id 
+      WHERE 
+        users.id IN (SELECT unnest (($1)::INTEGER[]))`;
+    let values = [ids];
+    let res = await pool.query(text, values);
+    if (res.rowCount) {
+      return res.rows.map(u => getDateOfBirth(getLocation(u)));
+    } else {
+      return [];
     }
   },
 

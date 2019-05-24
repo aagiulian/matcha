@@ -7,50 +7,50 @@ export const resolvers = {
   User: {
     profile: ({ id }) => ({ id }),
     conversations: ({ id }) => ({ id }),
-    likes: async ({ id }) => await Like.list(id),
-    matchs: async ({ id }) => await Like.matchList(id),
-    visits: async ({ id }) => await Visit.list(id),
-    blocked: async ({ id }) => await Block.list(id)
+    likes: async ({ id }) => Like.list(id),
+    matchs: async ({ id }) => Like.matchList(id),
+    visits: async ({ id }) => Visit.list(id),
+    blocked: async ({ id }) => Block.list(id)
   },
   Profile: {
-    username: async ({ id }) => {
-      const { username } = await User.getProfile(id);
+    username: async ({ id }, _, { profileLoader }) => {
+      const { username } = await profileLoader.load(id);
       return username;
     },
-    firstname: async ({ id }) => {
-      const { firstname } = await User.getProfile(id);
+    firstname: async ({ id }, _, { profileLoader }) => {
+      const { firstname } = await profileLoader.load(id);
       return firstname;
     },
-    lastname: async ({ id }) => {
-      const { lastname } = await User.getProfile(id);
+    lastname: async ({ id }, _, { profileLoader }) => {
+      const { lastname } = await profileLoader.load(id);
       return lastname;
     },
-    gender: async ({ id }) => {
-      const { gender } = await User.getProfile(id);
+    gender: async ({ id }, _, { profileLoader }) => {
+      const { gender } = await profileLoader.load(id);
       return gender;
     },
-    dateOfBirth: async ({ id }) => {
-      const { dateOfBirth } = await User.getProfile(id);
+    dateOfBirth: async ({ id }, _, { profileLoader }) => {
+      const { dateOfBirth } = await profileLoader.load(id);
       return dateOfBirth;
     },
-    bio: async ({ id }) => {
-      const { bio } = await User.getProfile(id);
+    bio: async ({ id }, _, { profileLoader }) => {
+      const { bio } = await profileLoader.load(id);
       return bio;
     },
-    sexualOrientation: async ({ id }) => {
-      const { sexualOrientation } = await User.getProfile(id);
+    sexualOrientation: async ({ id }, _, { profileLoader }) => {
+      const { sexualOrientation } = await profileLoader.load(id);
       return sexualOrientation;
     },
-    email: async ({ id }) => {
-      const { email } = await User.getProfile(id);
+    email: async ({ id }, _, { profileLoader }) => {
+      const { email } = await profileLoader.load(id);
       return email;
     },
     hashtags: async ({ id }) => {
       const { hashtags } = await User.getHashtags(id);
       return hashtags;
     },
-    location: async ({ id }) => {
-      const { location } = await User.getProfile(id);
+    location: async ({ id }, _, { profileLoader }) => {
+      const { location } = await profileLoader.load(id);
       return location;
     }
   },

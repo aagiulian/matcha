@@ -10,6 +10,7 @@ import express from "express";
 import { ApolloServer } from "apollo-server";
 import { RedisPubSub } from "graphql-redis-subscriptions";
 import { genSchema } from "./utils/genSchema";
+import { profileLoader } from "./modules/loader/profileLoader";
 
 const { PubSub } = require("apollo-server");
 
@@ -83,7 +84,7 @@ const clientIpAddress = headers => {
   let ip = null;
   if (headers) {
     const ipAddress = headers["x-forwarded-for"];
-    if (ipAddress) return ip = ipAddress;
+    if (ipAddress) return (ip = ipAddress);
   }
   console.log("ip:", ip);
   return ip;
@@ -109,7 +110,8 @@ const server = new ApolloServer({
       return {
         user: getUserFromToken(token),
         location: await Geolocation.getUserLocation(req.headers),
-        pubsub
+        pubsub,
+        profileLoader: profileLoader()
       };
     }
   },

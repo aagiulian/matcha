@@ -129,7 +129,7 @@ async function isUserVerified(username) {
   }
 }
 
-async function getProfile(id) {
+async function getProfileById(id) {
   let text = `
     SELECT 
       users.id, 
@@ -434,7 +434,7 @@ module.exports = {
   getUserId,
   getUserEmail,
   isUserVerified,
-  getProfile,
+  getProfileById,
   getUserById,
   getUserByUsername,
   getUserByEmail,

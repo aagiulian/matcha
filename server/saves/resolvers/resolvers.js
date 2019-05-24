@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 const bcrypt = require("bcrypt");
 const { generateToken } = require("../auth-helpers/generateToken");
 import { pool } from "../database";
-import { getProfile } from "../controllers/userCalls";
+import { getProfileById } from "../controllers/userCalls";
 import { resetPasswordEmail } from "../auth-helpers/passwordReset";
 import { sendMailToken } from "../auth-helpers/emailVerification";
 import {
@@ -28,35 +28,35 @@ const resolvers = {
   },
   Profile: {
     username: async ({ id }) => {
-      const { username } = await getProfile(id);
+      const { username } = await getProfileById(id);
       return username;
     },
     firstname: async ({ id }) => {
-      const { firstname } = await getProfile(id);
+      const { firstname } = await getProfileById(id);
       return firstname;
     },
     lastname: async ({ id }) => {
-      const { lastname } = await getProfile(id);
+      const { lastname } = await getProfileById(id);
       return lastname;
     },
     gender: async ({ id }) => {
-      const { gender } = await getProfile(id);
+      const { gender } = await getProfileById(id);
       return gender;
     },
     dateOfBirth: async ({ id }) => {
-      const { dateOfBirth } = await getProfile(id);
+      const { dateOfBirth } = await getProfileById(id);
       return dateOfBirth;
     },
     bio: async ({ id }) => {
-      const { bio } = await getProfile(id);
+      const { bio } = await getProfileById(id);
       return bio;
     },
     sexualOrientation: async ({ id }) => {
-      const { sexualOrientation } = await getProfile(id);
+      const { sexualOrientation } = await getProfileById(id);
       return sexualOrientation;
     },
     email: async ({ id }) => {
-      const { email } = await getProfile(id);
+      const { email } = await getProfileById(id);
       return email;
     },
     hashtags: async ({ id }) => {

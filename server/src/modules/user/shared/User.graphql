@@ -5,7 +5,7 @@ directive @isOwner on FIELD_DEFINITION
 type User {
   id: ID!
   profile: Profile
-  location: String!
+  location: Location!
   isOnline: Boolean!
   popularityScore: String!
   lastSeen: String!

@@ -1,0 +1,6 @@
+type Mutation {
+  like(userId: ID!): Boolean
+  unLike(userId: ID!): Boolean
+  block(userId: ID!): Boolean
+  unBlock(userId: ID!): Boolean
+}
