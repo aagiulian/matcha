@@ -14,10 +14,12 @@ module.exports = {
 };
 */
 
-export default const transporter = nodemailer.createTransport({
+const transporter = nodemailer.createTransport({
   service: "Gmail",
   auth: {
     user: "giuliano.arthur@gmail.com",
     pass: "fyrquvpgysozpyip"
   }
 });
+
+export default transporter;

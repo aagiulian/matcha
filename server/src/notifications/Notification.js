@@ -1,28 +1,10 @@
-import { pool } from "../modules/postgres";
-
-const LIKE_NOTIFICATION = "liked";
-const MATCH_NOTIFICATION = "match";
-const UNMATCH_NOTIFICATION = "unmatch";
-const VISIT_NOTIFICATION = "visited";
-const PUBSUB_NEW_NOTIFICATION = "pubsubNewNotification";
-const PUBSUB_NEW_UNSEEN_COUNT = "pubsubNewUnseenCount";
-
+import pool from "../postgres";
 
 export default class Notification {
   // static notifyUser({sendId, recvId, datetime}, notificationType) {
   //   this.prototype.save({sendId, recvId, datetime, notificationType});
   //   //pubsub(sendId, recvId, datetime, notificationType);
   // }
-
-  static newNotificationSubscription() {
-    return withFilter(
-      (_, __, { pubsub }) => pubsub.asyncIterator(PUBSUB_NEW_NOTIFICATION),
-      (payload, _, { user }) => {
-        return user.id == payload.newNotification.recipient;
-      }
-    )
-  }
-
 
   static async save({ sendId, recvId, datetime }, notificationType) {
     const query = `

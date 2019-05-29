@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { transporter } from "./mailTransporter";
+import transporter from "./mailTransporter";
 
 export default function sendMailToken(username, email) {
   jwt.sign(

@@ -1,0 +1,8 @@
+type Mutation {
+  findOrCreateConv(userId: ID!): String!
+}
+
+type Conversation {
+  id: ID!
+  friend: User!
+}

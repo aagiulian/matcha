@@ -168,7 +168,7 @@ spec:
       volumes:
         - name: source-code
           hostPath:
-            path: /Users/agiulian/dev/matcha/server
+            path: /Users/vfour/dev/matcha/server
             type: Directory
 
 ---
@@ -251,7 +251,7 @@ spec:
       volumes:
         - name: source-code
           hostPath:
-            path: /Users/agiulian/dev/matcha/client
+            path: /Users/vfour/dev/matcha/client
             type: Directory
 
 ---

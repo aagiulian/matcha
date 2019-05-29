@@ -1,0 +1,144 @@
+
+type Query {
+  findUsers: [User]
+}
+
+type Mutation {
+  forgotPasswordChange(newPassword: String!, token: String!): Boolean
+  sendForgotPasswordEmail(email: String!): Boolean
+}
+
+type Query {
+  hashtags: [String]
+}
+
+type AuthPayload {
+  success: Boolean!
+  token: String
+}
+
+input LoginInput {
+  username: String!
+  password: String!
+}
+
+type Mutation {
+  login(input: LoginInput!): AuthPayload!
+}
+
+type Query {
+  me: User
+}
+
+enum SexualOrientation {
+  heterosexual
+  homosexual
+  bisexual
+}
+
+enum Gender {
+  male
+  female
+  ftm
+  mtf
+}
+
+type Picture {
+  id: ID!
+  # user: User!
+  url: String!
+  # ismain: Boolean!
+}
+
+type Location {
+  lng: Float
+  lat: Float
+}
+
+type Profile {
+  username: String!
+  firstname: String!
+  lastname: String!
+  gender: Gender
+  dateOfBirth: String
+  bio: String
+  numPics: Int
+  urlPp: String
+  pictures: [Picture]
+  sexualOrientation: SexualOrientation
+  email: String!
+  location: Location
+  hashtags: [String]
+}
+
+directive @isAuthenticated on FIELD_DEFINITION
+directive @isOwner on FIELD_DEFINITION
+
+## Il faut qu'on protege via les directives tous les fields ou c'est necessaire
+type User {
+  id: ID!
+  profile: Profile
+  location: Location!
+  isOnline: Boolean!
+  popularityScore: String!
+  lastSeen: String!
+  verified: Boolean!
+  conversations: [Conversation]! #@isOwner
+  likes: [User]! #@isOwner
+  matchs: [User]! #@isOwner
+  visits: [User]! #@isOwner
+  blocked: [User]! #@isOwner
+  # protected: ProtectedInfo!
+}
+
+type Query {
+  user(id: ID!): User
+}
+
+input SignupInput {
+  email: String!
+  username: String!
+  firstname: String!
+  lastname: String!
+  password: String!
+}
+
+type SignupResponse {
+  #id: ID!
+  email: String!
+}
+
+type Mutation {
+  signup(input: SignupInput!): SignupResponse!
+}
+
+scalar Date
+
+input inputLocation {
+  lng: Float
+  lat: Float
+}
+
+input UpdateMeInput {
+  username: String!
+  firstname: String!
+  lastname: String!
+  email: String!
+  # password: String
+  gender: Gender
+  bio: String
+  dateOfBirth: Date
+  sexualOrientation: SexualOrientation
+  hashtags: [String]
+  location: inputLocation
+  # hashtag: Hashtag
+  # images: Picture
+}
+
+type Mutation {
+  updateMe(input: UpdateMeInput!): User
+}
+
+type Mutation {
+  view(userId: ID!): User
+}

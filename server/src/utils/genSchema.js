@@ -9,7 +9,7 @@ import {
 } from "../modules/auth-helpers/directives";
 
 export const genSchema = () => {
-  const pathToModules = path.join(__dirname, "../modules");
+  const pathToModules = path.join(__dirname, "..");
   const graphqlTypes = glob
     .sync(`${pathToModules}/**/*.graphql`)
     .map(x => fs.readFileSync(x, { encoding: "utf8" }));

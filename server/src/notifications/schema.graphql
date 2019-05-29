@@ -1,0 +1,58 @@
+# type Like {
+#   id: ID!
+#   friend: User!
+#   datetime: String!
+#   # back: Boolean!
+# }
+
+# type Blocked {
+#   id: ID!
+#   friend: User!
+#   datetime: String!
+#   # back: Boolean!
+# }
+
+# type Match {
+#   id: ID!
+#   friend: User!
+#   datetime: String!
+#   # back: Boolean!
+# }
+
+# type Visit {
+#   id: ID!
+#   friend: User!
+#   datetime: String!
+#   # back: Boolean!
+# }
+
+type Notification {
+  id: ID!
+  emitter: User!
+  recipient: User!
+  datetime: String!
+  type: String!
+}
+
+type Subscription {
+  newNotification: Notification!
+  newUnseenCount: Int!
+}
+
+type Query {
+  getLatest(recvId: ID!): [Notification]
+  getAll(recvId: ID!, limit: Int, latestnotificationId: ID): [Notification]
+  getUnseenCount(recvId: ID!): Int
+}
+
+input inputNotification {
+  emitter: User!
+  recipient: User!
+  datetime: String!
+  type: String!
+}
+
+type Mutation {
+  markAsSeen(notificationId: ID!): Notification
+  save(notification: inputNotification!): Notification
+}
