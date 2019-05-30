@@ -5,6 +5,9 @@ import {
   MATCH_NOTIFICATION,
   UNMATCH_NOTIFICATION
 } from "./constants";
+import Like from "../user/Like";
+import Block from "./user/Block";
+import Notification from "./Notification";
 
 export const resolvers = {
   Mutation: {

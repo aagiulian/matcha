@@ -34,9 +34,11 @@ type Notification {
   type: String!
 }
 
-type Subscription {
-  newNotification: Notification!
-  newUnseenCount: Int!
+input inputNotification {
+  emitter: User!
+  recipient: User!
+  datetime: String!
+  type: String!
 }
 
 type Query {
@@ -45,14 +47,12 @@ type Query {
   getUnseenCount(recvId: ID!): Int
 }
 
-input inputNotification {
-  emitter: User!
-  recipient: User!
-  datetime: String!
-  type: String!
-}
-
 type Mutation {
   markAsSeen(notificationId: ID!): Notification
   save(notification: inputNotification!): Notification
+}
+
+type Subscription {
+  newNotification: Notification!
+  newUnseenCount: Int!
 }

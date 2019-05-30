@@ -1,27 +1,24 @@
-const USER_LOGGED = "USER_LOGGED";
-
 import moment from "moment";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { UserInputError, AuthenticationError, UserInputError } from "apollo-server";
-import { generateToken, sendMailToken, resetPasswordEmail } from "../auth-helpers";
 
+import { User } from "./User";
+import { Like } from "./Like";
+import { Hashtags } from "./Hashtags";
+import { Block } from "./Block";
+import { Visit } from "./Visit";
 
-import pool from "../postgres";
-
-import User from "./User";
-
-import Like from "../../../models/Like";
-import { Hashtags } from "../../../models/Hashtags";
-import Block from "../../../models/Block";
-import Visit from "../../../models/Visit";
-import Notification from "../../../models/Notification";
-import Visit from "../../../models/Visit";
+import { pool } from "../utils/postgres";
+import { generateToken, sendMailToken, resetPasswordEmail } from "../utils/auth";
+import { profileLoader, userLoader, likeLoader } from "./loaders";
 
 import {
+  Notification,
+  USER_LOGGED,
   VISIT_NOTIFICATION,
   PUBSUB_NEW_NOTIFICATION
-} from "../../notification/shared/constants";
+} from "../notifications";
 
 const resolvers = {
   User: {

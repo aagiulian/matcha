@@ -1,16 +1,6 @@
-
-type Query {
-  findUsers: [User]
-}
-
-type Mutation {
-  forgotPasswordChange(newPassword: String!, token: String!): Boolean
-  sendForgotPasswordEmail(email: String!): Boolean
-}
-
-type Query {
-  hashtags: [String]
-}
+directive @isAuthenticated on FIELD_DEFINITION
+directive @isOwner on FIELD_DEFINITION
+scalar Date
 
 type AuthPayload {
   success: Boolean!
@@ -22,12 +12,25 @@ input LoginInput {
   password: String!
 }
 
-type Mutation {
-  login(input: LoginInput!): AuthPayload!
+input inputLocation {
+  lng: Float
+  lat: Float
 }
 
-type Query {
-  me: User
+input UpdateMeInput {
+  username: String!
+  firstname: String!
+  lastname: String!
+  email: String!
+  # password: String
+  gender: Gender
+  bio: String
+  dateOfBirth: Date
+  sexualOrientation: SexualOrientation
+  hashtags: [String]
+  location: inputLocation
+  # hashtag: Hashtag
+  # images: Picture
 }
 
 enum SexualOrientation {
@@ -71,9 +74,6 @@ type Profile {
   hashtags: [String]
 }
 
-directive @isAuthenticated on FIELD_DEFINITION
-directive @isOwner on FIELD_DEFINITION
-
 ## Il faut qu'on protege via les directives tous les fields ou c'est necessaire
 type User {
   id: ID!
@@ -91,8 +91,9 @@ type User {
   # protected: ProtectedInfo!
 }
 
-type Query {
-  user(id: ID!): User
+type SignupResponse {
+  #id: ID!
+  email: String!
 }
 
 input SignupInput {
@@ -103,42 +104,18 @@ input SignupInput {
   password: String!
 }
 
-type SignupResponse {
-  #id: ID!
-  email: String!
-}
-
-type Mutation {
-  signup(input: SignupInput!): SignupResponse!
-}
-
-scalar Date
-
-input inputLocation {
-  lng: Float
-  lat: Float
-}
-
-input UpdateMeInput {
-  username: String!
-  firstname: String!
-  lastname: String!
-  email: String!
-  # password: String
-  gender: Gender
-  bio: String
-  dateOfBirth: Date
-  sexualOrientation: SexualOrientation
+type Query {
+  me: User
   hashtags: [String]
-  location: inputLocation
-  # hashtag: Hashtag
-  # images: Picture
+  findUsers: [User]
+  user(id: ID!): User
 }
 
 type Mutation {
+  forgotPasswordChange(newPassword: String!, token: String!): Boolean
+  sendForgotPasswordEmail(email: String!): Boolean
+  login(input: LoginInput!): AuthPayload!
+  signup(input: SignupInput!): SignupResponse!
   updateMe(input: UpdateMeInput!): User
-}
-
-type Mutation {
   view(userId: ID!): User
 }

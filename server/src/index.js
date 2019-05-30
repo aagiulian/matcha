@@ -4,34 +4,32 @@
 
 require("dotenv").config();
 import geoip from "geoip-lite";
-import Geolocation from "./models/Geolocation";
 import jwt from "jsonwebtoken";
 import express from "express";
 import { ApolloServer } from "apollo-server";
-import { RedisPubSub } from "graphql-redis-subscriptions";
-import { genSchema } from "./utils/genSchema";
-import { profileLoader } from "./modules/loader/profileLoader";
-
-const { PubSub } = require("apollo-server");
-
-const pubsub = new PubSub();
 import { makeExecutableSchema } from "graphql-tools";
+
+import { PubSub } from "apollo-server";
+import { RedisPubSub } from "graphql-redis-subscriptions";
+
+import { Geolocation } from "./utils/geolocation";
+import { genSchema } from "./utils/genSchema";
+
+import { profileLoader } from "./user";
+
 import {
-  getUserFromToken,
-  attachUserToContext,
   OwnerDirective,
-  AuthenticationDirective
-} from "./modules/auth-helpers/directives";
+  AuthenticationDirective,
+  getUserFromToken,
+  sendMailToken
+} from "./utils/auth";
 
-import { pool } from "./modules/postgres";
-
-// import { getUserByUsername } from "./controllers/userCalls";
-import { sendMailToken } from "./modules/auth-helpers/emailVerification";
-
-//console.log("fake profile:", fakeProfiles[0]);
+import { pool } from "./utils/postgres";
 
 const app = express();
 // const pubsub = RedisPubSub();
+const pubsub = new PubSub();
+
 app.get("/verify/:token", async (req, res) => {
   console.log("express verify token");
   jwt.verify(req.params.token, process.env.JWT_PUBLIC, (err, decoded) => {
@@ -71,36 +69,10 @@ app.get("/sendVerification/:username", async (req, res) => {
   // }
 });
 
-const schema = genSchema();
-
-const attachToContext = funs => req =>
-  funs.reduce((toAttach, fun) => Object.assign(toAttach, fun(req)), {});
-
-//const pubsub = new PubSub();
-
-//console.log("pubsub async:", pubsub.asyncIterator);
-
-const clientIpAddress = headers => {
-  let ip = null;
-  if (headers) {
-    const ipAddress = headers["x-forwarded-for"];
-    if (ipAddress) return (ip = ipAddress);
-  }
-  console.log("ip:", ip);
-  return ip;
-};
-
 const server = new ApolloServer({
-  schema,
+  schema : genSchema(),
   context: async ({ req, connection }) => {
-    //console.log("server req:", util.inspect(req, {showHidden: false, depth:1}));
-    //console.log("server req:", Object.keys(req));
-
-    //console.log("server req headers:", util.inspect(req.headers,{showHidden: false, depth:null}));
     if (connection) {
-      //console.log("connection:", util.inspect(connection, {showHidden: false, depth:null}));
-      // console.log("connection context", connection.context);
-      // console.log("req", req);
       return {
         ...connection.context,
         pubsub
@@ -120,7 +92,7 @@ const server = new ApolloServer({
       console.log(
         `Subscription client connected using Apollo server's built-in SubscriptionServer.`
       );
-      console.log("connectio params:", connectionParams);
+      console.log("Subscription connection params:", connectionParams);
 
       if (connectionParams.Authorization) {
         // ici faire un try catch au cas ou le user soit mauvais mais du coup on check
@@ -137,29 +109,16 @@ const server = new ApolloServer({
       }
       if (connectionParams.authToken) {
         const user = getUserFromToken(connectionParams.authToken);
-        //console.log("user:", user);
         return {
           user
         };
       }
       console.log("Missing auth token for websocket");
-      /*
-      console.log("connection params:", connectionParams);
-      console.log("websocket", webSocket);
-      console.log("context", context);
-      */
     },
     onDisconnect: (webSocket, context) => {
       console.log(`Subscription client disconnected.`);
-
-      /*
-      console.log("websocket", webSocket);
-      console.log("context", context);
-      */
     }
   }
-  //  attachToContext([attachUserToContext,
-  //                            ({ req, res }) => ({req, res, pubsub })])
 });
 
 server.listen().then(({ url }) => {

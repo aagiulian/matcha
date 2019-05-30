@@ -2,9 +2,9 @@ import bcrypt from "bcrypt";
 import moment from "moment";
 import { AuthenticationError, UserInputError } from "apollo-server";
 import { empty } from "apollo-link";
-import pool from "../postgres";
-import { generateToken } from "../auth-helpers";
-import { Hashtags } from "./Hashtags";
+import { pool } from "../utils/postgres";
+import { generateToken } from "../utils/auth";
+import Hashtags from "./Hashtags";
 
 const setLocationValue = location =>
   "(" + location.lng + "," + location.lat + ")";

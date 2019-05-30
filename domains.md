@@ -21,6 +21,6 @@ chat
 message
 conversation
 
-- events 
-notification
+- notifications
+notifications
 
