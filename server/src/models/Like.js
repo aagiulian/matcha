@@ -39,6 +39,7 @@ const match = async (userA, userB) => {
       INSERT INTO
         matchs(user_a, user_b)
       VALUES($1, $2)
+      RETURNING id
       ON CONSTRAINT DO NOTHING
     `;
   let values = [userA, userB];
@@ -68,10 +69,9 @@ export default class Like {
     `;
     let values = [userId, userLiked, datetime];
     let res = await pool.query(text, values);
-    let ret = { like: false, match: false };
-    if (res) {
-      ret.like = true;
-      ret.match = isMatch(userId, userLiked) ? true : false;
+    let ret;
+    if (res.rowCount) {
+      ret = isMatch(userId, userLiked) ? MATCH_NOTIFICATION : LIKE_NOTIFICATION;
     }
     return ret;
   }
@@ -86,13 +86,15 @@ export default class Like {
     `;
     let values = [userId, userUnliked];
     let res = await pool.query(text, values);
-    let ret = { unMike: false, unMatch: false };
+    let ret;
     if (res.rowCount) {
       if (isMatch(userId, userUnliked)) {
-        ret.unMatch = unMatch(userId, userUnliked) ? true : false;
+        unMatch(userId, userUnliked);
+        return UNMATCH_NOTIFICATION;
       }
+      return UNLIKE_NOTIFICATION;
     }
-    return ret;
+    return null;
   }
 
   static async list(userId) {
