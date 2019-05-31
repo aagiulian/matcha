@@ -1,13 +1,13 @@
 import moment from "moment";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
-import { UserInputError, AuthenticationError, UserInputError } from "apollo-server";
+import { AuthenticationError, UserInputError } from "apollo-server";
 
-import { User } from "./User";
-import { Like } from "./Like";
-import { Hashtags } from "./Hashtags";
-import { Block } from "./Block";
-import { Visit } from "./Visit";
+import User from "./User";
+import Like from "./Like";
+import Hashtags from "./Hashtags";
+import Block from "./Block";
+import Visit from "./Visit";
 
 import { pool } from "../utils/postgres";
 import { generateToken, sendMailToken, resetPasswordEmail } from "../utils/auth";
@@ -20,7 +20,7 @@ import {
   PUBSUB_NEW_NOTIFICATION
 } from "../notifications";
 
-const resolvers = {
+export const resolvers = {
   User: {
     profile: ({ id }) => ({ id }),
     conversations: ({ id }) => ({ id }),
@@ -213,5 +213,3 @@ const resolvers = {
     }
   }
 };
-
-export default resolvers;

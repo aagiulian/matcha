@@ -6,16 +6,18 @@ import {
   UNMATCH_NOTIFICATION
 } from "./constants";
 import Like from "../user/Like";
-import Block from "./user/Block";
+import Block from "../user/Block";
 import Notification from "./Notification";
 
 export const resolvers = {
+  /*
   Mutation: {
     like: (_, { userId }, { user }) => {},
     unLike: (_, { userId }, { user }) => {},
     block: (_, { userId }, { user }) => {},
     unBlock: (_, { userId }, { user }) => {}
   },
+  */
   Subscription: {
     newNotification: {
       subscribe: withFilter(

@@ -1,6 +1,6 @@
 import DataLoader from "dataloader";
-import { User } from "../User";
-import { Like } from "../Like";
+import { User } from "./User";
+import { Like } from "./Like";
 
 const batchUsers = async ids => {
   const users = await User.findByIds(ids);

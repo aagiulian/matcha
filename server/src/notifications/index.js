@@ -6,4 +6,4 @@ export {
 	PUBSUB_NEW_NOTIFICATION,
 	PUBSUB_NEW_UNSEEN_COUNT } from "./constants";
 
-export { default as "Notification" } from "./Notification";
+export { default as Notification } from "./Notification";

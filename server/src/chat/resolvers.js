@@ -1,5 +1,5 @@
 import Conversation from "./Conversation";
-import { UserInputError } from "apollo-server";
+import { withFilter, UserInputError } from "apollo-server";
 
 export const resolvers = {
   Conversation: {

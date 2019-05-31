@@ -91,6 +91,22 @@ type User {
   # protected: ProtectedInfo!
 }
 
+input inputUser {
+  id: ID!
+  profile: Profile
+  location: Location!
+  isOnline: Boolean!
+  popularityScore: String!
+  lastSeen: String!
+  verified: Boolean!
+  conversations: [Conversation]! #@isOwner
+  likes: [User]! #@isOwner
+  matchs: [User]! #@isOwner
+  visits: [User]! #@isOwner
+  blocked: [User]! #@isOwner
+  # protected: ProtectedInfo!
+}
+
 type SignupResponse {
   #id: ID!
   email: String!

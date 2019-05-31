@@ -49,8 +49,8 @@ const emptyUser = {
   // protected: ProtectedInfo!,
 };
 
-const User = {
-  hasExtendedProfile: async id => {
+export default class User {
+  static async hasExtendedProfile(id) {
     const query = `
       SELECT
         gender
@@ -67,8 +67,9 @@ const User = {
       return true;
     }
     return false;
-  },
-  blocked: async (userA, userB) => {
+  }
+
+  static async blocked(userA, userB) {
     const query = `
       SELECT
         id
@@ -84,9 +85,9 @@ const User = {
       return true;
     }
     return false;
-  },
+  }
 
-  new: async ({ email, password, username, firstname, lastname, location }) => {
+  static async new({ email, password, username, firstname, lastname, location }) {
     const available = {
       username: (await availUsername(username)) ? undefined : "Already exists",
       email: (await availEmail(email)) ? undefined : "Already exists"
@@ -124,9 +125,9 @@ const User = {
       return false;
     }
     return true;
-  },
+  }
 
-  findById: async id => {
+  static async findById(id) {
     const text = `
       SELECT 
         id, 
@@ -169,9 +170,9 @@ const User = {
     } else {
       return emptyUser;
     }
-  },
+  }
 
-  findByEmail: async email => {
+  static async findByEmail(email) {
     const text = `
     SELECT 
       id, 
@@ -214,9 +215,9 @@ const User = {
     } else {
       return emptyUser;
     }
-  },
+  }
 
-  getProfileById: async id => {
+  static async getProfileById(id) {
     let text = `
       SELECT 
         users.id, 
@@ -252,9 +253,9 @@ const User = {
     } else {
       return emptyUser;
     }
-  },
+  }
 
-  getProfileByIds: async ids => {
+  static async getProfileByIds(ids) {
     let text = `
       SELECT 
         users.id, 
@@ -289,9 +290,9 @@ const User = {
     } else {
       return [];
     }
-  },
+  }
 
-  getHashtags: async id => {
+  static async getHashtags(id) {
     const text = `
     SELECT 
       hashtag_name 
@@ -306,16 +307,16 @@ const User = {
     } else {
       return { hashtags: null };
     }
-  },
+  }
 
-  updatePassword: async (id, newPassword) => {
+  static async updatePassword(id, newPassword) {
     const hashedPassword = await bcrypt.hash(newPassword, 10);
     const text = "UPDATE users SET hashed_password = $1 WHERE id = $2";
     const values = [hashedPassword, decoded.id];
     pool.query(text, values);
-  },
+  }
 
-  update: async (
+  static async update(
     {
       username,
       firstname,
@@ -329,7 +330,7 @@ const User = {
       tags
     },
     id
-  ) => {
+  ) {
     let dict = {
       male: {
         heterosexual: "{female}",
@@ -426,5 +427,3 @@ async function availEmail(email) {
   }
   return true;
 }
-
-export default User;

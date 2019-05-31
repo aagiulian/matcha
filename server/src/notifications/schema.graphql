@@ -34,12 +34,12 @@ type Notification {
   type: String!
 }
 
-input inputNotification {
-  emitter: User!
-  recipient: User!
-  datetime: String!
-  type: String!
-}
+#input inputNotification {
+#  emitter: User!
+#  recipient: User!
+#  datetime: String!
+#  type: String!
+#}
 
 type Query {
   getLatest(recvId: ID!): [Notification]
@@ -49,7 +49,7 @@ type Query {
 
 type Mutation {
   markAsSeen(notificationId: ID!): Notification
-  save(notification: inputNotification!): Notification
+  #save(notification: inputNotification!): Notification
 }
 
 type Subscription {
