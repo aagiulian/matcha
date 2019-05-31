@@ -1,0 +1,32 @@
+type Conversation {
+  id: ID!
+  friend: User!
+}
+
+type Message {
+  id: ID!
+  text: String!
+  isRead: Boolean!
+  createdAt: String!
+  emitter: User!
+  recipient: User!
+  conversationId: ID!
+}
+
+input MessageInput {
+  text: String!
+  convId: ID!
+}
+
+type Mutation {
+  findOrCreateConv(userId: ID!): String!
+  createMessage(message: MessageInput!): Boolean
+}
+
+type Query {
+  messages(conversationId: ID!): [Message]
+}
+
+type Subscription {
+  newMessage: Message!
+}

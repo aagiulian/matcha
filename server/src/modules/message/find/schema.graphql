@@ -1,3 +1,0 @@
-type Query {
-  messages(conversationId: ID!): [Message]
-}

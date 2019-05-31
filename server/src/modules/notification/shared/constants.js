@@ -1,5 +1,0 @@
-const LIKE_NOTIFICATION = "liked";
-const MATCH_NOTIFICATION = "match";
-const UNMATCH_NOTIFICATION = "unmatch";
-const VISIT_NOTIFICATION = "visited";
-const PUBSUB_NEW_NOTIFICATION = "PUBSUB_NEW_NOTIFICATION ";

@@ -6,16 +6,16 @@ import * as glob from "glob";
 import {
   OwnerDirective,
   AuthenticationDirective
-} from "../modules/auth-helpers/directives";
+} from "./auth";
 
 export const genSchema = () => {
-  const pathToModules = path.join(__dirname, "../modules");
+  const pathToModules = path.join(__dirname, "..");
   const graphqlTypes = glob
     .sync(`${pathToModules}/**/*.graphql`)
     .map(x => fs.readFileSync(x, { encoding: "utf8" }));
 
   const resolvers = glob
-    .sync(`${pathToModules}/**/resolvers.?s`)
+    .sync(`${pathToModules}/**/*resolvers.?s`)
     .map(resolver => require(resolver).resolvers);
 
   return makeExecutableSchema({

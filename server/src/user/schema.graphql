@@ -1,0 +1,121 @@
+directive @isAuthenticated on FIELD_DEFINITION
+directive @isOwner on FIELD_DEFINITION
+scalar Date
+
+type AuthPayload {
+  success: Boolean!
+  token: String
+}
+
+input LoginInput {
+  username: String!
+  password: String!
+}
+
+input inputLocation {
+  lng: Float
+  lat: Float
+}
+
+input UpdateMeInput {
+  username: String!
+  firstname: String!
+  lastname: String!
+  email: String!
+  # password: String
+  gender: Gender
+  bio: String
+  dateOfBirth: Date
+  sexualOrientation: SexualOrientation
+  hashtags: [String]
+  location: inputLocation
+  # hashtag: Hashtag
+  # images: Picture
+}
+
+enum SexualOrientation {
+  heterosexual
+  homosexual
+  bisexual
+}
+
+enum Gender {
+  male
+  female
+  ftm
+  mtf
+}
+
+type Picture {
+  id: ID!
+  # user: User!
+  url: String!
+  # ismain: Boolean!
+}
+
+type Location {
+  lng: Float
+  lat: Float
+}
+
+type Profile {
+  username: String!
+  firstname: String!
+  lastname: String!
+  gender: Gender
+  dateOfBirth: String
+  bio: String
+  numPics: Int
+  urlPp: String
+  pictures: [Picture]
+  sexualOrientation: SexualOrientation
+  email: String!
+  location: Location
+  hashtags: [String]
+}
+
+## Il faut qu'on protege via les directives tous les fields ou c'est necessaire
+type User {
+  id: ID!
+  profile: Profile
+  location: Location!
+  isOnline: Boolean!
+  popularityScore: String!
+  lastSeen: String!
+  verified: Boolean!
+  conversations: [Conversation]! #@isOwner
+  likes: [User]! #@isOwner
+  matchs: [User]! #@isOwner
+  visits: [User]! #@isOwner
+  blocked: [User]! #@isOwner
+  # protected: ProtectedInfo!
+}
+
+type SignupResponse {
+  #id: ID!
+  email: String!
+}
+
+input SignupInput {
+  email: String!
+  username: String!
+  firstname: String!
+  lastname: String!
+  password: String!
+}
+
+type Query {
+  me: User
+  hashtags: [String]
+  findUsers: [User]
+  user(id: ID!): User
+}
+
+type Mutation {
+  forgotPasswordChange(newPassword: String!, token: String!): Boolean
+  sendForgotPasswordEmail(email: String!): Boolean
+  login(input: LoginInput!): AuthPayload!
+  signup(input: SignupInput!): SignupResponse!
+  updateMe(input: UpdateMeInput!): User
+  view(userId: ID!): User
+}

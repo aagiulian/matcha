@@ -1,9 +1,0 @@
-type Message {
-  id: ID!
-  text: String!
-  isRead: Boolean!
-  createdAt: String!
-  emitter: User!
-  recipient: User!
-  conversationId: ID!
-}
