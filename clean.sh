@@ -10,3 +10,4 @@ kubectl delete pvc --all
 kubectl delete pv --all
 docker image rm --force graphql-api
 docker image rm --force react-app-matcha
+docker image rm --force postgres-local
