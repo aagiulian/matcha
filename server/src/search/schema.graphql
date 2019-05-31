@@ -1,0 +1,12 @@
+input SearchInput {
+  radius: Float
+  ageMin: Int
+  ageMax: Int
+  popularityMin: Int
+  popularityMax: Int
+  hashtags: [String]
+}
+
+type Query {
+  search(input: SearchInput!): [User]
+}
