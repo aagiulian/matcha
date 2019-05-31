@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: graphql-api-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: graphql-api
+  template:
+    metadata:
+      labels:
+        app: graphql-api
+    spec:
+      initContainers:
+        - name: pg-isready
+          image: postgres
+          command:
+            [
+              "sh",
+              "-c",
+              "until pg_isready -h user-db-service -p 5432; do echo waiting for database; sleep 2; done;",
+            ]
+        - name: init-redis
+          image: busybox:latest
+          command: ['sh', '-c', 'until nslookup redis-service; do echo waiting for redis; sleep 2; done;']
+      containers:
+        - name: graphql-api
+          image: graphql-api
+          resources:
+            requests:
+              cpu: "1"
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 4000
+              name: graphql-port
+            - containerPort: 4001
+              name: express-port
+          volumeMounts:
+            - name: source-code
+              mountPath: /usr/src/app
+      volumes:
+        - name: source-code
+          hostPath:
+            path: /Users/vfour/dev/matcha/server
+            type: Directory
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: graphql-api-service
+  labels:
+    app: graphql-api-service
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 4000
+      protocol: TCP
+      nodePort: 30077
+      name: graphql-port
+    - port: 4001
+      protocol: TCP
+      nodePort: 30078
+      name: express-port
+  selector:
+    app: graphql-api
+

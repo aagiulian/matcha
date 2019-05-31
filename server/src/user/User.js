@@ -5,25 +5,11 @@ import { empty } from "apollo-link";
 import { pool } from "../utils/postgres";
 import { generateToken } from "../utils/auth";
 import Hashtags from "./Hashtags";
+import { getLocation, getDateOfBirth } from "./utils";
 
 const setLocationValue = location =>
   "(" + location.lng + "," + location.lat + ")";
 
-const getLocation = ret => {
-  if (ret.location) {
-    ret.location = { lng: ret.location.x, lat: ret.location.y };
-  } else {
-    ret.location = { lng: null, lat: null };
-  }
-  return ret;
-};
-
-const getDateOfBirth = ret => {
-  if (ret.dateOfBirth !== null) {
-    ret.dateOfBirth = moment(ret.dateOfBirth).format("YYYY-MM-DD");
-  }
-  return ret;
-};
 
 const emptyUser = {
   id: null,
