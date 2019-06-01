@@ -4,6 +4,10 @@ import geoip from "geoip-lite";
 
 export default class Geolocation {
 
+  static locationToSqlPoint(location) {
+    return `(${location.lng},${location.lat})`;
+  }
+
   static async geolocationFromApi(ip) {
     const truc = process.env.IPGEOLOCATION_IO_API_KEY;
     //console.log("truc:", truc);

@@ -1,12 +1,20 @@
 input SearchInput {
-  radius: Float
+  near: inputLocation
   ageMin: Int
   ageMax: Int
   popularityMin: Int
   popularityMax: Int
+  orderBy: [String]
+  offset: Int
+  #cursor: String
   hashtags: [String]
 }
 
+#input MatchInput {
+  #offset: Int
+#}
+
 type Query {
   search(input: SearchInput!): [User]
+  #match(input: MatchInput!): [User]
 }

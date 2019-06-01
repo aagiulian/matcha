@@ -1,3 +1,5 @@
+import moment from "moment";
+
 export const getLocation = ret => {
   if (ret.location) {
     ret.location = { lng: ret.location.x, lat: ret.location.y };
