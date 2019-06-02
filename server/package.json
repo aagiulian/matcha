@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "babel-node -- ./src/index.js",
-    "dev": "nodemon -e js,graphql --legacy-watch ./src/index.js --exec babel-node",
+    "dev": "nodemon -e js,graphql --legacy-watch ./src/index.js --exec sucrase-node",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -37,6 +37,7 @@
     "@babel/core": "^7.4.0",
     "@babel/node": "^7.2.2",
     "@babel/preset-env": "^7.4.2",
-    "nodemon": "^1.18.10"
+    "nodemon": "^1.18.10",
+    "sucrase": "^3.10.1"
   }
 }
