@@ -14,9 +14,12 @@ const DEFAULT_POPULARITY_MIN = 0;
 const DEFAULT_POPULARITY_MAX = Number.MAX_SAFE_INTEGER;
 const DEFAULT_ORDER_BY = ["distance"];
 
-const ORDER_BY_DICT = {distance : "distance ASC",
-                       popularity_score : "users.popularity_score DESC",
-                       hashtags: "num_common_hashtags DESC"};
+const SERCH_ORDER_BY = {distance : "distance ASC",
+                        popularity_score : "users.popularity_score DESC"};
+
+const MATCH_ORDER_BY = {distance : "distance ASC",
+                        popularity_score : "users.popularity_score DESC",
+                        hashtags: "num_common_hashtags DESC"};
 
 
 const capitalize = (string) => string.chatAt(0).toUpperCase() + string.slice(1);
@@ -24,15 +27,24 @@ const capitalize = (string) => string.chatAt(0).toUpperCase() + string.slice(1);
 const snakeToCapitalized = (string) => string.split('_').map(capitalize).join(' ');
 
 
-export default class Search {
-
-  static choicesOrderBy() {
-    const values = Object.keys(ORDER_BY_DICT);
+const makeChoices = (dict) => {
+    const values = Object.keys(dict);
     let ret = {};
     values.forEach(val => {
       ret[snakeToCapitalized(val)] = val;
     });
     return ret;
+}
+
+
+export default class Search {
+
+  static choicesSearchOrderBy() {
+    return makeChoices(SEARCH_ORDER_BY);
+  }
+
+  static choicesMatchOrderBy() {
+    return makeChoices(MATCH_ORDER_BY);
   }
 
   static async search(input, context) {
