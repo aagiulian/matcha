@@ -204,7 +204,7 @@ export const resolvers = {
 
     view: async (_, { userId }, { user, pubsub }) => {
       const datetime = await moment().format("YYYY-MM-DD hh:mm:ss Z");
-      if (await Visit.do(user.id, userId, datetime)) {
+      if (Visit.do(user.id, userId, datetime)) {
         const gqlNotif = await Notification.save(
           { sendId: user.id, recvId: userId, datetime },
           VISIT_NOTIFICATION
