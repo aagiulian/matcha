@@ -1,4 +1,5 @@
 import { pool } from "../utils/postgres";
+import { addScore, VISIT_SCORE } from "../notifications";
 
 export default class Visit {
   static async do(userId, userVisited, datetime) {
@@ -10,7 +11,12 @@ export default class Visit {
       RETURNING user_id
     `;
     let values = [userId, userVisited, datetime];
-    return await pool.query(text, values);
+    let res = await pool.query(text, values);
+    if (res.rowCount) {
+      addScore([userVisited], VISIT_SCORE);
+      return true;
+    }
+    return false;
   }
 
   static async list(userId) {

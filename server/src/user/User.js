@@ -10,7 +10,6 @@ import { getLocation, getDateOfBirth } from "./utils";
 const setLocationValue = location =>
   "(" + location.lng + "," + location.lat + ")";
 
-
 const emptyUser = {
   id: null,
   profile: {
@@ -73,7 +72,14 @@ export default class User {
     return false;
   }
 
-  static async new({ email, password, username, firstname, lastname, location }) {
+  static async new({
+    email,
+    password,
+    username,
+    firstname,
+    lastname,
+    location
+  }) {
     const available = {
       username: (await availUsername(username)) ? undefined : "Already exists",
       email: (await availEmail(email)) ? undefined : "Already exists"
@@ -89,7 +95,8 @@ export default class User {
 	      username, firstname, 
 	      lastname, 
 	      sexual_orientation, 
-	      lookingfor, 
+        lookingfor,
+        popularity_score, 
 	      verified) 
       VALUES
 	($1, $2, $3, $4, $5, $6, $7, $8)`;
@@ -101,6 +108,7 @@ export default class User {
       lastname,
       "bisexual",
       "{male, female}",
+      0,
       true
     ]; // TRUE TO FALSE TO ENABLE VERIFICATION
     console.log(values);
@@ -380,7 +388,7 @@ export default class User {
     Hashtags.update(tags, id);
     return true;
   }
-};
+}
 
 async function availUsername(username) {
   const text = `

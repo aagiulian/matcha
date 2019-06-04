@@ -5,3 +5,6 @@ export const VISIT_NOTIFICATION = "visited";
 export const PUBSUB_NEW_NOTIFICATION = "PUBSUB_NEW_NOTIFICATION";
 export const PUBSUB_NEW_UNSEEN_COUNT = "PUBSUB_NEW_UNSEEN_COUNT";
 export const USER_LOGGED = "USER_LOGGED";
+export const MATCH_SCORE = 8;
+export const LIKE_SCORE = 3;
+export const VISIT_SCORE = 1;

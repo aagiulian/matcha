@@ -3,9 +3,11 @@ import {
   LIKE_NOTIFICATION,
   UNLIKE_NOTIFICATION,
   MATCH_NOTIFICATION,
-  UNMATCH_NOTIFICATION
+  UNMATCH_NOTIFICATION,
+  LIKE_SCORE,
+  MATCH_SCORE,
+  addScore
 } from "../notifications";
-
 
 const isMatch = async (userA, userB) => {
   let text = `
@@ -25,6 +27,7 @@ const isMatch = async (userA, userB) => {
   let res = await pool.query(text, values);
   if (res.rowCount > 1) {
     match(userA, userB);
+    addScore([userA, userB], MATCH_SCORE);
     return true;
   }
   return false;
@@ -72,6 +75,7 @@ export default class Like {
     let res = await pool.query(text, values);
     let ret;
     if (res.rowCount) {
+      addScore([userLiked], LIKE_SCORE);
       ret = isMatch(userId, userLiked) ? MATCH_NOTIFICATION : LIKE_NOTIFICATION;
     }
     return ret;
@@ -90,9 +94,11 @@ export default class Like {
     let ret;
     if (res.rowCount) {
       if (isMatch(userId, userUnliked)) {
+        addScore([userId, userUnliked], -MATCH_SCORE);
         unMatch(userId, userUnliked);
         return UNMATCH_NOTIFICATION;
       }
+      addScore([userUnliked], -LIKE_SCORE);
       return UNLIKE_NOTIFICATION;
     }
     return null;

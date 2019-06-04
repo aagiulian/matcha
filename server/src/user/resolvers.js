@@ -10,7 +10,11 @@ import Block from "./Block";
 import Visit from "./Visit";
 
 import { pool } from "../utils/postgres";
-import { generateToken, sendMailToken, resetPasswordEmail } from "../utils/auth";
+import {
+  generateToken,
+  sendMailToken,
+  resetPasswordEmail
+} from "../utils/auth";
 import { profileLoader, userLoader, likeLoader } from "./loaders";
 
 import {

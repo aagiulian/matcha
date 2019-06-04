@@ -1,13 +1,8 @@
 import { withFilter } from "apollo-server";
-import {
-  LIKE_NOTIFICATION,
-  UNLIKE_NOTIFICATION,
-  MATCH_NOTIFICATION,
-  UNMATCH_NOTIFICATION
-} from "./constants";
 import Like from "../user/Like";
 import Block from "../user/Block";
 import Notification from "./Notification";
+import { PUBSUB_NEW_NOTIFICATION, PUBSUB_NEW_UNSEEN_COUNT } from "./constants";
 
 export const resolvers = {
   Mutation: {

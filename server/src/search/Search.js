@@ -3,7 +3,6 @@ import { Geolocation } from "../utils/geolocation";
 import { getLocation, getDateOfBirth } from "../user";
 import { AuthenticationError, UserInputError } from "apollo-server";
 
-
 //TODO: use cursor
 const DEFAULT_LIMIT = 20;
 const DEFAULT_OFFSET = 0;
@@ -14,31 +13,35 @@ const DEFAULT_POPULARITY_MIN = 0;
 const DEFAULT_POPULARITY_MAX = Number.MAX_SAFE_INTEGER;
 const DEFAULT_ORDER_BY = ["distance"];
 
-const SERCH_ORDER_BY = {distance : "distance ASC",
-                        popularity_score : "users.popularity_score DESC"};
+const SERCH_ORDER_BY = {
+  distance: "distance ASC",
+  popularity_score: "users.popularity_score DESC"
+};
 
-const MATCH_ORDER_BY = {distance : "distance ASC",
-                        popularity_score : "users.popularity_score DESC",
-                        hashtags: "num_common_hashtags DESC"};
+const MATCH_ORDER_BY = {
+  distance: "distance ASC",
+  popularity_score: "users.popularity_score DESC",
+  hashtags: "num_common_hashtags DESC"
+};
 
+const capitalize = string => string.chatAt(0).toUpperCase() + string.slice(1);
 
-const capitalize = (string) => string.chatAt(0).toUpperCase() + string.slice(1);
+const snakeToCapitalized = string =>
+  string
+    .split("_")
+    .map(capitalize)
+    .join(" ");
 
-const snakeToCapitalized = (string) => string.split('_').map(capitalize).join(' ');
-
-
-const makeChoices = (dict) => {
-    const values = Object.keys(dict);
-    let ret = {};
-    values.forEach(val => {
-      ret[snakeToCapitalized(val)] = val;
-    });
-    return ret;
-}
-
+const makeChoices = dict => {
+  const values = Object.keys(dict);
+  let ret = {};
+  values.forEach(val => {
+    ret[snakeToCapitalized(val)] = val;
+  });
+  return ret;
+};
 
 export default class Search {
-
   static choicesSearchOrderBy() {
     return makeChoices(SEARCH_ORDER_BY);
   }
@@ -51,7 +54,9 @@ export default class Search {
     const userId = context.user.id;
 
     const myLocation = context.location ? context.location : "me.location";
-    const near = Geolocation.locationToSqlPoint(input.near ? input.near : myLocation);
+    const near = Geolocation.locationToSqlPoint(
+      input.near ? input.near : myLocation
+    );
 
     const ageMin = input.ageMin || DEFAULT_AGE_MIN;
     const ageMax = input.ageMax || DEFAULT_AGE_MAX;
@@ -66,15 +71,40 @@ export default class Search {
     //TODO: const cursor = input.cursor;
 
     const hashtags = input.hashtags || [];
-    
-    const values = hashtags.length > 1
-          ? [userId, near, ageMin, ageMax, popularityMin, popularityMax, orderBy, limit, offset, hashtags]
-          : [userId, near, ageMin, ageMax, popularityMin, popularityMax, orderBy, limit, offset];
 
-    const withHashtags = hashtags.length > 1
-          ? ` AND (users_hashtags.hashtag_name::text = ANY ($${values.length}::text[])) `
-          : "";
-  
+    const values =
+      hashtags.length > 1
+        ? [
+            userId,
+            near,
+            ageMin,
+            ageMax,
+            popularityMin,
+            popularityMax,
+            orderBy,
+            limit,
+            offset,
+            hashtags
+          ]
+        : [
+            userId,
+            near,
+            ageMin,
+            ageMax,
+            popularityMin,
+            popularityMax,
+            orderBy,
+            limit,
+            offset
+          ];
+
+    const withHashtags =
+      hashtags.length > 1
+        ? ` AND (users_hashtags.hashtag_name::text = ANY ($${
+            values.length
+          }::text[])) `
+        : "";
+
     const query = `
       SELECT 
         users.id, 
