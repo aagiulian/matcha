@@ -6,8 +6,9 @@ export default class Visit {
     let text = `
       INSERT INTO
         visited(user_id, user_visited, datetime)
-      VALUES ($1, $2, $3)
-      ON CONSTRAINT DO NOTHING
+      (SELECT $1, $2, $3
+      WHERE NOT EXISTS (SELECT 1 FROM blocked WHERE user_id = $2 AND user_blocked = $1))
+      ON CONFLICT DO NOTHING
       RETURNING user_id
     `;
     let values = [userId, userVisited, datetime];

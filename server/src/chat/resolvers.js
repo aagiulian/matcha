@@ -32,7 +32,10 @@ export const resolvers = {
         );
       }
 
-      const gqlMsg = await Message.save(message);
+      const gqlMsg = await Message.save(message); // returns null if user is blocked
+      if (!gqlMsg) {
+        return true;
+      }
       const gqlNotif = await Notification.save(message, MESSAGE_NOTIFICATION);
 
       pubsub.publish(PUBSUB_NEW_MESSAGE, {

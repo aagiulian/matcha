@@ -54,6 +54,8 @@ export default class Conversation {
         conversations
       WHERE
         user_b = $1
+      AND NOT
+        user_a IN (SELECT user_blocked FROM blocked WHERE user_id = $1)
       UNION
       SELECT
         id,
@@ -62,6 +64,8 @@ export default class Conversation {
         conversations
       WHERE
         user_a = $1
+      AND NOT
+        user_b IN (SELECT user_blocked FROM blocked WHERE user_id = $1)
       `;
     let values = [userId];
     let res = await pool.query(text, values);
