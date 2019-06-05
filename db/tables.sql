@@ -160,6 +160,7 @@ CREATE TABLE notifications
 
 \COPY users (bio,email,firstname,gender,hashed_password,lastname,location,lookingfor,num_pics,popularity_score,sexual_orientation,url_pp,username,verified,date_of_birth,last_seen) FROM '/docker-entrypoint-initdb.d/fake_profiles.csv' DELIMITER ';' CSV HEADER;
 
-\COPY hashtags (hashtags) FROM '/docker-entrypoint-initdb.d/fake_hashtags.csv' DELIMITER ';' CSV HEADER;
+\COPY hashtags (name) FROM '/docker-entrypoint-initdb.d/fake_hashtags.csv' DELIMITER ';' CSV HEADER;
 
-\COPY hashtags (hashtag_name, user_id) FROM '/docker-entrypoint-initdb.d/fake_users_hashtags.csv' DELIMITER ';' CSV HEADER;
+\COPY users_hashtags (hashtag_name, user_id) FROM '/docker-entrypoint-initdb.d/fake_users_hashtags.csv' DELIMITER ';' CSV HEADER;
+
