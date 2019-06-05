@@ -30,7 +30,7 @@ spec:
       volumes:
         - name: source-code
           hostPath:
-            path: /Users/vfour/dev/matcha/client
+            path: /Users/agiulian/dev/matcha/client
             type: Directory
 
 ---

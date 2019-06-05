@@ -1,4 +1,6 @@
 import { pool } from "../utils/postgres";
+import Block from "../user";
+
 import {
   LIKE_NOTIFICATION,
   UNLIKE_NOTIFICATION,
@@ -68,8 +70,9 @@ export default class Like {
     let text = `
       INSERT INTO
         likes(user_a, user_b)
-      VALUES($1, $2)
-      ON CONSTRAINT DO NOTHING
+      SELECT $1, $2
+      WHERE NOT EXISTS (SELECT 1 FROM blocked WHERE user_id = $2 AND user_blocked = $1))
+      ON CONFLICT DO NOTHING
     `;
     let values = [userId, userLiked, datetime];
     let res = await pool.query(text, values);
@@ -91,8 +94,7 @@ export default class Like {
     `;
     let values = [userId, userUnliked];
     let res = await pool.query(text, values);
-    let ret;
-    if (res.rowCount) {
+    if (res.rowCount && !(userId in (await Block.list(userUnliked)))) {
       if (isMatch(userId, userUnliked)) {
         addScore([userId, userUnliked], -MATCH_SCORE);
         unMatch(userId, userUnliked);

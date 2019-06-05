@@ -1,4 +1,5 @@
 import { pool } from "../utils/postgres";
+import Block from "../user";
 
 const emptyMessage = {
   id: null,
@@ -33,6 +34,9 @@ export default class Message {
     let res = await pool.query(query, values);
     let msgId = res.rows[0].id;
     let recvId = res.rows[0].recv_id;
+    if (sendId in (await Block.list(recv.Id))) {
+      return null;
+    }
     return {
       id: msgId,
       text,

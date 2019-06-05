@@ -20,6 +20,7 @@ function Header() {
               Home
             </Link>
             <Link to="/profile">Profile</Link>
+            {/* <Link to="/search">Search</Link> */}
             <Logout />
           </div>
         ) : (
@@ -29,6 +30,5 @@ function Header() {
     </div>
   );
 }
-
 
 export default withRouter(Header);
