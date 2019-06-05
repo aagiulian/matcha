@@ -40,7 +40,7 @@ const LOGIN = gql`
 //   }
 // };
 
-export default function Login(props) {
+const Login = props => {
   const [errors, setErrors] = useState(null);
   //const [userCache, setUserCache] = useState(null);
 
@@ -141,4 +141,6 @@ export default function Login(props) {
       </Link>
     </div>
   );
-}
+};
+
+export default Login;
