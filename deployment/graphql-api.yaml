@@ -42,7 +42,7 @@ spec:
       volumes:
         - name: source-code
           hostPath:
-            path: /Users/agiulian/dev/matcha/server
+            path: /Users/vico/dev/matcha/server
             type: Directory
 
 ---

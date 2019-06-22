@@ -13,7 +13,7 @@ const DEFAULT_POPULARITY_MIN = 0;
 const DEFAULT_POPULARITY_MAX = Number.MAX_SAFE_INTEGER;
 const DEFAULT_ORDER_BY = ["distance"];
 
-const SERCH_ORDER_BY = {
+const SEARCH_ORDER_BY = {
   distance: "distance ASC",
   popularity_score: "users.popularity_score DESC"
 };

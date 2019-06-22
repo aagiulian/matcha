@@ -163,4 +163,51 @@ CREATE TABLE notifications
 \COPY hashtags (name) FROM '/docker-entrypoint-initdb.d/fake_hashtags.csv' DELIMITER ';' CSV HEADER;
 
 \COPY users_hashtags (hashtag_name, user_id) FROM '/docker-entrypoint-initdb.d/fake_users_hashtags.csv' DELIMITER ';' CSV HEADER;
+/*
+SELECT 
+  id
+  FROM
+      users
+      LIMIT 10;
 
+SELECT 
+  users.id,
+  users.username, 
+  users.gender, 
+  users.sexual_orientation as "sexualOrientation", 
+  users.url_pp as "urlPp", 
+  users.location, 
+  users.popularity_score,
+  users.lookingfor,
+  date_part('year', age(users.date_of_birth)) as "age",
+  round((users.location <@> POINT(1.00288,49.28669))::numeric, 3) as "distance"
+  ARRAY_AGG (hashtag_name) hashtag_name
+FROM 
+  users
+LEFT JOIN users_hashtags ON
+  users_hashtags.user_id = users.id
+LEFT JOIN users as me ON
+  me.id = 1
+WHERE
+(users.id != 1)
+AND
+(users.gender::text = ANY (me.lookingfor::text[]))
+AND
+(me.gender::text = ANY (users.lookingfor::text[]))
+AND
+(date_part('year', age(users.date_of_birth)) >= 18)
+AND
+(date_part('year', age(users.date_of_birth)) <= 44)
+AND
+(users.popularity_score >= 0)
+AND
+(users.popularity_score <= 100)
+AND
+(users.popularity_score BETWEEN 0 AND 100)
+AND
+(users_hashtags.hashtag_name::text = ANY ('{Geocaching,Papermaking, Running}'::text[]))
+GROUP BY users.id
+ORDER BY distance ASC
+LIMIT 20;
+
+  */
