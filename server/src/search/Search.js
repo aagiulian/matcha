@@ -92,7 +92,6 @@ export default class Search {
       hashtagSelect = ",ARRAY_AGG (hashtag_name) hashtag_name";
       hashtagJoin = `LEFT JOIN users_hashtags ON users_hashtags.user_id = users.id`
       hashtagWhere = `AND (users_hashtags.hashtag_name::text = ANY ($${hashtagIndex}::text[]))`
-      hashtagGroupBy = "GROUP BY users.id"
     }
 
     const query = `
@@ -141,7 +140,7 @@ export default class Search {
         AND
         (users.popularity_score <= $6)
         ${hashtagWhere}
-      ${hashtagGroupBy}
+      GROUP BY users.id
       ORDER BY $7
       LIMIT $8
       OFFSET $9`;
