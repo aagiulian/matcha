@@ -10,6 +10,7 @@ import Block from "./Block";
 import Visit from "./Visit";
 
 import { pool } from "../utils/postgres";
+import { storeUpload } from "../utils/upload";
 import {
   generateToken,
   sendMailToken,
@@ -214,6 +215,15 @@ export const resolvers = {
         });
       }
       return { id: userId };
+    },
+
+    uploadImage: async (_, { [image]: images }) => {
+      console.log(images);
+      const { createReadStream, filename } = await [images];
+      console.log(images);
+      const stream = createReadStream();
+      await storeUpload({ stream, filename });
+      return true;
     }
   }
 };

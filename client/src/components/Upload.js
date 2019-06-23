@@ -5,8 +5,8 @@ import { useMutation } from "react-apollo-hooks";
 import { useDropzone } from "react-dropzone";
 
 const uploadFileMutation = gql`
-  mutation($file: Upload!) {
-    uploadFile(file: $file)
+  mutation($image: Upload!) {
+    uploadImage(image: $image)
   }
 `;
 
@@ -14,7 +14,8 @@ export default function Upload() {
   const uploadFile = useMutation(uploadFileMutation);
 
   const onDrop = useCallback(acceptedFiles => {
-    uploadFile({ variables: { file: acceptedFiles } });
+    console.log(acceptedFiles);
+    uploadFile({ variables: { image: acceptedFiles } });
   }, []);
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
 

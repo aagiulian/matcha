@@ -1,6 +1,7 @@
 directive @isAuthenticated on FIELD_DEFINITION
 directive @isOwner on FIELD_DEFINITION
 scalar Date
+scalar Upload
 
 type AuthPayload {
   success: Boolean!
@@ -118,4 +119,5 @@ type Mutation {
   signup(input: SignupInput!): SignupResponse!
   updateMe(input: UpdateMeInput!): User
   view(userId: ID!): User
+  uploadImage(image: Upload!): Boolean
 }
