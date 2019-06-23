@@ -52,58 +52,48 @@ export default class Search {
 
   static async search(input, context) {
     const userId = context.user.id;
-
+    //location
     const myLocation = context.location ? context.location : "me.location";
     const near = Geolocation.locationToSqlPoint(
       input.near ? input.near : myLocation
     );
-
+    //age
     const ageMin = input.ageMin || DEFAULT_AGE_MIN;
     const ageMax = input.ageMax || DEFAULT_AGE_MAX;
+    //popularity
     const popularityMin = input.popularityMin || DEFAULT_POPULARITY_MIN;
     const popularityMax = input.popularityMax || DEFAULT_POPULARITY_MAX;
-
+    //column to order by given by user
     const inputOrderBy = input.orderBy || DEFAULT_ORDER_BY;
     const orderBy = inputOrderBy.map(e => ORDER_BY_DICT[e]).join(" , ");
-
+    //pagnation
     const limit = DEFAULT_LIMIT;
     const offset = input.offset || DEFAULT_OFFSET;
-    //TODO: const cursor = input.cursor;
-
+    //hashtags + values in query
     const hashtags = input.hashtags || [];
-
-    const values =
-      hashtags.length > 1
-        ? [
-            userId,
-            near,
-            ageMin,
-            ageMax,
-            popularityMin,
-            popularityMax,
-            orderBy,
-            limit,
-            offset,
-            hashtags
-          ]
-        : [
-            userId,
-            near,
-            ageMin,
-            ageMax,
-            popularityMin,
-            popularityMax,
-            orderBy,
-            limit,
-            offset
-          ];
-
-    const withHashtags =
-      hashtags.length > 1
-        ? ` AND (users_hashtags.hashtag_name::text = ANY ($${
-            values.length
-          }::text[])) `
-        : "";
+    let values = [
+      userId,
+      near,
+      ageMin,
+      ageMax,
+      popularityMin,
+      popularityMax,
+      orderBy,
+      limit,
+      offset,
+      hashtags];
+    let hashtagSelect = "";
+    let hashtagJoin = "";
+    let hashtagWhere = "";
+    let hashtagGroupBy = "";
+    if (hashtags.length > 1) {
+      values.append(hashtags);
+      const hashtagIndex = values.length;
+      hashtagSelect = ",ARRAY_AGG (hashtag_name) hashtag_name";
+      hashtagJoin = `LEFT JOIN users_hashtags ON users_hashtags.user_id = users.id`
+      hashtagWhere = `AND (users_hashtags.hashtag_name::text = ANY ($${hashtagIndex}::text[]))`
+      hashtagGroupBy = "GROUP BY users.id"
+    }
 
     const query = `
       SELECT 
@@ -122,15 +112,22 @@ export default class Search {
         users.bio,
         users_hashtags.hashtag_name,
         date_part('year', age(users.date_of_birth)) as "age",
-        round((users.location <@> $2)::numeric, 3) as "distance"
+        round((users.location <@> $2)::numeric, 3) as "distance",
+        ARRAY_AGG (blocked.user_blocked) as "blocked"
+        ${hashtagSelect}
       FROM 
         users
-      LEFT JOIN users_hashtags ON
-        users_hashtags.user_id = users.id
       LEFT JOIN users as me ON
         me.id = $1
+      LEFT JOIN blocked ON
+        blocked.user_id = users.id
+      ${hashtagJoin}
       WHERE
         (users.id != $1)
+        AND
+        (users.id NOT IN (SELECT user_blocked FROM blocked WHERE blocked.user_id = me.id))
+        AND
+        (blocked.user_blocked IS NULL)
         AND
         (users.gender::text = ANY (me.lookingfor::text[]))
         AND
@@ -143,7 +140,8 @@ export default class Search {
         (users.popularity_score >= $5)
         AND
         (users.popularity_score <= $6)
-        ${withHashtags}
+        ${hashtagWhere}
+      ${hashtagGroupBy}
       ORDER BY $7
       LIMIT $8
       OFFSET $9`;
