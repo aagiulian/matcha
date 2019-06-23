@@ -69,8 +69,7 @@ export default class Search {
     //pagnation
     const limit = DEFAULT_LIMIT;
     const offset = input.offset || DEFAULT_OFFSET;
-    //hashtags + values in query
-    const hashtags = input.hashtags || [];
+    //values in query
     let values = [
       userId,
       near,
@@ -80,12 +79,13 @@ export default class Search {
       popularityMax,
       orderBy,
       limit,
-      offset,
-      hashtags];
+      offset];
+
+    //hashtags
+    const hashtags = input.hashtags || [];
     let hashtagSelect = "";
     let hashtagJoin = "";
     let hashtagWhere = "";
-    let hashtagGroupBy = "";
     if (hashtags.length > 1) {
       values.append(hashtags);
       const hashtagIndex = values.length;
