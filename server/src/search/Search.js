@@ -126,8 +126,6 @@ export default class Search {
         AND
         (users.id NOT IN (SELECT user_blocked FROM blocked WHERE blocked.user_id = me.id))
         AND
-        (blocked.user_blocked IS NULL)
-        AND
         (users.gender::text = ANY (me.lookingfor::text[]))
         AND
         (me.gender::text = ANY (users.lookingfor::text[]))
@@ -141,6 +139,8 @@ export default class Search {
         (users.popularity_score <= $6)
         ${hashtagWhere}
       GROUP BY users.id
+      HAVING ((NOT ($1 = ANY (array_agg(blocked.user_blocked))))
+	      OR (COUNT(blocked.user_blocked) = 0))
       ORDER BY $7
       LIMIT $8
       OFFSET $9`;
