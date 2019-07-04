@@ -27,9 +27,9 @@ spec:
       containers:
         - name: graphql-api
           image: graphql-api
-          resources:
-            requests:
-              cpu: "1"
+          # resources:
+          #   requests:
+          #     cpu: "1"
           imagePullPolicy: Never
           ports:
             - containerPort: 4000
@@ -42,7 +42,7 @@ spec:
       volumes:
         - name: source-code
           hostPath:
-            path: /Users/agiulian/dev/matcha/server
+            path: /Users/Workstation/dev/matcha/server
             type: Directory
 
 ---

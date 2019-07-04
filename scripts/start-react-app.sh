@@ -28,4 +28,4 @@ docker build -t react-app-matcha ../client
 #k8s deployment
 kubectl create -f ../deployment/react-app.yaml
 
-ssh -o PubkeyAuthentication=no -R $MATCHA_FRONT:80:$(minikube ip):30080 serveo.net 1>> ../logs/react.out 2>> ../logs/react.err &
+ssh -tt -o PubkeyAuthentication=no -R $MATCHA_FRONT:80:$(minikube ip):30080 serveo.net 1> ../logs/react.out 2> ../logs/react.err &

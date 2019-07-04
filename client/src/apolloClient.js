@@ -72,11 +72,11 @@ const authLink = setContext((_, { headers }) => {
 });
 
 const httpLink = createUploadLink({
-  uri: `http://${process.env.REACT_APP_API_HOST}/`
+  uri: `https://${process.env.REACT_APP_API_HOST}/`
 });
 
 const wsLink = new WebSocketLink({
-  uri: `ws://${process.env.REACT_APP_API_HOST}/graphql`,
+  uri: `wss://${process.env.REACT_APP_API_HOST}/graphql`,
   options: {
     reconnect: true,
     connectionParams: {

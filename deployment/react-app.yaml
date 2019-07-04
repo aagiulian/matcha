@@ -15,9 +15,9 @@ spec:
       containers:
         - name: react-app-matcha
           image: react-app-matcha
-          resources:
-            requests:
-              cpu: "1"
+          # resources:
+          #   requests:
+          #     cpu: "1"
           imagePullPolicy: Never
           ports:
             - containerPort: 3000
@@ -30,7 +30,7 @@ spec:
       volumes:
         - name: source-code
           hostPath:
-            path: /Users/agiulian/dev/matcha/client
+            path: /Users/Workstation/dev/matcha/client
             type: Directory
 
 ---

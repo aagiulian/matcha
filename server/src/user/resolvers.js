@@ -217,13 +217,19 @@ export const resolvers = {
       return { id: userId };
     },
 
-    uploadImage: async (_, { [image]: images }) => {
-      console.log(images);
-      const { createReadStream, filename } = await [images];
-      console.log(images);
-      const stream = createReadStream();
-      await storeUpload({ stream, filename });
-      return true;
+    uploadImage: async (_, { image: [image] }) => {
+      console.log(image);
+      const { createReadStream, filename } = await image;
+      console.log(createReadStream, filename);
+      let stream = createReadStream();
+      try {
+        await storeUpload({ stream, filename });
+        return true;
+      } catch (e) {
+        // throw new graphql error bad file type
+        // too many images
+        return false;
+      }
     }
   }
 };

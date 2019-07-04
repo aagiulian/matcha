@@ -31,5 +31,5 @@ docker build -t graphql-api ../server
 
 kubectl create -f ../deployment/graphql-api.yaml
 
-ssh -o PubkeyAuthentication=no -R $MATCHA_API:80:$(minikube ip):30077 serveo.net 1>> ../logs/graphql.out 2>> ../logs/graphql.err &
-ssh -o PubkeyAuthentication=no -R $MATCHA_EMAIL_CHECK:80:$(minikube ip):30078 serveo.net 1>> ../logs/email_check.out 2>> ../logs/email_check.err &
+ssh -o PubkeyAuthentication=no -R $MATCHA_API:80:$(minikube ip):30077 serveo.net 1> ../logs/graphql.out 2> ../logs/graphql.err &
+ssh -o PubkeyAuthentication=no -R $MATCHA_EMAIL_CHECK:80:$(minikube ip):30078 serveo.net 1> ../logs/email_check.out 2> ../logs/email_check.err &

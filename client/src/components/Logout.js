@@ -1,19 +1,5 @@
 import React from "react";
-import { Redirect } from "react-router-dom"
-
-/*
-import gql from "graphql-tag";
-import { useMutation } from "react-apollo-hooks";
-
-const LOGOUT = gql`
-  mutation Logout($email: String!, $password: String!) {
-    login(email: $email, password: $password) {
-      success
-      token
-    }
-  }
-`;
-*/
+import { Redirect } from "react-router-dom";
 
 export default function Logout() {
   return (
@@ -22,8 +8,7 @@ export default function Logout() {
         onSubmit={e => {
           //   e.preventDefault();
           sessionStorage.removeItem("token");
-          return (<Redirect to="/login"/>)
-
+          return <Redirect to="/login" />;
         }}
       >
         <button type="submit">Logout</button>
